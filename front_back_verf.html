@@ -67,8 +67,10 @@ async function run_backend(arr_auth) {
 	
 	var message = 'create an empty file to trigger backend';
 	var content = "";
+
+	console.log('arr_auth.length: ', arr_auth.length);
 	
-	while (flag == "run" && i < arr_auth.length) {
+	while (flag == "run" && i <4) {
 		try {
 			await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
 		} catch (error_out) {
