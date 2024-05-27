@@ -55,7 +55,7 @@ async function run_backend(arr_auth) {
 	let flag = "run";
 	let i = 0;
 
-	var alpha = 'abcdefghijklmnopqrstuvwxyz';
+	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	var num = '0123456789'
 	
 	
@@ -79,7 +79,7 @@ async function run_backend(arr_auth) {
 
 				// A vector of length n, filled with 0 or 1
 				var letnum_selection = [];
-				for (len i=0; i<n; i++) {
+				for (let i=0; i<n; i++) {
 					letnum_selection.push(Math.round(Math.random()));
 				}
 
