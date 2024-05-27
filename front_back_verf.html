@@ -157,7 +157,6 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
     var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
     return await fetch(url, options)
       .then(res => { console.log(res); return res; })
-      .then(async function() { document.getElementById("notification").innerHTML = "Launching backend..."; })
       .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
