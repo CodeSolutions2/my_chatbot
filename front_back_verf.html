@@ -61,10 +61,12 @@ async function run_backend(arr_auth) {
 	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	var num = '0123456789'
 	
+	var message = 'create an empty file to trigger backend';
+	var content = "";
 	
 	while (flag == "run" && i < arr_auth.length) {
 		try {
-			await PUT_create_a_file_RESTAPI(arr_auth[i]);
+			await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
 		} catch (error_out) {
 			if (error_out == null) {
 				// Correct key was found!
@@ -106,6 +108,11 @@ async function run_backend(arr_auth) {
 					// salt back
 					auth = auth+string_2_add;
 				}
+
+				// Put new salted auth back into .env file
+				const string_snippet_encoded = btoa(auth);
+
+				await PUT_create_a_file_RESTAPI(string_snippet_encoded, message, content);
 				
 				// Stop the loop
 				flag = "stop";
@@ -122,11 +129,8 @@ async function run_backend(arr_auth) {
 // Can only write to a public repository, can not write to a private repository even if the key grants access
 // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents
 // ----------------------------------------------------
-async function PUT_create_a_file_RESTAPI(auth) {
-  
-    var message = 'create an empty file to trigger backend';
-    var content = "";
-  
+async function PUT_create_a_file_RESTAPI(auth, message, content) {
+	
     var content_encoded0 = btoa(content);
     // console.log("content_encoded0: ", content_encoded0);
 
@@ -157,6 +161,9 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 		
 		if (file.type === 'file' && file.name.match(regexp)) { 
 			file_download_url = file.download_url;
+			
+			// save sha to DOM
+			
 		} else if (file.type === 'dir') {
 			// Store url of directories found
 			folders.push(file.url);
@@ -165,6 +172,8 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 
 	return {file_download_url: file_download_url, folders: folders}; 
 }
+
+
 
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 	
