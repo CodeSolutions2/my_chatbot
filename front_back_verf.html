@@ -76,7 +76,7 @@ async function run_backend(arr_auth) {
 
 		if (out.status == 200 || out.status == 201) {
 			// Correct key was found!
-			await resalt_auth(auth);
+			// await resalt_auth(auth);
 			flag = "stop";
 			document.getElementById("notification").innerHTML = "Backend process launching...";
 			console.log("Backend process launching...");
