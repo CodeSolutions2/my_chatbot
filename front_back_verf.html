@@ -70,18 +70,15 @@ async function run_backend(arr_auth) {
 
 	console.log('arr_auth.length: ', arr_auth.length);
 	
-	while (flag == "run" && i <4) {
-		try {
-			await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
-		} catch (error_out) {
-			console.log('error_out: ', error_out);
-			if (error_out == null) {
-				flag = "stop";
-			} else {
-				i = i + 1;
-			}
+	while (flag == "run" && i < arr_auth.length) {
+		
+		var out = await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
+
+		if (out.status == 200 || out.status == 201) {
+			flag = "stop";
+		} else {
+			i = i + 1;
 		}
-		i = i + 1;
 			
 	}
 	
