@@ -37,12 +37,10 @@ async function decode_desalt(base64_string) {
 
 	for (let i=1; i<n+1; i++) {
 		// remove end
-		let val = text.slice(0, text.length-n);
-		arr_auth.push(val);
+		arr_auth.push(text.slice(0, text.length-n));
 
 		// remove beginning
-		let val = text.slice(n, text.length);
-		arr_auth.push(val);
+		arr_auth.push(text.slice(n, text.length));
 	}
 	return arr_auth;
 }
