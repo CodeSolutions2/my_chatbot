@@ -6,58 +6,113 @@
 <script>
 
 // ----------------------------------------------------
-// Set-up: 
-// 0. Salt the authorization key (https://en.wikipedia.org/wiki/Salt_%28cryptography%29)
-// 1. base64encode
 
-// put it in .env
-// ----------------------------------------------------
 const repoOwner = 'CodeSolutions2';
 const empty_repoName = 'empty_repo_to_trigger_GitHub_Actions';
 const repoName = 'my_chatbot';
 
 
-
-
-
-async function treat_frontend_data_to_trigger_backend() {
+async function run_backend_process() {
 
   await GET_text_from_file_wo_auth_GitHub_RESTAPI()
-    .then(async function(auth) { return arr_auth = await create_nsquared_auth_versions(auth); })
-    .then(async function(arr_auth) { return await identify_low_level_auth(arr_auth); })
-    .then(async function(auth) { await PUT_create_a_file_RESTAPI(auth); })
+    .then(async function(base64_string) { return await decode_desalt(base64_string); })
+    .then(async function(arr_auth) { value = await run_backend(arr_auth); })
     .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
 
+	
+
+// ----------------------------------------------------
 
 
-async function create_nsquared_auth_versions() {
+async function decode_desalt(base64_string) {
+	
+	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
+	const text = atob(base64_string);
+	
+	// 1. 'de-salt' the authorization key read from the file
+	n = 2;
+	arr_auth = [];
 
-  // 0. Decode the Base64-encoded string --> obtain the scrambled data in binary string format
-		const text = atob(base64_string);
-  
-  // 'de-salt' the authorization key read from the file
-  n = 1;
+	for (let i=1; i<n+1; i++) {
+		// remove end
+		let val = text.slice(0, text.length-n);
+		arr_auth.push(val);
 
-  arr_auth = [];
-  
-  let val = text.slice(0, text.length-n);
-  arr_auth.push(val);
-
-  let val = text.slice(n, text.length);
-  arr_auth.push(val);
-  
+		// remove beginning
+		let val = text.slice(n, text.length);
+		arr_auth.push(val);
+	}
+	return arr_auth;
 }
 
+	
+// ----------------------------------------------------
 
-async function identify_low_level_auth() {
+	
+async function run_backend(arr_auth) {
+	
+	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
+	let flag = "run";
+	let i = 0;
 
-  // try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
+	var alpha = 'abcdefghijklmnopqrstuvwxyz;
+	var num = '0123456789'
+	
+	
+	while (flag == "run" && i < arr_auth.length) {
+		try {
+			await PUT_create_a_file_RESTAPI(arr_auth[i]);
+		} catch (error_out) {
+			if (error_out == null) {
+				// Correct key was found!
+				var auth = arr_auth[i];
 
-  
+				// Resalt and save the key in .env, for the next time
+				let alpha_arr = alpha.split('');
+				console.log('alpha_arr: ', alpha_arr);
+				
+				let num_arr = num.split('');
+				console.log('num_arr: ', num_arr);
 
-  
+				let frontend = Math.round(Math.random());  
+				console.log('frontend: ', frontend);  // 0, 1
+
+				// A vector of length n, filled with 0 or 1
+				var letnum_selection = [];
+				for (len i=0; i<n; i++) {
+					letnum_selection.push(Math.round(Math.random()));
+				}
+
+				// Create salt (extra strings randomly)
+				let string_2_add = "";
+				letnum_selection.forEach(function (row, ind) {
+					if (row == 0) {
+						let val = Math.round(Math.random()*alpha_arr.length);
+						string_2_add = string_2_add + alpha_arr[val];
+					} else {
+						let val = Math.round(Math.random()*num_arr.length);
+						string_2_add = string_2_add + num_arr[val];
+					}
+				});
+
+				// Add salt to auth
+				if (frontend == 0) {
+					// salt front
+					auth = string_2_add+auth;
+				} else {
+					// salt back
+					auth = auth+string_2_add;
+				}
+				
+				// Stop the loop
+				flag = "stop";
+			} else {
+				i = i + 1;
+			}
+		}
+	}
 }
 
 
@@ -68,10 +123,9 @@ async function identify_low_level_auth() {
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth) {
   
-    var message = 'add user input to file for backend';
-    var content = document.getElementById("user_input").value;
+    var message = 'create an empty file to trigger backend';
+    var content = "";
   
-    // https://developer.mozilla.org/en-US/docs/Web/API/btoa
     var content_encoded0 = btoa(content);
     // console.log("content_encoded0: ", content_encoded0);
 
@@ -80,19 +134,21 @@ async function PUT_create_a_file_RESTAPI(auth) {
     console.log("auth: ", auth);
     
     // PUT into a new file
-    var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/temp`;
+    var url = `https://api.github.com/repos/${repoOwner}/${empty_repoName}/contents/temp`;
     var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0};
     var headers = {"Accept": "application/vnd.github+json", "Authorization": `token ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
     var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
     return await fetch(url, options)
       .then(res => { console.log(res); return res; })
-      .then(async function() { document.getElementById("notification").innerHTML = "Thank you for submiting data, please close the popup window"; })
+      .then(async function() { document.getElementById("notification").innerHTML = "Launching backend..."; })
       .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
-  
+
+	
 // ----------------------------------------------------
 
+	
 async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
 	// run through files per url directory
 	data.forEach(async function(file) {
@@ -112,7 +168,7 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 	
-	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+	var url = `https://api.github.com/repos/${repoOwner}/${empty_repoName}/contents`;
 
 	var desired_filename = ".env"; 
   
