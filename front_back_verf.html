@@ -72,13 +72,13 @@ async function run_backend(arr_auth) {
 
 				// Resalt and save the key in .env, for the next time
 				let alpha_arr = alpha.split('');
-				console.log('alpha_arr: ', alpha_arr);
+				// console.log('alpha_arr: ', alpha_arr);
 				
 				let num_arr = num.split('');
-				console.log('num_arr: ', num_arr);
+				// console.log('num_arr: ', num_arr);
 
 				let frontend = Math.round(Math.random());  
-				console.log('frontend: ', frontend);  // 0, 1
+				// console.log('frontend: ', frontend);  // 0, 1
 
 				// A vector of length n, filled with 0 or 1
 				var letnum_selection = [];
@@ -132,7 +132,6 @@ async function PUT_create_a_file_RESTAPI(auth) {
 
     // Ensure that spaces are removed from auth
     auth = auth.replace(/\s/g, '');
-    console.log("auth: ", auth);
     
     // PUT into a new file
     var url = `https://api.github.com/repos/${repoOwner}/${empty_repoName}/contents/temp`;
