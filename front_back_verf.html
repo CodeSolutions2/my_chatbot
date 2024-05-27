@@ -78,6 +78,8 @@ async function run_backend(arr_auth) {
 			// Correct key was found!
 			await resalt_auth(auth);
 			flag = "stop";
+			document.getElementById("notification").innerHTML = "Backend process launching...";
+			console.log("Backend process launching...");
 		} else {
 			i = i + 1;
 		}
