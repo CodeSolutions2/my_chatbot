@@ -179,7 +179,6 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 	
 	return await fetch(document.getElementById("file_download_url").innerHTML, options)
 		.then(res => { console.log(res); return res; })
-		.then(async function() { document.getElementById("notification").innerHTML = "Launching backend..."; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
