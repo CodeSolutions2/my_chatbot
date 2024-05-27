@@ -6,8 +6,10 @@
 <button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
 <div id="sha" style="display:none"></div>
 <div id="file_download_url" style="display:none"></div>
+<div id="error" style="display:block"></div>
+<div id="error" style="display:block"></div>
 
-	
+
 <script>
 
 // ----------------------------------------------------
@@ -187,8 +189,9 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 			
 			// save sha to DOM
 			document.getElementById("sha").innerHTML = file.sha;
+			console.log('sha: ', document.getElementById("sha").innerHTML);
 			document.getElementById("file_download_url").innerHTML = file_download_url;
-			console.log('file_download_url: ', file_download_url);
+			console.log('file_download_url: ', document.getElementById("file_download_url").innerHTML);
 			
 		} else if (file.type === 'dir') {
 			// Store url of directories found
