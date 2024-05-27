@@ -74,58 +74,10 @@ async function run_backend(arr_auth) {
 		try {
 			await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
 		} catch (error_out) {
-			if (error_out == null) {
-				// Correct key was found!
-				var auth = arr_auth[i];
-
-				// Resalt and save the key in .env, for the next time
-				let alpha_arr = alpha.split('');
-				// console.log('alpha_arr: ', alpha_arr);
-				
-				let num_arr = num.split('');
-				// console.log('num_arr: ', num_arr);
-
-				let frontend = Math.round(Math.random());  
-				// console.log('frontend: ', frontend);  // 0, 1
-
-				// A vector of length n, filled with 0 or 1
-				var letnum_selection = [];
-				for (let i=0; i<n; i++) {
-					letnum_selection.push(Math.round(Math.random()));
-				}
-
-				// Create salt (extra strings randomly)
-				let string_2_add = "";
-				letnum_selection.forEach(function (row, ind) {
-					if (row == 0) {
-						let val = Math.round(Math.random()*alpha_arr.length);
-						string_2_add = string_2_add + alpha_arr[val];
-					} else {
-						let val = Math.round(Math.random()*num_arr.length);
-						string_2_add = string_2_add + num_arr[val];
-					}
-				});
-
-				// Add salt to auth
-				if (frontend == 0) {
-					// salt front
-					auth = string_2_add+auth;
-				} else {
-					// salt back
-					auth = auth+string_2_add;
-				}
-
-				// Put new salted auth back into .env file
-				const string_snippet_encoded = btoa(auth);
-				await PUT_add_to_a_file_RESTAPI(string_snippet_encoded, message, content);
-				
-				// Stop the loop
-				flag = "stop";
-			} else {
-				i = i + 1;
-			}
+			
 		}
 	}
+	
 }
 
 
