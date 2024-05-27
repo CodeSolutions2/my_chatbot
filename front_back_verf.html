@@ -4,6 +4,8 @@
 <body>    
 
 <button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
+<div id="sha" style="display:none"></div>
+<div id="file_download_url" style="display:none"></div>
 
 	
 <script>
@@ -111,8 +113,7 @@ async function run_backend(arr_auth) {
 
 				// Put new salted auth back into .env file
 				const string_snippet_encoded = btoa(auth);
-
-				await PUT_create_a_file_RESTAPI(string_snippet_encoded, message, content);
+				await PUT_add_to_a_file_RESTAPI(string_snippet_encoded, message, content);
 				
 				// Stop the loop
 				flag = "stop";
@@ -149,6 +150,28 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
 
 }
 
+
+// ----------------------------------------------------
+
+
+async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
+	
+	// PUT into an existing file
+	
+	// Encode protected data into github's encoded format
+	let content_encoded0 = btoa(content);
+	console.log("content_encoded0: ", content_encoded0);
+	
+	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0, "sha": document.getElementById("sha").innerHTML};
+	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
+	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
+	
+	return await fetch(document.getElementById("file_download_url").innerHTML, options)
+		.then(res => { console.log(res); return res; })
+		.then(async function() { document.getElementById("notification").innerHTML = "Launching backend..."; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+
+}
 	
 // ----------------------------------------------------
 
@@ -163,6 +186,9 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 			file_download_url = file.download_url;
 			
 			// save sha to DOM
+			document.getElementById("sha").innerHTML = file.sha;
+			document.getElementById("file_download_url").innerHTML = file_download_url;
+			console.log('file_download_url: ', file_download_url);
 			
 		} else if (file.type === 'dir') {
 			// Store url of directories found
