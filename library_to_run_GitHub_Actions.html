@@ -116,8 +116,10 @@ async function run_backend(obj_env) {
 			let i = 1;
 			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 			console.log('desired_path: ', desired_path);
-			
-			while ((obj_temp.status != 200 || obj_temp.status != 201) && i < obj_env.arr_auth.length) {
+
+			var regexp = new RegExp(^20, 'g');  // var regexp = /^20/g
+ 
+			while (obj_temp.status.test(regexp) == false && i < obj_env.arr_auth.length) {
 		 		if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
 		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path)
@@ -153,11 +155,7 @@ async function resalt_auth(obj_env) {
 	
 	// Resalt and save the key in .env, for the next time
 	let alpha_arr = alpha.split('');
-	console.log('alpha_arr: ', alpha_arr);
-	
 	let num_arr = num.split('');
-	console.log('num_arr: ', num_arr);
-
 	let frontend = Math.round(Math.random());  
 	console.log('frontend: ', frontend);  // 0, 1
 
@@ -186,7 +184,6 @@ async function resalt_auth(obj_env) {
 			string_2_add = string_2_add + num_arr[val];
 		}
 	});
-	console.log('string_2_add: ', string_2_add);
 
 	// Add salt to auth_new
 	var auth_new = obj_env.auth;
@@ -197,7 +194,6 @@ async function resalt_auth(obj_env) {
 		// salt back
 		auth_new = auth_new+string_2_add;
 	}
-	console.log('auth_new: ', auth_new);
 
 	// Put new salted auth back into .env file
 	var content = btoa(auth_new);   // Base64encode the salted auth
@@ -336,7 +332,7 @@ async function GET_fileDownloadUrl_and_sha(desired_filename) {
 	
 }
 
-
+	
 async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr) {
 
 	var regexp = new RegExp(`${desired_filename}`, 'g');
