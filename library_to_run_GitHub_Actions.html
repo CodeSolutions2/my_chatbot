@@ -145,7 +145,7 @@ async function resalt_auth(obj_env) {
 	// Determine the salt length - it can be up to length n
 
 	// Randomly choose the salt length from 1 to n
-	var new_salt_length = Math.round(Math.random())*n + 1;
+	var new_salt_length = Math.round(Math.random())*(n-1) + 1;
 	console.log('new_salt_length: ', new_salt_length);
 
 	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
