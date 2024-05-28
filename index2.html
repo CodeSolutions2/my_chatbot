@@ -226,47 +226,54 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
   
 	var file_download_url = [];
 	var folders = [];
-	var flag = "run";
 	var max_loop_limit = 0;
 	
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) { 
 
-			while (flag == "run" || max_loop_limit < 5) {
-				// search over data for the desired_filename
-				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders);
-
-				folders = folders.concat(obj.folders);
-				folders = [... new Set(folders)];
-				file_download_url = file_download_url.concat(obj.file_download_url);
-				file_download_url = [... new Set(file_download_url)];
-
-				console.log("folders: ", folders);
-				console.log("file_download_url: ", file_download_url);
-				console.log("folders.length: ", folders.length);
-				
-				// get list of folders from the main directory
-				if (folders.length == 0) {
-					flag = "stop";
-					if (file_download_url.length == 0) {
-						file_download_url = "No file found";
-					}
-				} else {
-					// There are directories in the main file
+			await loop_over_files_and_folders(data, desired_filename, file_download_url, folders)
+				.then(async function(obj) {
+					folders = folders.concat(obj.folders);
+					folders = [... new Set(folders)];
+					file_download_url = file_download_url.concat(obj.file_download_url);
+					file_download_url = [... new Set(file_download_url)];
 					
-					// remove url from folders
-					let new_url = folders.shift();
-					console.log("new_url: ", new_url);
+					console.log("folders: ", folders);
+					console.log("file_download_url: ", file_download_url);
+					console.log("folders.length: ", folders.length);
 
-					// fetch data from url
-					data = await fetch(new_url)
-						.then(res => res.json())
-						.then(async function(data) { return data; });
-				}
-				max_loop_limit += 1;
-				console.log("max_loop_limit: ", max_loop_limit);
-			}
+					while (folders.length > 0 || max_loop_limit < 5) {
+						// search over data for the desired_filename
+						var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders);
+		
+						folders = folders.concat(obj.folders);
+						folders = [... new Set(folders)];
+						file_download_url = file_download_url.concat(obj.file_download_url);
+						file_download_url = [... new Set(file_download_url)];
+		
+						console.log("folders: ", folders);
+						console.log("file_download_url: ", file_download_url);
+						console.log("folders.length: ", folders.length);
+						
+						// There are directories in the main file
+						
+						// remove url from folders
+						let new_url = folders.shift();
+						console.log("new_url: ", new_url);
+	
+						// fetch data from url
+						data = await fetch(new_url)
+							.then(res => res.json())
+							.then(async function(data) { return data; });
+						
+						max_loop_limit += 1;
+						console.log("max_loop_limit: ", max_loop_limit);
+					}
+					
+				})
+			
+			
 			
 			return file_download_url;
 		})
