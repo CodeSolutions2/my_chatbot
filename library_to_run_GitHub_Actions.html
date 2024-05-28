@@ -76,23 +76,14 @@ async function run_backend(obj_env) {
 	
 	// [0] Determine if temp exists
 	await GET_fileDownloadUrl_and_sha("temp")
-		// PROBLEM: one needs the authorization code to delete the file, it is not yet known
-		// .then(async function(obj_temp) {
-			// obj_temp.file_download_url[0], obj_temp.sha_arr[0]
-			// if (obj_temp.file_download_url != "No file found") {
-				// The file exists, so delete the file
-				// await DELETE_a_file_RESTAPI(auth, message, "temp", obj_temp.sha_arr[0]);
-			// }
-		// })
 		// [1] Test for the correct key, save input_text to temp
 		.then(async function(obj_temp) { 
-			var out = "";
 			if (obj_temp.file_download_url == "No file found") {
 				// Option 0: create a new file
-				out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, "temp"); 		
+				var out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, "temp"); 		
 			} else {
 				// Option 1: modify an existing file
-				out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0]);
+				var out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0]);
 			}
 			obj_temp.status = out.status;
 			return obj_temp;
@@ -100,15 +91,14 @@ async function run_backend(obj_env) {
 		.then(async function(obj_temp) { await new Promise(r => setTimeout(r, 5000)); console.log('obj_temp.status: ', obj_temp.status); return obj_temp; })
 		.then(async function(obj_temp) {
 			let i = 1;
-			var out = "";
 			while ((obj_temp.status != 200 || obj_temp.status != 201) && i < obj_env.arr_auth.length) {
 				if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
-					out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, "temp")
+					var out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, "temp")
 						.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); return out; })
 				} else {
 					// Option 1: modify an existing file
-					out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0])
+					var out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0])
 						.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); return out; })
 				}
 				obj_temp.status = out.status;
