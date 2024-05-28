@@ -18,7 +18,8 @@
 const repoOwner = 'CodeSolutions2';
 const repoName = 'run_GitHub_Actions';
 
-var n = 2; // the salt length
+var n = 3; // maximum salt length used
+var input_text = 'input text to backend';
 
 
 // ----------------------------------------------------
@@ -49,10 +50,10 @@ async function decode_desalt(base64_string) {
 
 	for (let i=1; i<n+1; i++) {
 		// remove end
-		arr_auth.push(text.slice(0, text.length-n));
+		arr_auth.push(text.slice(0, text.length-i));
 
 		// remove beginning
-		arr_auth.push(text.slice(n, text.length));
+		arr_auth.push(text.slice(i, text.length));
 	}
 	return arr_auth;
 }
@@ -67,8 +68,8 @@ async function run_backend(arr_auth) {
 	let flag = "run";
 	let i = 0;
 	
-	var message = 'create an empty file to trigger backend';
-	var content = "";
+	var message = 'run GitHub Action';
+	var content = input_text;
 
 	console.log('arr_auth.length: ', arr_auth.length);
 	console.log('arr_auth: ', arr_auth);
@@ -108,9 +109,18 @@ async function resalt_auth(auth) {
 	let frontend = Math.round(Math.random());  
 	console.log('frontend: ', frontend);  // 0, 1
 
-	// A vector of length n, filled with 0 or 1
+	// A vector of length n
+	// Determine the salt length - it can be up to length n
+
+	// Randomly choose the salt length from 1 to n
+	var new_salt_length = Math.round(Math.random())*n;
+	console.log('new_salt_length: ', new_salt_length);
+
+	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
 	var letnum_selection = [];
-	for (let i=0; i<n; i++) { letnum_selection.push(Math.round(Math.random())); }
+	for (let i=0; i<new_salt_length; i++) { 
+		letnum_selection.push(Math.round(Math.random())); 
+	}
 	console.log('letnum_selection: ', letnum_selection);
 
 	// Create salt (extra strings randomly)
@@ -137,9 +147,10 @@ async function resalt_auth(auth) {
 	}
 	console.log('auth_new: ', auth_new);
 
-	// Put new salted auth back into .env file
+	// Base64encode the salted auth
 	const string_snippet_encoded = btoa(auth_new);
-	
+
+	// Put new salted auth back into .env file
 	var message = 'resave the new value';
 	var content = string_snippet_encoded;
 	// await PUT_add_to_a_file_RESTAPI(auth, message, content);
