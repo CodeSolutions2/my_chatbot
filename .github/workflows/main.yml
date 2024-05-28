@@ -15,10 +15,3 @@ jobs:
     steps:
       - name: Step 1
         run: echo "Workflow triggered by adding a file to the main branch"
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Read the first line from the file temp and save to a variable named input_text
-        run: |
-          export input_text=$(cat temp | head -n 1)
