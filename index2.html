@@ -62,9 +62,6 @@ async function run_backend(arr_auth) {
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
 	let flag = "run";
 	let i = 0;
-
-	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var num = '0123456789'
 	
 	var message = 'create an empty file to trigger backend';
 	var content = "";
@@ -94,6 +91,8 @@ async function resalt_auth() {
 	let auth = 'test_text';
 	
 	let n = 2;
+	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var num = '0123456789'
 	
 	// Resalt and save the key in .env, for the next time
 	let alpha_arr = alpha.split('');
