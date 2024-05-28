@@ -87,7 +87,7 @@ async function run_backend(obj_env) {
 			}
 		})
 		.then(async function(obj_temp) { 
-			await new Promise(r => setTimeout(r, 5000)); 
+			await new Promise(r => setTimeout(r, 2000)); 
 			console.log('obj_temp.status: ', obj_temp.status);
 			return obj_temp; 
 		})
@@ -102,11 +102,11 @@ async function run_backend(obj_env) {
 		 		if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
 		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path)
-		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
+		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 2000)); return obj_temp; })
 		 		} else {
 		 			// Option 1: modify an existing file
 		 			obj_temp = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path, obj_temp.sha_arr[0])
-		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
+		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 2000)); return obj_temp; })
 		 		}
 				
 				if (regexp.test(obj_temp.status) == true) {
@@ -145,7 +145,7 @@ async function resalt_auth(obj_env) {
 	// Determine the salt length - it can be up to length n
 
 	// Randomly choose the salt length from 1 to n
-	var new_salt_length = Math.round(Math.random())*n;
+	var new_salt_length = Math.round(Math.random())*n + 1;
 	console.log('new_salt_length: ', new_salt_length);
 
 	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
