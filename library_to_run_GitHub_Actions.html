@@ -117,7 +117,7 @@ async function run_backend(obj_env) {
 			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 			console.log('desired_path: ', desired_path);
 
-			var regexp = /^20/g
+			var regexp = /^20/g;
  
 			while (regexp.test(obj_temp.status) == false && i < obj_env.arr_auth.length) {
 		 		if (obj_temp.file_download_url == "No file found") {
