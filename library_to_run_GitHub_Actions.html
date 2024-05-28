@@ -78,7 +78,7 @@ async function run_backend(arr_auth) {
 			return arr_auth[i];
 		})
 		.then(async function(auth) { 
-			// await resalt_auth(auth); 
+			await resalt_auth(auth);
 			document.getElementById("notification").innerHTML = "Backend process launching...";
 			console.log("Backend process launching...");
 		})
@@ -144,6 +144,9 @@ async function resalt_auth(auth) {
 	var message = 'resave the new value';
 	var content = btoa(auth_new);   // Base64encode the salted auth
 	await PUT_add_to_a_file_RESTAPI(auth, message, content);
+	
+	document.getElementById("notification").innerHTML = "Resalted key...";
+	console.log("Resalted key...");
 }
 	
 
