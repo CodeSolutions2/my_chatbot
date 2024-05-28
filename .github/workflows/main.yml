@@ -22,10 +22,3 @@ jobs:
       - name: Read the first line from the file temp and save to a variable named input_text
         run: |
           export input_text=$(cat temp | head -n 1)
-          curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.OPENAI_API_KEY}}"   -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "system", "content": "You are helpful and respond concisely, using the least number of words."}, {"role": "user", "content": input_text}]}' > response.txt
-
-      - name: Save backend response to repository for frontend to read
-        uses: actions/upload-artifact@v2
-        with:
-          name: backend-response-file
-          path: response.txt
