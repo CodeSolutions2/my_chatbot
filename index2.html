@@ -67,16 +67,12 @@ async function run_backend(arr_auth) {
 	console.log('arr_auth.length: ', arr_auth.length);
 
 	await PUT_create_a_file_RESTAPI(arr_auth[0], 'run GitHub Action', input_text)
+		.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); console.log('out: ', out); return out; })
 		.then(async function(out) {
 			let i = 1;
 			while ((out.status != 200 || out.status != 201) && i < arr_auth.length) {
 				out = await PUT_create_a_file_RESTAPI(arr_auth[i], 'run GitHub Action', input_text)
-					.then(async function(out) {
-						// Prevent "endpoint from being spammed"
-						await new Promise(r => setTimeout(r, 5000));
-						return out;
-					});
-				console.log('out: ', out);
+					.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); console.log('out: ', out); return out; })
 				i += 1;
 			}
 			return arr_auth[i];
@@ -204,7 +200,7 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 			console.log('A directory was found: ', file.url);
 			folders.push(file.url);
 		} else {
-			console.log('No match loop_over_files_and_folders: ', file.name);
+			console.log('Desired file not found, file name: ', file.name);
 		}
 	});
 	return {data: data, file_download_url: file_download_url, folders: folders}; 
