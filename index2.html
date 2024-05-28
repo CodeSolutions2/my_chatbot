@@ -18,7 +18,7 @@
 const repoOwner = 'CodeSolutions2';
 const repoName = 'run_GitHub_Actions';
 
-var n = 3; // maximum salt length used
+var n = 2; // maximum salt length used
 var input_text = 'input text to backend';
 
 
@@ -67,14 +67,11 @@ async function run_backend(arr_auth) {
 	let flag = "run";
 	let i = 0;
 	
-	var message = 'run GitHub Action';
-	var content = input_text;
-
 	console.log('arr_auth.length: ', arr_auth.length);
 	
 	while (flag == "run" && i < arr_auth.length) {
 		
-		var out = await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
+		var out = await PUT_create_a_file_RESTAPI(arr_auth[i], 'run GitHub Action', input_text);
 		console.log('out: ', out);
 
 		if (out.status == 200 || out.status == 201) {
@@ -164,15 +161,13 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
 	
     var content_encoded0 = btoa(content);
     // console.log("content_encoded0: ", content_encoded0);
-
-    // Ensure that spaces are removed from auth
-    auth = auth.replace(/\s/g, '');
     
-    // PUT into a new file
+    // PUT content into a new file
     var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/temp`;
     var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0};
     var headers = {"Accept": "application/vnd.github+json", "Authorization": `token ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
     var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
+	
     return await fetch(url, options)
       .catch(error => { document.getElementById("error").innerHTML = error; });
 
@@ -184,20 +179,17 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 	
-	// PUT into an existing file
-	
 	// Encode protected data into github's encoded format
 	let content_encoded0 = btoa(content);
 	console.log("content_encoded0: ", content_encoded0);
-	
+
+	// PUT content into an existing file
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0, "sha": document.getElementById("sha").innerHTML};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
 	return await fetch(document.getElementById("file_download_url").innerHTML, options)
-		.then(res => { console.log(res); return res; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
-
 }
 	
 // ----------------------------------------------------
