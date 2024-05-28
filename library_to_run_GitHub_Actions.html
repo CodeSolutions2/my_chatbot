@@ -55,8 +55,6 @@ async function decode_desalt(obj_env) {
 
 	// Add arr_auth to obj_env
 	obj_env.arr_auth = arr_auth;
-
-	console.log("obj_env: ", obj_env);
 	
 	return obj_env;
 }
@@ -74,7 +72,6 @@ async function run_backend(obj_env) {
 		// [1] Test for the correct key, save input_text to temp
 		.then(async function(obj_temp) { 
 			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
-			console.log('desired_path: ', desired_path);
 			
 			if (obj_temp.file_download_url == "No file found") {
 				// Option 0: create a new file
@@ -88,13 +85,11 @@ async function run_backend(obj_env) {
 		})
 		.then(async function(obj_temp) { 
 			await new Promise(r => setTimeout(r, 2000)); 
-			console.log('obj_temp.status: ', obj_temp.status);
 			return obj_temp; 
 		})
 		.then(async function(obj_temp) {
 			let i = 1;
 			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
-			console.log('desired_path: ', desired_path);
 
 			var regexp = /^20/g;
  
@@ -112,16 +107,13 @@ async function run_backend(obj_env) {
 				if (regexp.test(obj_temp.status) == true) {
 					obj_env.auth = obj_env.arr_auth[i];
 				}
-				console.log('obj_temp.status: ', obj_temp.status);
 		 		i += 1;
 		 	}
 			delete obj_env.arr_auth;
-			console.log("obj_env: ", obj_env);
 		 	return obj_env;
 		})
 		.then(async function(obj_env) { 
 		 	document.getElementById("notification").innerHTML = "Backend process launching...";
-		 	console.log("Backend process launching...");
 		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 	
@@ -185,7 +177,6 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename) {
 					.then(response => response.text())
 					.then(async function(text) { return text; });
 			}
-			// console.log("text: ", text);
 			return {text: text, file_download_url: obj.file_download_url[0], sha_arr: obj.sha_arr[0]};
 		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
