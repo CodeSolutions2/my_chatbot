@@ -4,9 +4,7 @@
 <body>    
 
 <button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
-	
-<div id="sha_env" style="display:none"></div>
-<div id="file_download_url_env" style="display:none"></div>
+
 <div id="notification" style="display:block"></div>
 <div id="error" style="display:block"></div>
 
@@ -29,7 +27,7 @@ async function run_backend_process() {
 
   await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
     .then(async function(obj_env) {  return await decode_desalt(obj_env); })
-    .then(async function(obj_env) { await run_backend(obj_env); })
+    // .then(async function(obj_env) { await run_backend(obj_env); })
     .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
@@ -57,6 +55,8 @@ async function decode_desalt(obj_env) {
 
 	// Add arr_auth to obj_env
 	obj_env.arr_auth = arr_auth;
+
+	console.log("obj_env: ", obj_env);
 	
 	return obj_env;
 }
