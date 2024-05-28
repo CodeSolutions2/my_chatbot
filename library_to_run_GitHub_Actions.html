@@ -5,8 +5,8 @@
 
 <button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
 	
-<div id="sha" style="display:none"></div>
-<div id="file_download_url" style="display:none"></div>
+<div id="sha_env" style="display:none"></div>
+<div id="file_download_url_env" style="display:none"></div>
 <div id="notification" style="display:block"></div>
 <div id="error" style="display:block"></div>
 
@@ -27,9 +27,9 @@ var input_text = 'input text from frontend to backend';
 	
 async function run_backend_process() {
 
-  await GET_text_from_file_wo_auth_GitHub_RESTAPI()
-    .then(async function(base64_string) { return await decode_desalt(base64_string); })
-    .then(async function(arr_auth) { value = await run_backend(arr_auth); })
+  await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
+    .then(async function(obj_env) {  return await decode_desalt(obj_env); })
+    .then(async function(obj_env) { await run_backend(obj_env); })
     .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
@@ -39,10 +39,10 @@ async function run_backend_process() {
 // ----------------------------------------------------
 
 
-async function decode_desalt(base64_string) {
+async function decode_desalt(obj_env) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
-	const text = atob(base64_string);
+	const text = atob(obj_env.text);
 	
 	// 1. 'de-salt' the authorization key read from the file
 	let arr_auth = [];
@@ -54,31 +54,68 @@ async function decode_desalt(base64_string) {
 		// remove beginning
 		arr_auth.push(text.slice(i, text.length));
 	}
-	return arr_auth;
+
+	// Add arr_auth to obj_env
+	obj_env.arr_auth = arr_auth;
+	
+	return obj_env;
 }
 
 	
 // ----------------------------------------------------
 
 	
-async function run_backend(arr_auth) {
+async function run_backend(obj_env) {
 	
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
-	console.log('arr_auth.length: ', arr_auth.length);
-
-	await PUT_create_a_file_RESTAPI(arr_auth[0], 'run GitHub Action', input_text)
-		.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); console.log('out: ', out); return out; })
-		.then(async function(out) {
+	
+	// [0] Determine if temp exists
+	await GET_fileDownloadUrl_and_sha("temp")
+		// PROBLEM: one needs the authorization code to delete the file, it is not yet known
+		// .then(async function(obj_temp) {
+			// obj_temp.file_download_url[0], obj_temp.sha_arr[0]
+			// if (obj_temp.file_download_url != "No file found") {
+				// The file exists, so delete the file
+				// await DELETE_a_file_RESTAPI(auth, message, "temp", obj_temp.sha_arr[0]);
+			// }
+		// })
+		// [1] Test for the correct key, save input_text to temp
+		.then(async function(obj_temp) { 
+			var out = "";
+			if (obj_temp.file_download_url == "No file found") {
+				// Option 0: create a new file
+				out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, "temp"); 		
+			} else {
+				// Option 1: modify an existing file
+				out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0]);
+			}
+			obj_temp.status = out.status;
+			return obj_temp;
+		})
+		.then(async function(obj_temp) { await new Promise(r => setTimeout(r, 5000)); console.log('obj_temp.status: ', obj_temp.status); return obj_temp; })
+		.then(async function(obj_temp) {
 			let i = 1;
-			while ((out.status != 200 || out.status != 201) && i < arr_auth.length) {
-				out = await PUT_create_a_file_RESTAPI(arr_auth[i], 'run GitHub Action', input_text)
-					.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); console.log('out: ', out); return out; })
+			while ((obj_temp.status != 200 || obj_temp.status != 201) && i < obj_env.arr_auth.length) {
+				if (obj_temp.file_download_url == "No file found") {
+					// Option 0: create a new file
+					out = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, "temp")
+						.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); return out; })
+				} else {
+					// Option 1: modify an existing file
+					out = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, obj_temp.sha_arr[0], obj_temp.file_download_url[0])
+						.then(async function(out) { await new Promise(r => setTimeout(r, 5000)); return out; })
+				}
+				obj_temp.status = out.status;
+				console.log('obj_temp.status: ', obj_temp.status);
 				i += 1;
 			}
-			return arr_auth[i];
+			obj_env.auth = obj_env.arr_auth[i];
+			delete obj_env.arr_auth;
+			return obj_env;
 		})
-		.then(async function(auth) { 
-			await resalt_auth(auth);
+		// [2] Resalt the key
+		.then(async function(obj_env) { 
+			await resalt_auth(obj_env);
 			document.getElementById("notification").innerHTML = "Backend process launching...";
 			console.log("Backend process launching...");
 		})
@@ -87,7 +124,7 @@ async function run_backend(arr_auth) {
 }
 
 	
-async function resalt_auth(auth) {
+async function resalt_auth(obj_env) {
 	
 	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	var num = '0123456789'
@@ -143,10 +180,27 @@ async function resalt_auth(auth) {
 	// Put new salted auth back into .env file
 	var message = 'resave the new value';
 	var content = btoa(auth_new);   // Base64encode the salted auth
-	await PUT_add_to_a_file_RESTAPI(auth, message, content);
+	await PUT_add_to_a_file_RESTAPI(obj_env.auth, message, content, obj_env.sha_arr[0], obj_env.file_download_url[0]);
 	
 	document.getElementById("notification").innerHTML = "Resalted key...";
 	console.log("Resalted key...");
+}
+
+
+
+// ----------------------------------------------------
+// SUBFUNCTIONS
+// ----------------------------------------------------
+
+async function DELETE_a_file_RESTAPI(auth, message, desired_filename, sha) {
+
+	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_filename}`;
+	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "sha": sha};
+	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
+	var options = {method : 'DELETE', headers: headers, body : JSON.stringify(data)};
+	
+	return await fetch(url, options)
+		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 	
 
@@ -155,13 +209,14 @@ async function resalt_auth(auth) {
 // Can only write to a public repository, can not write to a private repository even if the key grants access
 // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents
 // 
-// Now, the file temp can not exist for it to work. 
 // Before, GitHub copied over the temp file with a new temp.
+//
+// Now, if the file temp exists it does not copy over the file; it gives a 422 error. One needs to delete the file temp and then use this function to create the file temp. 
 // ----------------------------------------------------
-async function PUT_create_a_file_RESTAPI(auth, message, content) {
+async function PUT_create_a_file_RESTAPI(auth, message, content, desired_filename) {
 	
 	// PUT content into a new file
-	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/temp`;
+	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_filename}`;
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content)};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
@@ -174,55 +229,46 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
 // ----------------------------------------------------
 
 
-async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
+async function PUT_add_to_a_file_RESTAPI(auth, message, content, sha, url) {
 	
 	// PUT content into an existing file
-	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content), "sha": document.getElementById("sha").innerHTML};
+	// var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_filename}`;
+	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content), "sha": sha};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
-	return await fetch(document.getElementById("file_download_url").innerHTML, options)
+	return await fetch(url, options)
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 	
 // ----------------------------------------------------
 
+async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename) {
 	
-async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
-
-	var regexp = new RegExp(`${desired_filename}`, 'g');
-	
-	// run through files per url directory
-	data.forEach(async function(file) {
-		if (file.type === 'file' && file.name.match(regexp)) { 
-			file_download_url = file.download_url;
-			console.log('Desired file found: ', file.url);
-			
-			// save sha to DOM
-			document.getElementById("sha").innerHTML = file.sha;
-			document.getElementById("file_download_url").innerHTML = file_download_url;
-			
-		} else if (file.type === 'dir') {
-			// Store url of directories found
-			console.log('A directory was found: ', file.url);
-			folders.push(file.url);
-		} else {
-			console.log('Desired file not found: ', file.url);
-		}
-	});
-	return {data: data, file_download_url: file_download_url, folders: folders}; 
+	return await GET_fileDownloadUrl_and_sha(desired_filename)
+		.then(async function (obj) { 
+			var text = "";
+			if (obj.file_download_url != "No file found") {
+				// fetch on first file
+				text = await fetch(obj.file_download_url[0])
+					.then(response => response.text())
+					.then(async function(text) { return text; });
+			}
+			// console.log("text: ", text);
+			return {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]};
+		})
+		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
+// ----------------------------------------------------
 
-
-async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
+async function GET_fileDownloadUrl_and_sha(desired_filename) {
 	
 	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
-
-	var desired_filename = ".env"; 
-  
+	
 	var file_download_url = [];
 	var folders = [];
+	var sha_arr = [];
 	var flag = "run";
 	var max_loop_limit = 0;
 	
@@ -230,9 +276,9 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 		.then(res => res.json())
 		.then(async function(data) {
 			
-			while (flag == "run" || max_loop_limit < 5) {
+			while (flag == "run" && max_loop_limit < 5) {
 				// search over data for the desired_filename
-				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders);
+				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr);
 
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
@@ -240,6 +286,9 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 				
 				file_download_url = file_download_url.concat(obj.file_download_url);
 				file_download_url = [... new Set(file_download_url)];
+				sha_arr = sha_arr.concat(obj.sha_arr);
+				sha_arr = [... new Set(sha_arr)];
+				
 				// console.log("file_download_url: ", file_download_url);
 				// console.log("folders.length: ", folders.length);
 				
@@ -247,6 +296,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 				if (folders.length == 0) {
 					flag = "stop";
 					if (file_download_url.length == 0) { file_download_url = "No file found"; }
+					if (sha_arr.length == 0) { sha_arr = "No file found"; }
 				} else {
 					// There are directories in the main file
 					data = await fetch(folders.shift())
@@ -256,20 +306,32 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 				max_loop_limit += 1;
 				// console.log("max_loop_limit: ", max_loop_limit);
 			}
-			return file_download_url;
-		})
-		.then(async function (file_download_url) { 
-			var text_out = "";
-			if (file_download_url != "No file found") {
-				// fetch on first file
-				text_out = await fetch(file_download_url[0])
-					.then(response => response.text())
-					.then(async function(text_out) { return text_out; });
-			}
-			// console.log("text_out: ", text_out);
-			return text_out;
+			return {file_download_url: file_download_url, sha_arr: sha_arr};
 		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
+	
+}
+
+
+async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr) {
+
+	var regexp = new RegExp(`${desired_filename}`, 'g');
+	
+	// run through files per url directory
+	data.forEach(async function(file) {
+		if (file.type === 'file' && file.name.match(regexp)) { 
+			file_download_url = file.download_url;
+			sha_arr = file.sha;
+			console.log('Desired file found: ', file.url);
+		} else if (file.type === 'dir') {
+			// Store url of directories found
+			folders.push(file.url);
+			console.log('A directory was found: ', file.url);
+		} else {
+			console.log('Desired file not found: ', file.url);
+		}
+	});
+	return {file_download_url: file_download_url, folders: folders, sha_arr: sha_arr}; 
 }
 
 // ----------------------------------------------------
