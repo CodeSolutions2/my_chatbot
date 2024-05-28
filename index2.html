@@ -19,7 +19,7 @@ const repoOwner = 'CodeSolutions2';
 const repoName = 'run_GitHub_Actions';
 
 var n = 2; // maximum salt length used
-var input_text = 'input text to backend';
+var input_text = 'input text from frontend to backend';
 
 
 // ----------------------------------------------------
@@ -197,25 +197,26 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 	
 async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
 	
-	console.log("data: ", data);
+	console.log("data loop_over_files_and_folders: ", data);
+
+	var regexp = new RegExp(`${desired_filename}`, 'g');
 	
 	// run through files per url directory
 	data.forEach(async function(file) {
-		// console.log("file: ", file);
-		var regexp = new RegExp(`${desired_filename}`, 'g');
+		console.log("file loop_over_files_and_folders: ", file);
 		
 		if (file.type === 'file' && file.name.match(regexp)) { 
 			file_download_url = file.download_url;
 			
 			// save sha to DOM
 			document.getElementById("sha").innerHTML = file.sha;
-			console.log('sha: ', document.getElementById("sha").innerHTML);
 			document.getElementById("file_download_url").innerHTML = file_download_url;
-			console.log('file_download_url: ', document.getElementById("file_download_url").innerHTML);
 			
 		} else if (file.type === 'dir') {
 			// Store url of directories found
 			folders.push(file.url);
+		} else {
+			console.log('No match loop_over_files_and_folders: ', file.name);
 		}
 	});
 
@@ -245,12 +246,12 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
-				// console.log("folders: ", folders);
-				
 				file_download_url = file_download_url.concat(obj.file_download_url);
 				file_download_url = [... new Set(file_download_url)];
-				// console.log("file_download_url: ", file_download_url);
-				// console.log("folders.length: ", folders.length);
+
+				console.log("folders: ", folders);
+				console.log("file_download_url: ", file_download_url);
+				console.log("folders.length: ", folders.length);
 				
 				// get list of folders from the main directory
 				if (folders.length == 0) {
@@ -263,8 +264,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 					
 					// remove url from folders
 					let new_url = folders.shift();
-					// console.log("new_url: ", new_url);
-					// console.log("folders: ", folders);
+					console.log("new_url: ", new_url);
 
 					// fetch data from url
 					data = await fetch(new_url)
