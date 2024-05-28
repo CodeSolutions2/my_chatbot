@@ -189,15 +189,11 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 
 	
 async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
-	
-	console.log("data loop_over_files_and_folders: ", data);
 
 	var regexp = new RegExp(`${desired_filename}`, 'g');
 	
 	// run through files per url directory
 	data.forEach(async function(file) {
-		console.log("file loop_over_files_and_folders: ", file);
-		
 		if (file.type === 'file' && file.name.match(regexp)) { 
 			file_download_url = file.download_url;
 			
@@ -212,7 +208,6 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 			console.log('No match loop_over_files_and_folders: ', file.name);
 		}
 	});
-
 	return {file_download_url: file_download_url, folders: folders}; 
 }
 
@@ -231,7 +226,6 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) { 
-
 			await loop_over_files_and_folders(data, desired_filename, file_download_url, folders)
 				.then(async function(obj) {
 					folders = folders.concat(obj.folders);
@@ -256,21 +250,21 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 						console.log("file_download_url: ", file_download_url);
 						console.log("folders.length: ", folders.length);
 						
-						// There are directories in the main file
-						
-						// remove url from folders
-						let new_url = folders.shift();
-						console.log("new_url: ", new_url);
-	
-						// fetch data from url
-						data = await fetch(new_url)
-							.then(res => res.json())
-							.then(async function(data) { return data; });
+						// To ensure that this part is not executed when folders.length=0
+						if (folders.length > 0) {
+							// remove url from folders
+							let new_url = folders.shift();
+							console.log("new_url: ", new_url);
+		
+							// fetch data from url
+							data = await fetch(new_url)
+								.then(res => res.json())
+								.then(async function(data) { return data; });
+						}
 						
 						max_loop_limit += 1;
 						console.log("max_loop_limit: ", max_loop_limit);
 					}
-					
 				})
 			
 			
