@@ -204,15 +204,12 @@ async function GET_fileDownloadUrl_and_sha(desired_filename) {
 
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
-				// console.log("folders: ", folders);
 				
 				file_download_url = file_download_url.concat(obj.file_download_url);
 				file_download_url = [... new Set(file_download_url)];
 				sha_arr = sha_arr.concat(obj.sha_arr);
 				sha_arr = [... new Set(sha_arr)];
 				
-				// console.log("file_download_url: ", file_download_url);
-				// console.log("folders.length: ", folders.length);
 				
 				// get list of folders from the main directory
 				if (folders.length == 0) {
@@ -226,7 +223,6 @@ async function GET_fileDownloadUrl_and_sha(desired_filename) {
 						.then(async function(data) { return data; });
 				}
 				max_loop_limit += 1;
-				// console.log("max_loop_limit: ", max_loop_limit);
 			}
 			return {file_download_url: file_download_url, sha_arr: sha_arr};
 		})
@@ -244,13 +240,13 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 		if (file.type === 'file' && file.name.match(regexp)) { 
 			file_download_url = file.download_url;
 			sha_arr = file.sha;
-			console.log('Desired file found: ', file.url);
+			// console.log('Desired file found: ', file.url);
 		} else if (file.type === 'dir') {
 			// Store url of directories found
 			folders.push(file.url);
-			console.log('A directory was found: ', file.url);
+			// console.log('A directory was found: ', file.url);
 		} else {
-			console.log('Desired file not found: ', file.url);
+			// console.log('Desired file not found: ', file.url);
 		}
 	});
 	return {file_download_url: file_download_url, folders: folders, sha_arr: sha_arr}; 
