@@ -121,12 +121,13 @@ async function run_backend(obj_env) {
 		 		if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
 		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path)
-		 				.then(async function(out) { obj_temp.status = out.status; console.log('obj_temp.status: ', obj_temp.status); await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
+		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
 		 		} else {
 		 			// Option 1: modify an existing file
 		 			obj_temp = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path, obj_temp.sha_arr[0])
-		 				.then(async function(out) { obj_temp.status = out.status; console.log('obj_temp.status: ', obj_temp.status); await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
+		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 5000)); return obj_temp; })
 		 		}
+				console.log('obj_temp.status: ', obj_temp.status);
 		 		i += 1;
 		 	}
 		 	obj_env.auth = obj_env.arr_auth[i];
@@ -187,7 +188,7 @@ async function resalt_auth(obj_env) {
 	console.log('string_2_add: ', string_2_add);
 
 	// Add salt to auth_new
-	var auth_new = auth;
+	var auth_new = obj_env.auth;
 	if (frontend == 0) {
 		// salt front
 		auth_new = string_2_add+auth_new;
