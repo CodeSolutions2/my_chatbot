@@ -196,6 +196,9 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 
 	
 async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
+	
+	console.log("data: ", data);
+	
 	// run through files per url directory
 	data.forEach(async function(file) {
 		// console.log("file: ", file);
@@ -269,7 +272,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
 						.then(async function(data) { return data; });
 				}
 				max_loop_limit += 1;
-				// console.log("max_loop_limit: ", max_loop_limit);
+				console.log("max_loop_limit: ", max_loop_limit);
 			}
 			
 			return file_download_url;
