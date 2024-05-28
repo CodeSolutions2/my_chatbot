@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>    
+
+<button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
+<button id="resalt_auth" onclick="resalt_auth()" style="display:block">resalt_auth</button>
+	
+<div id="sha" style="display:none"></div>
+<div id="file_download_url" style="display:none"></div>
+<div id="error" style="display:block"></div>
+<div id="error" style="display:block"></div>
+
+
+<script>
+
+// ----------------------------------------------------
+
+const repoOwner = 'CodeSolutions2';
+const repoName = 'run_GitHub_Actions ';
+
+
+async function run_backend_process() {
+
+  await GET_text_from_file_wo_auth_GitHub_RESTAPI()
+    .then(async function(base64_string) { return await decode_desalt(base64_string); })
+    .then(async function(arr_auth) { value = await run_backend(arr_auth); })
+    .catch(error => { document.getElementById("error").innerHTML = error; });
+
+}
+
+	
+
+// ----------------------------------------------------
+
+
+async function decode_desalt(base64_string) {
+	
+	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
+	const text = atob(base64_string);
+	
+	// 1. 'de-salt' the authorization key read from the file
+	n = 2;
+	arr_auth = [];
+
+	for (let i=1; i<n+1; i++) {
+		// remove end
+		arr_auth.push(text.slice(0, text.length-n));
+
+		// remove beginning
+		arr_auth.push(text.slice(n, text.length));
+	}
+	return arr_auth;
+}
+
+	
+// ----------------------------------------------------
+
+	
+async function run_backend(arr_auth) {
+	
+	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
+	let flag = "run";
+	let i = 0;
+
+	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var num = '0123456789'
+	
+	var message = 'create an empty file to trigger backend';
+	var content = "";
+
+	console.log('arr_auth.length: ', arr_auth.length);
+	
+	while (flag == "run" && i < arr_auth.length) {
+		
+		var out = await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
+
+		if (out.status == 200 || out.status == 201) {
+			// Correct key was found!
+			// await resalt_auth(auth);
+			flag = "stop";
+			document.getElementById("notification").innerHTML = "Backend process launching...";
+			console.log("Backend process launching...");
+		} else {
+			i = i + 1;
+		}
+			
+	}
+	
+}
+
+// async function resalt_auth(auth) {
+async function resalt_auth() {
+	let auth = 'test_text';
+	
+	let n = 2;
+	
+	// Resalt and save the key in .env, for the next time
+	let alpha_arr = alpha.split('');
+	console.log('alpha_arr: ', alpha_arr);
+	
+	let num_arr = num.split('');
+	console.log('num_arr: ', num_arr);
+
+	let frontend = Math.round(Math.random());  
+	console.log('frontend: ', frontend);  // 0, 1
+
+	// A vector of length n, filled with 0 or 1
+	var letnum_selection = [];
+	for (let i=0; i<n; i++) {
+		letnum_selection.push(Math.round(Math.random()));
+	}
+	console.log('letnum_selection: ', letnum_selection);
+
+	// Create salt (extra strings randomly)
+	let string_2_add = "";
+	letnum_selection.forEach(function (row, ind) {
+		if (row == 0) {
+			let val = Math.round(Math.random()*alpha_arr.length);
+			string_2_add = string_2_add + alpha_arr[val];
+		} else {
+			let val = Math.round(Math.random()*num_arr.length);
+			string_2_add = string_2_add + num_arr[val];
+		}
+	});
+	console.log('string_2_add: ', string_2_add);
+
+	// Add salt to auth_new
+	var auth_new = auth;
+	if (frontend == 0) {
+		// salt front
+		auth_new = string_2_add+auth_new;
+	} else {
+		// salt back
+		auth_new = auth_new+string_2_add;
+	}
+	console.log('auth_new: ', auth_new);
+
+	// Put new salted auth back into .env file
+	const string_snippet_encoded = btoa(auth_new);
+	
+	var message = 'resave the new value';
+	var content = string_snippet_encoded;
+	// await PUT_add_to_a_file_RESTAPI(auth, message, content);
+}
+	
+
+// ----------------------------------------------------
+// PUT create a file - Way 0: REST API (WORKS!)
+// Can only write to a public repository, can not write to a private repository even if the key grants access
+// https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents
+// ----------------------------------------------------
+async function PUT_create_a_file_RESTAPI(auth, message, content) {
+	
+    var content_encoded0 = btoa(content);
+    // console.log("content_encoded0: ", content_encoded0);
+
+    // Ensure that spaces are removed from auth
+    auth = auth.replace(/\s/g, '');
+    
+    // PUT into a new file
+    var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/temp`;
+    var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0};
+    var headers = {"Accept": "application/vnd.github+json", "Authorization": `token ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
+    var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
+    return await fetch(url, options)
+      .then(res => { console.log(res); return res; })
+      .catch(error => { document.getElementById("error").innerHTML = error; });
+
+}
+
+
+// ----------------------------------------------------
+
+
+async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
+	
+	// PUT into an existing file
+	
+	// Encode protected data into github's encoded format
+	let content_encoded0 = btoa(content);
+	console.log("content_encoded0: ", content_encoded0);
+	
+	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0, "sha": document.getElementById("sha").innerHTML};
+	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
+	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
+	
+	return await fetch(document.getElementById("file_download_url").innerHTML, options)
+		.then(res => { console.log(res); return res; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+
+}
+	
+// ----------------------------------------------------
+
+	
+async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders) {
+	// run through files per url directory
+	data.forEach(async function(file) {
+		// console.log("file: ", file);
+		var regexp = new RegExp(`${desired_filename}`, 'g');
+		
+		if (file.type === 'file' && file.name.match(regexp)) { 
+			file_download_url = file.download_url;
+			
+			// save sha to DOM
+			document.getElementById("sha").innerHTML = file.sha;
+			console.log('sha: ', document.getElementById("sha").innerHTML);
+			document.getElementById("file_download_url").innerHTML = file_download_url;
+			console.log('file_download_url: ', document.getElementById("file_download_url").innerHTML);
+			
+		} else if (file.type === 'dir') {
+			// Store url of directories found
+			folders.push(file.url);
+		}
+	});
+
+	return {file_download_url: file_download_url, folders: folders}; 
+}
+
+
+
+async function GET_text_from_file_wo_auth_GitHub_RESTAPI() {
+	
+	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+
+	var desired_filename = ".env"; 
+  
+	var file_download_url = [];
+	var folders = [];
+	var flag = "run";
+	var max_loop_limit = 0;
+	
+	return await fetch(url)
+		.then(res => res.json())
+		.then(async function(data) { 
+
+			while (flag == "run" || max_loop_limit < 5) {
+				// search over data for the desired_filename
+				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders);
+
+				folders = folders.concat(obj.folders);
+				folders = [... new Set(folders)];
+				// console.log("folders: ", folders);
+				
+				file_download_url = file_download_url.concat(obj.file_download_url);
+				file_download_url = [... new Set(file_download_url)];
+				// console.log("file_download_url: ", file_download_url);
+				// console.log("folders.length: ", folders.length);
+				
+				// get list of folders from the main directory
+				if (folders.length == 0) {
+					flag = "stop";
+					if (file_download_url.length == 0) {
+						file_download_url = "No file found";
+					}
+				} else {
+					// There are directories in the main file
+					
+					// remove url from folders
+					let new_url = folders.shift();
+					// console.log("new_url: ", new_url);
+					// console.log("folders: ", folders);
+
+					// fetch data from url
+					data = await fetch(new_url)
+						.then(res => res.json())
+						.then(async function(data) { return data; });
+				}
+				max_loop_limit += 1;
+				// console.log("max_loop_limit: ", max_loop_limit);
+			}
+			
+			return file_download_url;
+		})
+		.then(async function (file_download_url) { 
+			var text_out = "";
+			if (file_download_url != "No file found") {
+				// fetch on first file
+				text_out = await fetch(file_download_url[0])
+					.then(response => response.text())
+					.then(async function(text_out) { return text_out; });
+			}
+			// console.log("text_out: ", text_out);
+			return text_out;
+		})
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+}
+
+// ----------------------------------------------------
+
+
+</script>
+
+  </body>
+</html>
