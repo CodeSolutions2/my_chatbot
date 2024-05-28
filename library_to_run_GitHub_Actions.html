@@ -100,6 +100,7 @@ async function run_backend(obj_env) {
 		.then(async function(obj_temp) { await new Promise(r => setTimeout(r, 5000)); console.log('obj_temp.status: ', obj_temp.status); return obj_temp; })
 		.then(async function(obj_temp) {
 			let i = 1;
+			var out = "";
 			while ((obj_temp.status != 200 || obj_temp.status != 201) && i < obj_env.arr_auth.length) {
 				if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
