@@ -28,6 +28,11 @@ async function run_backend_process() {
   await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
     .then(async function(obj_env) {  return await decode_desalt(obj_env); })
     // .then(async function(obj_env) { await run_backend(obj_env); })
+    // OR
+    .then(async function(obj_env) { 
+	    var obj_temp = await GET_fileDownloadUrl_and_sha("temp");
+	    console.log("obj_temp: ", obj_temp);
+    })
     .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
