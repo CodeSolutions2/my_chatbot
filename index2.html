@@ -4,7 +4,6 @@
 <body>    
 
 <button id="run_backend_process" onclick="run_backend_process()" style="display:block">run_backend_process</button>
-<button id="resalt_auth" onclick="resalt_auth()" style="display:block">resalt_auth</button>
 	
 <div id="sha" style="display:none"></div>
 <div id="file_download_url" style="display:none"></div>
@@ -19,7 +18,12 @@
 const repoOwner = 'CodeSolutions2';
 const repoName = 'run_GitHub_Actions ';
 
+var n = 2; // the salt length
 
+
+// ----------------------------------------------------
+
+	
 async function run_backend_process() {
 
   await GET_text_from_file_wo_auth_GitHub_RESTAPI()
@@ -40,7 +44,6 @@ async function decode_desalt(base64_string) {
 	const text = atob(base64_string);
 	
 	// 1. 'de-salt' the authorization key read from the file
-	n = 2;
 	arr_auth = [];
 
 	for (let i=1; i<n+1; i++) {
@@ -74,7 +77,7 @@ async function run_backend(arr_auth) {
 
 		if (out.status == 200 || out.status == 201) {
 			// Correct key was found!
-			// await resalt_auth(auth);
+			await resalt_auth(arr_auth[i]);
 			flag = "stop";
 			document.getElementById("notification").innerHTML = "Backend process launching...";
 			console.log("Backend process launching...");
@@ -86,11 +89,9 @@ async function run_backend(arr_auth) {
 	
 }
 
-// async function resalt_auth(auth) {
-async function resalt_auth() {
-	let auth = 'test_text';
 	
-	let n = 2;
+async function resalt_auth(auth) {
+	
 	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	var num = '0123456789'
 	
@@ -106,9 +107,7 @@ async function resalt_auth() {
 
 	// A vector of length n, filled with 0 or 1
 	var letnum_selection = [];
-	for (let i=0; i<n; i++) {
-		letnum_selection.push(Math.round(Math.random()));
-	}
+	for (let i=0; i<n; i++) { letnum_selection.push(Math.round(Math.random())); }
 	console.log('letnum_selection: ', letnum_selection);
 
 	// Create salt (extra strings randomly)
