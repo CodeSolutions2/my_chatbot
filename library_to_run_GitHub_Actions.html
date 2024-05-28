@@ -132,6 +132,7 @@ async function run_backend(obj_env) {
 		 	}
 		 	obj_env.auth = obj_env.arr_auth[i];
 		 	delete obj_env.arr_auth;
+			console.log("obj_env: ", obj_env);
 		 	return obj_env;
 		})
 		// [2] Resalt the key
@@ -278,7 +279,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename) {
 					.then(async function(text) { return text; });
 			}
 			// console.log("text: ", text);
-			return {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]};
+			return {text: text, file_download_url: obj.file_download_url[0], sha_arr: obj.sha_arr[0]};
 		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
