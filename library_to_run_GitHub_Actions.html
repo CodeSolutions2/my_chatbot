@@ -71,14 +71,14 @@ async function run_backend(obj_env) {
 	await GET_fileDownloadUrl_and_sha("temp")
 		// [1] Test for the correct key, save input_text to temp
 		.then(async function(obj_temp) { 
-			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 			
 			if (obj_temp.file_download_url == "No file found") {
 				// Option 0: create a new file
-				return await PUT_create_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, desired_path)
+				return await PUT_create_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, "temp")
 					.then(async function(out) { obj_temp.status = out.status; return obj_temp; });
 			} else {
 				// Option 1: modify an existing file
+				let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 				return await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[0], 'run GitHub Action', input_text, desired_path, obj_temp.sha_arr[0])
 					.then(async function(out) { obj_temp.status = out.status; return obj_temp; });
 			}
@@ -89,17 +89,17 @@ async function run_backend(obj_env) {
 		})
 		.then(async function(obj_temp) {
 			let i = 1;
-			let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 
 			var regexp = /^20/g;
  
 			while (regexp.test(obj_temp.status) == false && i < obj_env.arr_auth.length) {
 		 		if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
-		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path)
+		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, "temp")
 		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 2000)); return obj_temp; })
 		 		} else {
 		 			// Option 1: modify an existing file
+					let desired_path = obj_temp.file_download_url[0].split('main/').pop();
 		 			obj_temp = await PUT_add_to_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, desired_path, obj_temp.sha_arr[0])
 		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 2000)); return obj_temp; })
 		 		}
