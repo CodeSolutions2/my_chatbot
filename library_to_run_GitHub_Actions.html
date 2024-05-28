@@ -28,12 +28,22 @@ async function run_backend_process() {
   await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
     .then(async function(obj_env) {  return await decode_desalt(obj_env); })
     // ---------------------------------
-    .then(async function(obj_env) { await run_backend(obj_env); })
+    // .then(async function(obj_env) { await run_backend(obj_env); })
     // OR
-    // .then(async function(obj_env) { 
-	//     var obj_temp = await GET_fileDownloadUrl_and_sha("temp");
-	//     console.log("obj_temp: ", obj_temp);
-   //  })
+    .then(async function(obj_env) { 
+	    var obj_temp = await GET_fileDownloadUrl_and_sha("temp");
+	    return {obj_env: obj_env, obj_temp: obj_temp};
+    })
+	  .then(async function(obj) { 
+		  console.log("obj: ", obj);
+			if (obj.obj_temp.file_download_url == "No file found") {
+				// Option 0: create a new file
+				return await PUT_create_a_file_RESTAPI(obj.obj_env.arr_auth[0], 'run GitHub Action', input_text, "temp");
+			} else {
+				// Option 1: modify an existing file
+				return await PUT_add_to_a_file_RESTAPI(obj.obj_env.arr_auth[0], 'run GitHub Action', input_text, obj.obj_temp.sha_arr[0], obj.obj_temp.file_download_url[0]);
+			}
+		})
     // ---------------------------------
     .catch(error => { document.getElementById("error").innerHTML = error; });
 
