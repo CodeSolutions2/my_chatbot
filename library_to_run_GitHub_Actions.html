@@ -111,12 +111,12 @@ async function run_backend(obj_env) {
 				
 				if (regexp.test(obj_temp.status) == true) {
 					obj_env.auth = obj_env.arr_auth[i];
-					delete obj_env.arr_auth;
-					console.log("obj_env: ", obj_env);
 				}
 				console.log('obj_temp.status: ', obj_temp.status);
 		 		i += 1;
 		 	}
+			delete obj_env.arr_auth;
+			console.log("obj_env: ", obj_env);
 		 	return obj_env;
 		})
 		// [2] Resalt the key
