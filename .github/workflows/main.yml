@@ -1,1 +1,23 @@
+name: Process Frontend data on the Backend
 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+
+jobs:
+  job_name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1
+        run: echo "Workflow triggered by adding a file to the main branch"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read the temp.txt user_input
+        run: |
+          export user_input=$(cat temp.txt | head -n 1)
