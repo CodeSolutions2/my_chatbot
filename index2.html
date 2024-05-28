@@ -158,14 +158,11 @@ async function resalt_auth(auth) {
 // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content) {
-	
-    var content_encoded0 = btoa(content);
-    // console.log("content_encoded0: ", content_encoded0);
     
     // PUT content into a new file
     var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/temp`;
-    var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0};
-    var headers = {"Accept": "application/vnd.github+json", "Authorization": `token ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
+    var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content)};
+    var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
     var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
     return await fetch(url, options)
@@ -179,12 +176,8 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content) {
 	
-	// Encode protected data into github's encoded format
-	let content_encoded0 = btoa(content);
-	console.log("content_encoded0: ", content_encoded0);
-
 	// PUT content into an existing file
-	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": content_encoded0, "sha": document.getElementById("sha").innerHTML};
+	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content), "sha": document.getElementById("sha").innerHTML};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
