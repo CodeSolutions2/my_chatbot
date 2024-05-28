@@ -9,6 +9,7 @@ on:
 
 jobs:
   job_name:
+    name: obtain input_text from frontend and process it on backend
     runs-on: ubuntu-latest
 
     steps:
@@ -18,6 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Read the temp.txt user_input
+      - name: Read the first line from the file temp and save to a variable named input_text
         run: |
-          export user_input=$(cat temp.txt | head -n 1)
+          export input_text=$(cat temp | head -n 1)
+          curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.OPENAI_API_KEY}}"   -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "system", "content": "You are helpful and respond concisely, using the least number of words."}, {"role": "user", "content": input_text}]}' > response.txt
+
+      - name: Save backend response to repository for frontend to read
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend-response-file
+          path: response.txt
