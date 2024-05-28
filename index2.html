@@ -43,7 +43,6 @@ async function decode_desalt(base64_string) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	const text = atob(base64_string);
-	console.log('text in file: ', text);
 	
 	// 1. 'de-salt' the authorization key read from the file
 	arr_auth = [];
@@ -72,7 +71,6 @@ async function run_backend(arr_auth) {
 	var content = input_text;
 
 	console.log('arr_auth.length: ', arr_auth.length);
-	console.log('arr_auth: ', arr_auth);
 	
 	while (flag == "run" && i < arr_auth.length) {
 		
