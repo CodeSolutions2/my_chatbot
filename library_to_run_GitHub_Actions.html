@@ -119,9 +119,7 @@ async function run_backend(obj_env) {
 			console.log("obj_env: ", obj_env);
 		 	return obj_env;
 		})
-		// [2] Resalt the key
 		.then(async function(obj_env) { 
-		 	await resalt_auth(obj_env);
 		 	document.getElementById("notification").innerHTML = "Backend process launching...";
 		 	console.log("Backend process launching...");
 		})
@@ -130,77 +128,6 @@ async function run_backend(obj_env) {
 }
 
 	
-async function resalt_auth(obj_env) {
-	
-	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var num = '0123456789'
-	
-	// Resalt and save the key in .env, for the next time
-	let alpha_arr = alpha.split('');
-	let num_arr = num.split('');
-	let frontend = Math.round(Math.random());  
-	console.log('frontend: ', frontend);  // 0, 1
-
-	// A vector of length n
-	// Determine the salt length - it can be up to length n
-
-	// Randomly choose the salt length from 1 to n
-	var new_salt_length = Math.round(Math.random())*(n-1) + 1;
-	console.log('new_salt_length: ', new_salt_length);
-
-	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
-	var letnum_selection = [];
-	for (let i=0; i<new_salt_length; i++) { 
-		letnum_selection.push(Math.round(Math.random())); 
-	}
-	console.log('letnum_selection: ', letnum_selection);
-
-	// Create salt (extra strings randomly)
-	let string_2_add = "";
-	letnum_selection.forEach(function (row, ind) {
-		if (row == 0) {
-			let val = Math.round(Math.random()*alpha_arr.length);
-			string_2_add = string_2_add + alpha_arr[val];
-		} else {
-			let val = Math.round(Math.random()*num_arr.length);
-			string_2_add = string_2_add + num_arr[val];
-		}
-	});
-
-	// Add salt to auth_new
-	var auth_new = obj_env.auth;
-	if (frontend == 0) {
-		// salt front
-		auth_new = string_2_add+auth_new;
-	} else {
-		// salt back
-		auth_new = auth_new+string_2_add;
-	}
-
-	// Put new salted auth back into .env file
-	var content = btoa(auth_new);   // Base64encode the salted auth
-
-	// --------------------------------
-	
-	let desired_path = "";
-	
-	// Determine if it is an array or string
-	if (Array.isArray(obj_env.file_download_url) == true) {
-		desired_path = obj_env.file_download_url[0].split('main/').pop();
-	} else {
-		// a string
-		desired_path = obj_env.file_download_url.split('main/').pop();
-	}
-	console.log('desired_path: ', desired_path);
-
-	// --------------------------------
-	
-	await PUT_add_to_a_file_RESTAPI(obj_env.auth, 'resave the new value', content, desired_path, obj_env.sha_arr[0]);
-	
-	document.getElementById("notification").innerHTML = "Resalted key...";
-	console.log("Resalted key...");
-}
-
 
 
 // ----------------------------------------------------
