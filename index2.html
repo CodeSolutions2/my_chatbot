@@ -42,6 +42,7 @@ async function decode_desalt(base64_string) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	const text = atob(base64_string);
+	console.log('text in file: ', text);
 	
 	// 1. 'de-salt' the authorization key read from the file
 	arr_auth = [];
@@ -70,10 +71,12 @@ async function run_backend(arr_auth) {
 	var content = "";
 
 	console.log('arr_auth.length: ', arr_auth.length);
+	console.log('arr_auth: ', arr_auth);
 	
 	while (flag == "run" && i < arr_auth.length) {
 		
 		var out = await PUT_create_a_file_RESTAPI(arr_auth[i], message, content);
+		console.log('out: ', out);
 
 		if (out.status == 200 || out.status == 201) {
 			// Correct key was found!
@@ -162,7 +165,6 @@ async function PUT_create_a_file_RESTAPI(auth, message, content) {
     var headers = {"Accept": "application/vnd.github+json", "Authorization": `token ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
     var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
     return await fetch(url, options)
-      .then(res => { console.log(res); return res; })
       .catch(error => { document.getElementById("error").innerHTML = error; });
 
 }
