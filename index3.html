@@ -100,12 +100,12 @@ async function run_backend(obj_env) {
 			// *** loop does not stop when true 
 			// Idea 0 : use a Signal
 			// Idea 1 : delete obj_env.arr_auth in the loop and make while 
-			const val_reac = new Signal.State(regexp.test(obj_temp.status));  // false
+			// const val_reac = new Signal.State(regexp.test(obj_temp.status));  // false
 
 			let max_loop_val = obj_env.arr_auth.length;
 
-			// while (val_reac.get() == false && obj_env.arr_auth != null && i < max_loop_val) {
-			while (val_reac.get() == false && i < obj_env.arr_auth.length) {
+			// while (val_reac.get() == false && i < obj_env.arr_auth.length) {
+			while (regexp.test(obj_temp.status) == false && obj_env.arr_auth != null && i < max_loop_val) {
 		 		if (obj_temp.file_download_url == "No file found") {
 					// Option 0: create a new file
 		 			obj_temp = await PUT_create_a_file_RESTAPI(obj_env.arr_auth[i], 'run GitHub Action', input_text, "temp")
@@ -119,16 +119,17 @@ async function run_backend(obj_env) {
 		 				.then(async function(out) { obj_temp.status = out.status; await new Promise(r => setTimeout(r, 2000)); return obj_temp; })
 		 		}
 
-				val_reac.set(regexp.test(obj_temp.status)); // change the value of the Signal
+				// val_reac.set(regexp.test(obj_temp.status)); // change the value of the Signal
 				
-				if (val_reac.get() == true) {
+				// if (val_reac.get() == true) {
+				if (regexp.test(obj_temp.status) == true) {
 					obj_env.auth = obj_env.arr_auth[i];
 					console.log('[3] obj_env.auth: ', obj_env.auth);
-					//delete obj_env.arr_auth;
+					delete obj_env.arr_auth;
 				}
 		 		i += 1;
 		 	}
-			delete obj_env.arr_auth;
+			// delete obj_env.arr_auth;
 		 	return obj_env;
 		})
 		// [4] Resalt the key
