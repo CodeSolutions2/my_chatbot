@@ -61,27 +61,27 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
   
 <script type="module">
     import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+</script>
 
 
-    
 
+<script>
 
-async function run_selection() {
-	var input_text = document.getElementById("input_text").value;
-	var filename = 'cb.txt'
+ async function run_selection() {
+	 var input_text = document.getElementById("input_text").value;
+	 var filename = 'cb.txt'
 
-	const out = async function(filename, input_text) { await run_backend_process(filename, input_text); return 'done';}
-	console.log('out: ', out);
+	 const out = async function(filename, input_text) { await run_backend_process(filename, input_text); return 'done';}
+	 console.log('out: ', out);
   
   
   //while (document.getElementById('response').innerHTML == "") {
   //  keep checking the GET on a file with filename_response.txt
   // }
-  document.getElementById('response').innerHTML = "";
+	 document.getElementById('response').innerHTML = "";
   
 }
-
-    
+	
 async function print_response_to_frontend() {
 
 	document.getElementById("chatbot_output").style.display = "block";
