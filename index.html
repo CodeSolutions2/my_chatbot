@@ -68,6 +68,7 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 async function run_selection() {
 	var input_text = document.getElementById("input_text").value;
+	var filename = 'cb.txt'
 
 	const out = async function(filename, input_text) { await run_backend_process(filename, input_text); return 'done';}
 	console.log('out: ', out);
