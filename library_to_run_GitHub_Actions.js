@@ -8,14 +8,22 @@ var n = 2; // maximum salt length used
 // ----------------------------------------------------
 
 	
-export async function run_backend_process() {
+export async function run_backend_process(filename, input_text) {
 
-  await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
+  // await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
 	  // Reorganize obj_env for one general object 
 	  // {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]};
-	  .then(async function(obj_env) { return {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha }; })
-	  .then(async function(obj) { await run_backend(obj); })
-	  .catch(error => { document.getElementById("error").innerHTML = error; });
+	  //.then(async function(obj_env) { return {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha }; })
+	  //.then(async function(obj) { await run_backend(obj); })
+	  //.catch(error => { document.getElementById("error").innerHTML = error; });
+
+	// OR
+	
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env");
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
+	      filename: filename, input_text: input_text};
+	await run_backend(obj);
+	
 }
 
 
@@ -25,11 +33,9 @@ export async function run_backend_process() {
 async function run_backend(obj) {
 	
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
-	// console.log("filename: ", document.getElementById("filename").value);
-	// console.log("input_text: ", document.getElementById("input_text").value);
 	
 	// [0] Determine if filename exists
-	var obj_temp = await GET_fileDownloadUrl_and_sha(document.getElementById("filename").value)
+	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename)
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
@@ -61,12 +67,12 @@ async function run_backend(obj) {
 				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
-					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', document.getElementById("input_text").value, document.getElementById("filename").value)
+					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				} else {
 					// Option 1: modify an existing file
-					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', document.getElementById("input_text").value, obj.temp_desired_path, obj.temp_sha)
+					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				}
