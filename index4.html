@@ -79,11 +79,10 @@ async function run_selection() {
 	 var filename = 'cb.txt'
 
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"/n"+repoName);
-  
-  //while (document.getElementById('response').innerHTML == "") {
-  //  keep checking the GET on a file with filename_response.txt
-  // }
+	
 	 document.getElementById('response').innerHTML = "";
+	
+	 await print_response_to_frontend();
 }
 
 // -----------------------------------------------
