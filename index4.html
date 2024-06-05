@@ -58,17 +58,16 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 
 <!-- --------------------------------------------------- -->	  
-  
-<script type="module">
-    import { run_backend_process } from './library_to_run_GitHub_Actions.js';
-    module.run_backend_process = run_backend_process;
-</script>
 
 
 
 <script>
 
+// -----------------------------------------------
+
 const module = {};
+
+// -----------------------------------------------
 	
 async function run_selection() {
 	 var filename = 'cb.txt'
@@ -79,7 +78,6 @@ async function run_selection() {
   //  keep checking the GET on a file with filename_response.txt
   // }
 	 document.getElementById('response').innerHTML = "";
-  
 }
 
 // -----------------------------------------------
@@ -115,6 +113,13 @@ async function print_response_to_frontend() {
 	tbl.appendChild(tblBody);
 	
 }
+
+// -----------------------------------------------
+
+</script>
+<script type="module">
+    import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+    module.run_backend_process = run_backend_process;
 </script>
   
 </body>
