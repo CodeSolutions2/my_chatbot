@@ -61,13 +61,16 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
   
 <script type="module">
     import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+    module.run_backend_process = run_backend_process;
 </script>
 
 
 
 <script>
 
- async function run_selection() {
+const module = {};
+	
+async function run_selection() {
 	 var filename = 'cb.txt'
 
 	 await run_backend_process(filename, document.getElementById("input_text").value);
@@ -78,6 +81,8 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 	 document.getElementById('response').innerHTML = "";
   
 }
+
+// -----------------------------------------------
 	
 async function print_response_to_frontend() {
 
