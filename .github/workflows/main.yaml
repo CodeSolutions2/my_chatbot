@@ -1,11 +1,8 @@
 name: Process Frontend data on the Backend
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '**'
+  repository_dispatch:
+    types: [trigger-event]
 
 jobs:
   job_name:
