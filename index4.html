@@ -60,22 +60,24 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 <!-- --------------------------------------------------- -->	  
 
 
-<script type="module" src="library_to_run_GitHub_Actions.js">
-
+<script type="module">
+import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+module.run_backend_process = run_backend_process;
+</script>
 
 	
 <script>
 
 // -----------------------------------------------
 
-//const module = {};
+const module = {};
 
 // -----------------------------------------------
 	
 async function run_selection() {
 	 var filename = 'cb.txt'
 
-	 await run_backend_process(filename, document.getElementById("input_text").value);
+	 await module.run_backend_process(filename, document.getElementById("input_text").value);
   
   //while (document.getElementById('response').innerHTML == "") {
   //  keep checking the GET on a file with filename_response.txt
