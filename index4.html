@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<!-- ---------------------------------------- -->
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 500px; display:block'>
+<tr>
+
+<th id="inputs">
+
+<h1></h1>
+
+<h3>[Step 0]</h3>
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+<br>
+
+</th>
+
+<!-- ---------------------------------------- -->
+<th id="outputs">
+<h3 id="table_h3" style="display:block">[Step 1]</h3>
+<!-- ---------------------------------------- -->
+<!-- View output in table -->
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<!-- dynamically add rows here -->
+</table>
+<!-- ---------------------------------------- -->
+</th>
+
+</tr>
+</table>
+</div>  
+<!-- ---------------------------------------- -->
+
+<!-- ---------------------------------------- -->
+<!-- CSS -->
+<style>
+div { padding: 10px; display:block; font-family:courier; font-size:15px; height:10px; }
+	
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+div#response { display:none; color: #3236a8; }
+
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+
+tr {vertical-align: top; border: 0px solid black; padding: 20px 20px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 20px 20px; }
+
+input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+</style>
+
+
+<!-- --------------------------------------------------- -->	  
+  
+<script type="module">
+    import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+</script>
+
+
+
+<script>
+
+ async function run_selection() {
+	 var filename = 'cb.txt'
+
+	 await run_backend_process(filename, document.getElementById("input_text").value);
+  
+  //while (document.getElementById('response').innerHTML == "") {
+  //  keep checking the GET on a file with filename_response.txt
+  // }
+	 document.getElementById('response').innerHTML = "";
+  
+}
+	
+async function print_response_to_frontend() {
+
+	document.getElementById("chatbot_output").style.display = "block";
+	
+	// Print response to Frontend here
+	let tbl = document.getElementById("chatbot_output");
+	let tblBody = document.createElement("tbody");
+	
+	// Add to Frontend: Create a cellText OR textarea
+	let row = document.createElement("tr");
+	let cell = document.createElement("td");
+	cell.style.backgroundColor = "#cacccf";
+	let cellText = document.createTextNode(`User: ${document.getElementById("input_text").value}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+	
+	// Add chatbot output to Frontend: Create a cellText OR textarea
+	row = document.createElement("tr");
+	cell = document.createElement("td");
+	cell.style.backgroundColor = "#dbc49e";
+	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+	
+}
+</script>
+  
+</body>
+</html>
