@@ -2,22 +2,19 @@ name: Process Frontend data on the Backend
 
 on:
   repository_dispatch:
-    types: [trigger-event]
+    types: [on-demand-test]
 
 jobs:
-  job_name:
-    name: obtain input_text from frontend and process it on backend
+  call_endpoint_after_trigger:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Test 0 Create file
-        run: echo "input_text received- "+$(cat cb.txt) > response
+      - uses: actions/checkout@v4
+      - run: echo "Event payload ${{ github.event.client_payload }}\n" >> response
+      - run: curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"what is 2+2"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
 
-      - name: Upload file as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: name of file to send to repository
-          path: response
+      - name: Commit and push changes
+        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git add .; git commit -m "add files"; git push https://${{ secrets.REP0A }}@github.com/CodeSolutions2/my_chatbot.git
