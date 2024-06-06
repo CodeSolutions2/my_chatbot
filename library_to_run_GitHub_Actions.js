@@ -8,7 +8,7 @@ var n = 2; // maximum salt length used
 // ----------------------------------------------------
 
 	
-export async function run_backend_process(filename, input_text, repoA_name) {
+export async function run_backend_process(filename, input_text) {
 
   // await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
 	  // Reorganize obj_env for one general object 
@@ -21,7 +21,7 @@ export async function run_backend_process(filename, input_text, repoA_name) {
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env");
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
-	      filename: filename, input_text: input_text, repoA_name: repoA_name};
+	      filename: filename, input_text: input_text};
 	await run_backend(obj);
 	
 }
@@ -67,12 +67,12 @@ async function run_backend(obj) {
 				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
-					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text+"|"+obj.repoA_name, obj.filename)
+					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				} else {
 					// Option 1: modify an existing file
-					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text+"|"+obj.repoA_name, obj.temp_desired_path, obj.temp_sha)
+					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				}
