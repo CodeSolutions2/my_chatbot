@@ -2,7 +2,7 @@ name: Process Frontend data on the Backend
 
 on:
   repository_dispatch:
-    types: [on-demand-test]
+    types: [trigger-event]
 
 jobs:
   call_endpoint_after_trigger:
