@@ -78,7 +78,7 @@ const repoName = 'my_chatbot';
 async function run_selection() {
 	 var filename = 'cb.txt'
 
-	 await module.run_backend_process(filename, document.getElementById("input_text").value+"/n"+repoName);
+	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName);
 	
 	 document.getElementById('response').innerHTML = "";
 	
