@@ -75,6 +75,8 @@ module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_G
 
 const module = {};
 const module1 = {};
+console.log("module1.length :", module1.length);
+	
 const repoName = 'my_chatbot';
 
 // -----------------------------------------------
@@ -93,6 +95,8 @@ async function run_selection() {
 			.then(async function (output) {
 				// output = {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]}
 				console.log("output :", output);
+
+				console.log("output.length :", output.length);
 				
 				if (output.length > 0) {
 					document.getElementById('response').innerHTML = output.text;
