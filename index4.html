@@ -61,8 +61,9 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 
 <script type="module">
-import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+import { run_backend_process, GET_text_from_file_wo_auth_GitHub_RESTAPI } from './library_to_run_GitHub_Actions.js';
 module.run_backend_process = run_backend_process;
+module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
 </script>
 
 	
@@ -71,6 +72,7 @@ module.run_backend_process = run_backend_process;
 // -----------------------------------------------
 
 const module = {};
+const module1 = {};
 const repoName = 'my_chatbot';
 
 // -----------------------------------------------
@@ -80,9 +82,25 @@ async function run_selection() {
 
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName);
 	
-	 document.getElementById('response').innerHTML = "";
-	
-	 await print_response_to_frontend();
+	// Wait for file creation
+	var flag = "run";
+	while (flag == "run") {
+		// keep doing GET on the repo files for 'response' until it appears
+		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI('response')
+			.then(async function (output) {
+				// output = {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]}
+				if (output.length > 0) {
+					document.getElementById('response').innerHTML = output.text;
+					await print_response_to_frontend();
+					return "stop";
+				} else {
+					return "run";
+				}
+			})
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 2000)); return flag; })
+			.catch(error => { document.getElementById("error").innerHTML = error; });
+	}
+		
 }
 
 // -----------------------------------------------
