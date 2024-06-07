@@ -13,9 +13,9 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
-      - run: date+"\n" >> response
+      - run: date >> response
       - run: echo "Event payload ${{ github.event.client_payload }}\n" >> response
-      - run: curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"what is 2+2"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
+      - run: curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"${{ github.event.client_payload }}"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
       - run: curl -H "Accept:application/vnd.github+json" -X GET https://api.github.com/repos/CodeSolutions2/run_GitHub_Actions/dispatches >> response
 
       - name: Commit and push changes
