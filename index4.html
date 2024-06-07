@@ -126,7 +126,7 @@ async function GET_repo_file_info_RESTAPI() {
 		.then(data => {
 			let regexp = new RegExp(`${desired_filename}`, 'g');
 			data.forEach(file => {
-			      if (file.type === 'file' && file.name.match(regexp) {
+			      if (file.type === 'file' && file.name.match(regexp)) {
 				return file.download_url;
 			      }
 			    });
