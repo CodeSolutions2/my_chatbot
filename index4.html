@@ -26,7 +26,7 @@
 <h3 id="table_h3" style="display:block">[Step 1]</h3>
 <!-- ---------------------------------------- -->
 <!-- View output in table -->
-<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button><button id="run_selection" onclick="print_result()">Print result</button>
 <table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
 <!-- dynamically add rows here -->
 </table>
@@ -80,9 +80,14 @@ const repoName = 'my_chatbot';
 	
 async function run_selection() {
 	 var filename = 'cb.txt'
-
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'run_GitHub_Actions')
-	
+	// await automatic_print_result();
+}
+
+// -----------------------------------------------
+
+async function automatic_print_result() {
+
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
@@ -104,9 +109,20 @@ async function run_selection() {
 		i += 1;
 		console.log('i: ', i);
 	}
-		
 }
 
+// -----------------------------------------------
+	
+async function print_result() {
+
+	await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", repoName)
+		.then(async function (output) {
+			document.getElementById('response').innerHTML = output.text;
+			await print_response_to_frontend();
+		})
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+}
+	
 // -----------------------------------------------
 	
 async function print_response_to_frontend() {
