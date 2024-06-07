@@ -74,7 +74,9 @@ module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_G
 
 const module = {};
 const module1 = {};
+const repoOwner = 'CodeSolutions2';
 const repoName = 'my_chatbot';
+var desired_filename = 'response';
 
 // -----------------------------------------------
 	
@@ -115,13 +117,35 @@ async function automatic_print_result() {
 	
 async function print_result() {
 
-	await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", repoName)
-		.then(async function (output) {
-			document.getElementById('response').innerHTML = output.text;
+	await GET_repo_file_info_RESTAPI()
+		.then(async function () {
 			await print_response_to_frontend();
 		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
+
+
+
+
+async function GET_repo_file_info_RESTAPI() {
+	
+	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
+		.then(res => res.json())
+		.then(data => {
+			let regexp = new RegExp(`${desired_filename}`, 'g');
+			data.forEach(file => {
+			      if (file.type === 'file' && file.name.match(regexp) {
+				return file.download_url;
+			      }
+			    });
+		})
+		.then(async function (file_download_url) { await fetch(file_download_url); })
+		.then(res => res.text())
+		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.catch(error => { console.log(error); });
+
+}
+	
 	
 // -----------------------------------------------
 	
