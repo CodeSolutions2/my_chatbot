@@ -98,7 +98,7 @@ async function run_selection() {
 
 				console.log("output.length :", output.length);
 				
-				if (output.length > 0) {
+				if (output.length != undefined) {
 					document.getElementById('response').innerHTML = output.text;
 					await print_response_to_frontend();
 					return "stop";
