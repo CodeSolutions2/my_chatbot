@@ -1,0 +1,27 @@
+name: Clean up files
+
+on:
+  workflow_run:
+    workflows: ["Process Frontend data on the Backend"]
+    types:
+      - completed
+
+jobs:
+  clean_up_response_file:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Wait for 10 seconds
+        run: sleep 10
+
+      - name: Get repository files (equivalent to git pull)
+        uses: actions/checkout@v2
+
+      - name: Run commands
+        run: rm response
+        
+      - name: Commit and push changes
+        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
