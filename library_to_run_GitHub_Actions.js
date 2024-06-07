@@ -1,8 +1,6 @@
 // ----------------------------------------------------
 
 const repoOwner = 'CodeSolutions2';
-// const repoName = 'run_GitHub_Actions';
-
 var n = 2; // maximum salt length used
 
 // ----------------------------------------------------
