@@ -75,8 +75,6 @@ module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_G
 
 const module = {};
 const module1 = {};
-console.log("module1.length :", module1.length);
-	
 const repoName = 'my_chatbot';
 
 // -----------------------------------------------
@@ -89,7 +87,7 @@ async function run_selection() {
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
-	while (flag == "run" && i < 10) {
+	while (flag == "run" && i < 1) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI('response')
 			.then(async function (output) {
@@ -97,8 +95,9 @@ async function run_selection() {
 				console.log("output :", output);
 
 				console.log("output.length :", output.length);
+				console.log("output.text.length :", output.text.length);
 				
-				if (output.length != undefined) {
+				if (output.text.length > 0) {
 					document.getElementById('response').innerHTML = output.text;
 					await print_response_to_frontend();
 					return "stop";
