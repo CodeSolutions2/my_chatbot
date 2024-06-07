@@ -31,6 +31,7 @@ export async function run_backend_process(filename, input_text, repoName) {
 async function run_backend(obj) {
 	
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
+	// console.log('obj.repoName: ', obj.repoName);
 	
 	// [0] Determine if filename exists
 	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.repoName)
@@ -48,7 +49,7 @@ async function run_backend(obj) {
 	
 	obj.auth = obj.env_text; // Initialize value
 	obj.status = 0; // Initialize value
-	
+		
 	// [2] Loop over the number of possible values
 	let i = 1;
 	var regexp = /^20/g;
@@ -65,12 +66,12 @@ async function run_backend(obj) {
 				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
-					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename)
+					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoName)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				} else {
 					// Option 1: modify an existing file
-					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha)
+					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoName)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				}
@@ -169,7 +170,7 @@ async function resalt_auth(auth, new_auth, obj) {
 
 	// Put new salted auth back into .env file
 	var content = btoa(new_auth);   // Base64encode the salted auth
-	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', content, obj.env_desired_path, obj.env_sha);
+	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', content, obj.env_desired_path, obj.env_sha, obj.repoName);
 }
 
 // ----------------------------------------------------
@@ -190,7 +191,7 @@ async function resalt_auth(auth, new_auth, obj) {
 //
 // Now, if the file temp exists it does not copy over the file; it gives a 422 error. One needs to delete the file temp and then use this function to create the file temp. 
 // ----------------------------------------------------
-async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path) {
+async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
@@ -206,7 +207,7 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path) {
 // ----------------------------------------------------
 
 
-async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha) {
+async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
