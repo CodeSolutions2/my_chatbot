@@ -1,4 +1,4 @@
-name: Clean up files
+name: Clean up
 
 on:
   workflow_run:
