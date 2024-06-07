@@ -86,7 +86,7 @@ async function run_selection() {
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
-	while (flag == "run" && i < 10) {
+	while (flag == "run" && i < 15) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", repoName)
 			.then(async function (output) {
@@ -99,7 +99,7 @@ async function run_selection() {
 					return "run";
 				}
 			})
-			.then(async function(flag) { await new Promise(r => setTimeout(r, 2000)); return flag; })
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 4000)); return flag; })
 			.catch(error => { document.getElementById("error").innerHTML = error; });
 		i += 1;
 		console.log('i: ', i);
