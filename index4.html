@@ -131,7 +131,7 @@ async function GET_repo_file_info_RESTAPI() {
 			      }
 			    });
 		})
-		.then(async function (file_download_url) { await fetch(file_download_url); })
+		.then(async function (file_download_url) { return await fetch(file_download_url); })
 		.then(res => res.text())
 		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
 		.catch(error => { console.log(error); });
