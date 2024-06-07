@@ -12,11 +12,11 @@ jobs:
       contents: write
       
     steps:
-      - uses: actions/checkout@v4
-      - run: date > response
-      - run: echo "Event payload ${{ github.event.client_payload }}\n" >> response
-      - run: curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"${{ github.event.client_payload }}"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
-      - run: curl -H "Accept:application/vnd.github+json" -X GET https://api.github.com/repos/CodeSolutions2/run_GitHub_Actions/dispatches >> response
+      - name: Get repository files (equivalent to git pull)
+        uses: actions/checkout@v2
+
+      - name: Run commands
+        run: rm response; date > response; echo "Event payload ${{ github.event.client_payload }}\n" >> response; curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"${{ github.event.client_payload }}"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response; curl -H "Accept:application/vnd.github+json" -X GET https://api.github.com/repos/CodeSolutions2/my_chatbot/dispatches >> response
 
       - name: Commit and push changes
-        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REP0A }}@github.com/CodeSolutions2/my_chatbot.git
+        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
