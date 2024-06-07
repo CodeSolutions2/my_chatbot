@@ -63,8 +63,6 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 <script type="module">
 import { run_backend_process } from './library_to_run_GitHub_Actions.js';
 module.run_backend_process = run_backend_process;
-import { GET_text_from_file_wo_auth_GitHub_RESTAPI } from './library_to_run_GitHub_Actions.js';
-module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
 </script>
 
 	
@@ -73,7 +71,6 @@ module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_G
 // -----------------------------------------------
 
 const module = {};
-const module1 = {};
 const repoOwner = 'CodeSolutions2';
 const repoName = 'my_chatbot';
 var desired_filename = 'response';
@@ -83,7 +80,6 @@ var desired_filename = 'response';
 async function run_selection() {
 	 var filename = 'cb.txt'
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'run_GitHub_Actions')
-	// await automatic_print_result();
 }
 
 // -----------------------------------------------
@@ -95,12 +91,11 @@ async function automatic_print_result() {
 	var i = 0;
 	while (flag == "run" && i < 15) {
 		// keep doing GET on the repo files for 'response' until it appears
-		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", repoName)
-			.then(async function (output) {
-				// output = {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]}
-				if (output.text.length > 0) {
-					document.getElementById('response').innerHTML = output.text;
+		flag = await GET_repo_file_info_RESTAPI()
+			.then(async function () {
+				if (document.getElementById('response').innerHTML.length > 0) {
 					await print_response_to_frontend();
+					document.getElementById('response').innerHTML = ""; // Reset
 					return "stop";
 				} else {
 					return "run";
@@ -116,11 +111,8 @@ async function automatic_print_result() {
 // -----------------------------------------------
 	
 async function print_result() {
-
 	await GET_repo_file_info_RESTAPI()
-		.then(async function () {
-			await print_response_to_frontend();
-		})
+		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
