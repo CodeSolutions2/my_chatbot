@@ -61,14 +61,11 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 
 <script type="module">
-import { run_backend_process, GET_text_from_file_wo_auth_GitHub_RESTAPI } from './library_to_run_GitHub_Actions.js';
+import { run_backend_process } from './library_to_run_GitHub_Actions.js';
 module.run_backend_process = run_backend_process;
-module.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
-	
-// OR
 
-// import { GET_text_from_file_wo_auth_GitHub_RESTAPI } from './library_to_run_GitHub_Actions.js';
-// module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
+import { GET_text_from_file_wo_auth_GitHub_RESTAPI } from './library_to_run_GitHub_Actions.js';
+module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
 </script>
 
 	
@@ -77,7 +74,7 @@ module.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_Gi
 // -----------------------------------------------
 
 const module = {};
-// const module1 = {};
+const module1 = {};
 const repoName = 'my_chatbot';
 
 // -----------------------------------------------
@@ -85,17 +82,13 @@ const repoName = 'my_chatbot';
 async function run_selection() {
 	 var filename = 'cb.txt'
 
-	 module = await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName)
-		 .then(async function () {
-			 // reset module maybe for next imported function call
-			 return {};
-		 });
+	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName)
 	
 	// Wait for file creation
 	var flag = "run";
 	while (flag == "run") {
 		// keep doing GET on the repo files for 'response' until it appears
-		flag = await module.GET_text_from_file_wo_auth_GitHub_RESTAPI('response')
+		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI('response')
 			.then(async function (output) {
 				// output = {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]}
 				if (output.length > 0) {
