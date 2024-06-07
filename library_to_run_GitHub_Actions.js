@@ -1,14 +1,14 @@
 // ----------------------------------------------------
 
 const repoOwner = 'CodeSolutions2';
-const repoName = 'run_GitHub_Actions';
+// const repoName = 'run_GitHub_Actions';
 
 var n = 2; // maximum salt length used
 
 // ----------------------------------------------------
 
 	
-export async function run_backend_process(filename, input_text) {
+export async function run_backend_process(filename, input_text, repoName) {
 
   // await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
 	  // Reorganize obj_env for one general object 
@@ -19,9 +19,9 @@ export async function run_backend_process(filename, input_text) {
 
 	// OR
 	
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env");
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoName);
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
-	      filename: filename, input_text: input_text};
+	      filename: filename, input_text: input_text, repoName: repoName};
 	await run_backend(obj);
 	
 }
@@ -35,7 +35,7 @@ async function run_backend(obj) {
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
 	
 	// [0] Determine if filename exists
-	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename)
+	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.repoName)
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
@@ -222,11 +222,11 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	
 // ----------------------------------------------------
 
-export async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename) {
+export async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoName) {
 
 	// Returns an object of strings
 	
-	return await GET_fileDownloadUrl_and_sha(desired_filename)
+	return await GET_fileDownloadUrl_and_sha(desired_filename, repoName)
 		.then(async function (obj) {
 			var text = "";
 			if (obj.file_download_url != ["No_file_found"]) {
@@ -242,7 +242,7 @@ export async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename
 
 // ----------------------------------------------------
 
-async function GET_fileDownloadUrl_and_sha(desired_filename) {
+async function GET_fileDownloadUrl_and_sha(desired_filename, repoName) {
 
 	// Returns an object of values that are an array
 	
