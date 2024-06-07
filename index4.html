@@ -89,7 +89,7 @@ async function run_selection() {
 	var i = 0;
 	while (flag == "run" && i < 10) {
 		// keep doing GET on the repo files for 'response' until it appears
-		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", 'my_chatbot')
+		flag = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI("response", repoName)
 			.then(async function (output) {
 				// output = {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]}
 				if (output.text.length > 0) {
