@@ -221,7 +221,7 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	
 // ----------------------------------------------------
 
-async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoName) {
+export async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoName) {
 
 	// Returns an object of strings
 	
