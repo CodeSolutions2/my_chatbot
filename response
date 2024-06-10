@@ -1,0 +1,25 @@
+Mon Jun 10 09:22:07 UTC 2024
+Event payload 
+what is 4+3?|my_chatbot{
+  "id": "chatcmpl-9YVW4yOcIcCPdc6dJJ2Ct6VZV7Ga1",
+  "object": "chat.completion",
+  "created": 1718011328,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Please provide more information or let me know how I can assist you."
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 27,
+    "completion_tokens": 14,
+    "total_tokens": 41
+  },
+  "system_fingerprint": null
+}
