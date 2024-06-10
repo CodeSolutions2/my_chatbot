@@ -1,0 +1,28 @@
+Mon Jun 10 15:55:09 UTC 2024
+Event payload - \n
+Bash environmental variable -Input text is what is 9+7?
+Github environmental variable way 0 -Input text is 
+Github environmental variable way 1 -Input text is 
+{
+  "id": "chatcmpl-9YbeQpW4hXZ4J9xAGzYPoEWpLIniF",
+  "object": "chat.completion",
+  "created": 1718034910,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "9 + 7 equals 16."
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 31,
+    "completion_tokens": 8,
+    "total_tokens": 39
+  },
+  "system_fingerprint": null
+}
