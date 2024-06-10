@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run commands
-        run: date > response; echo "Event payload - ${{ github.event.client_payload.fromrepob }}\n" >> response; input_text="(curl -H 'Accept:application/vnd.github+json' -X GET https://raw.githubusercontent.com/CodeSolutions2/run_GitHub_Actions/main/cb.txt)"; echo "GET request - $input_text \n" >> response; curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"$input_text"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
+        run: date > response; echo "Event payload - ${{ github.event.client_payload.fromrepob }}\n" >> response; curl -X POST https://api.openai.com/v1/chat/completions -H "Content-Type:application/json" -H "Authorization:Bearer ${{secrets.OPENAI_API_KEY}}" -d '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant."}, {"role":"user", "content":"$input_text"}, {"role":"assistant", "content":"Respond concisely"}]}' >> response
 
       - name: Commit and push changes
         run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
