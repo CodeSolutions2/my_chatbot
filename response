@@ -1,0 +1,26 @@
+Mon Jun 10 11:49:10 UTC 2024
+Event payload - \n
+GET request - what is 8+6? \n
+{
+  "id": "chatcmpl-9YXoNrvfw9gbSFrirh3uxdHRkLRhH",
+  "object": "chat.completion",
+  "created": 1718020151,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "How can I assist you with that?"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 27,
+    "completion_tokens": 8,
+    "total_tokens": 35
+  },
+  "system_fingerprint": null
+}
