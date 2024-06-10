@@ -1,0 +1,26 @@
+Mon Jun 10 12:03:43 UTC 2024
+Event payload - \n
+input_text - what is 3+2? \n
+{
+  "id": "chatcmpl-9YY2SGkZcSnyBDjIVvcQ79DqletRA",
+  "object": "chat.completion",
+  "created": 1718021024,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I'm here to help. How can I assist you today?"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 29,
+    "completion_tokens": 13,
+    "total_tokens": 42
+  },
+  "system_fingerprint": null
+}
