@@ -26,7 +26,7 @@
 <h3 id="table_h3" style="display:block">[Step 1]</h3>
 <!-- ---------------------------------------- -->
 <!-- View output in table -->
-<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button><button id="run_selection" onclick="print_result()">Print result</button>
 <table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
 <!-- dynamically add rows here -->
 </table>
@@ -71,6 +71,7 @@ module.run_backend_process = run_backend_process;
 // -----------------------------------------------
 
 const module = {};
+const repoOwner = 'CodeSolutions2';
 const repoName = 'my_chatbot';
 
 // -----------------------------------------------
@@ -82,6 +83,38 @@ async function run_selection() {
 	 await print_response_to_frontend();
 }
 	
+// -----------------------------------------------
+
+async function print_result() {
+	await GET_repo_file_info_RESTAPI()
+		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+}
+
+
+
+
+async function GET_repo_file_info_RESTAPI() {
+	
+	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
+		.then(res => res.json())
+		.then(data => {
+			// let regexp = new RegExp(`${desired_filename}`, 'g');
+			let regexp = new RegExp('response', 'g');
+			data.forEach(file => {
+			      if (file.type === 'file' && file.name.match(regexp)) {
+				      console.log("file.download_url: ", file.download_url);
+				      return file.download_url;
+			      }
+			    });
+		})
+		.then(async function (file_download_url) { console.log("file_download_url: ", file_download_url); return await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response'); })
+		.then(res => res.text())
+		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.catch(error => { console.log(error); });
+
+}
+
 // -----------------------------------------------
 	
 async function print_response_to_frontend() {
