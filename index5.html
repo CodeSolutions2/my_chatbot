@@ -80,40 +80,10 @@ async function run_selection() {
 	 var filename = 'cb.txt'
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'run_GitHub_Actions')
 	 
-	
-	// document.getElementById('response').innerHTML = 'in progress';
-	// await print_response_to_frontend();
-	// OR
-	await automatic_print_result();
+	document.getElementById('response').innerHTML = 'in progress';
+	await print_response_to_frontend();
 }
 	
-// -----------------------------------------------
-
-
-async function automatic_print_result() {
-
-	// Wait for file creation
-	var flag = "run";
-	var i = 0;
-	while (flag == "run" && i < 15) {
-		// keep doing GET on the repo files for 'response' until it appears
-		flag = await GET_repo_file_info_RESTAPI()
-			.then(async function () {
-				if (document.getElementById('response').innerHTML.length > 0) {
-					await print_response_to_frontend();
-					document.getElementById('response').innerHTML = ""; // Reset
-					return "stop";
-				} else {
-					return "run";
-				}
-			})
-			.then(async function(flag) { await new Promise(r => setTimeout(r, 4000)); return flag; })
-			.catch(error => { document.getElementById("error").innerHTML = error; });
-		i += 1;
-		console.log('i: ', i);
-	}
-}
-
 // -----------------------------------------------
 	
 async function print_result() {
