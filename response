@@ -1,0 +1,26 @@
+Mon Jun 10 10:05:04 UTC 2024
+Event payload - what is 5+4\n
+GET request - (curl -H 'Accept:application/vnd.github+json' -X GET https://raw.githubusercontent.com/CodeSolutions2/run_GitHub_Actions/main/cb.txt) \n
+{
+  "id": "chatcmpl-9YWBd1EOOkHVstq9e4J7ac5E0YsHA",
+  "object": "chat.completion",
+  "created": 1718013905,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Please provide more information for me to assist you."
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 27,
+    "completion_tokens": 10,
+    "total_tokens": 37
+  },
+  "system_fingerprint": null
+}
