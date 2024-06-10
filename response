@@ -1,0 +1,26 @@
+Mon Jun 10 11:37:32 UTC 2024
+Event payload - \n
+GET request - what is 6+7? \n
+{
+  "id": "chatcmpl-9YXd7AP7hysyB6VoX9P8j5lvxRlx8",
+  "object": "chat.completion",
+  "created": 1718019453,
+  "model": "gpt-3.5-turbo-0125",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "How can I assist you with \"input_text\"?"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 27,
+    "completion_tokens": 10,
+    "total_tokens": 37
+  },
+  "system_fingerprint": null
+}
