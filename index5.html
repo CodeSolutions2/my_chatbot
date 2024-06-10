@@ -79,15 +79,46 @@ const repoName = 'my_chatbot';
 async function run_selection() {
 	 var filename = 'cb.txt'
 	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'run_GitHub_Actions')
-	 document.getElementById('response').innerHTML = 'in progress';
-	 await print_response_to_frontend();
+	 
+	
+	// document.getElementById('response').innerHTML = 'in progress';
+	// await print_response_to_frontend();
+	// OR
+	await automatic_print_result();
 }
 	
 // -----------------------------------------------
 
+
+async function automatic_print_result() {
+
+	// Wait for file creation
+	var flag = "run";
+	var i = 0;
+	while (flag == "run" && i < 15) {
+		// keep doing GET on the repo files for 'response' until it appears
+		flag = await GET_repo_file_info_RESTAPI()
+			.then(async function () {
+				if (document.getElementById('response').innerHTML.length > 0) {
+					await print_response_to_frontend();
+					document.getElementById('response').innerHTML = ""; // Reset
+					return "stop";
+				} else {
+					return "run";
+				}
+			})
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 4000)); return flag; })
+			.catch(error => { document.getElementById("error").innerHTML = error; });
+		i += 1;
+		console.log('i: ', i);
+	}
+}
+
+// -----------------------------------------------
+	
 async function print_result() {
 	await GET_repo_file_info_RESTAPI()
-		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
+		.then(async function () { await print_response_to_frontend(); })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
@@ -104,14 +135,14 @@ async function GET_repo_file_info_RESTAPI() {
 			let file_download_url = '';
 			data.forEach(file => {
 			      if (file.type === 'file' && file.name.match(regexp)) {
-				      console.log("file.download_url: ", file.download_url);
+				      // console.log("file.download_url: ", file.download_url);
 				      file_download_url = file.download_url;
 			      }
 			});
 			return file_download_url;
 		})
 		.then(async function (file_download_url) { 
-			console.log("file_download_url: ", file_download_url);
+			// console.log("file_download_url: ", file_download_url);
 			// https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response
 			return await fetch(file_download_url); 
 		})
@@ -152,6 +183,9 @@ async function print_response_to_frontend() {
 	row.appendChild(cell);
 	tblBody.appendChild(row);
 	tbl.appendChild(tblBody);
+
+	// Reset response
+	document.getElementById('response').innerHTML = "";
 	
 }
 
