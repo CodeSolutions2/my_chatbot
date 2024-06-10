@@ -101,14 +101,20 @@ async function GET_repo_file_info_RESTAPI() {
 		.then(data => {
 			// let regexp = new RegExp(`${desired_filename}`, 'g');
 			let regexp = new RegExp('response', 'g');
+			let file_download_url = '';
 			data.forEach(file => {
 			      if (file.type === 'file' && file.name.match(regexp)) {
 				      console.log("file.download_url: ", file.download_url);
-				      return file.download_url;
+				      file_download_url = file.download_url;
 			      }
-			    });
+			});
+			return file_download_url;
 		})
-		.then(async function (file_download_url) { console.log("file_download_url: ", file_download_url); return await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response'); })
+		.then(async function (file_download_url) { 
+			console.log("file_download_url: ", file_download_url);
+			// https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response
+			return await fetch(file_download_url); 
+		})
 		.then(res => res.text())
 		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
 		.catch(error => { console.log(error); });
