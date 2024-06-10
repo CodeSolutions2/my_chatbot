@@ -63,6 +63,7 @@ async function run_backend(obj) {
 		
 		obj = await decode_desalt(obj, x_rand[i-1], n)
 			.then(async function(obj) {
+				console.log("obj.auth: ", obj.auth);
 				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
