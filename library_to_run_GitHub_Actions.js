@@ -12,7 +12,7 @@ export async function run_backend_process(filename, input_text, repoName) {
 	console.log('obj_env: ', obj_env);
 	
 	// var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
-	      filename: filename, input_text: input_text, repoName: repoName};
+	//      filename: filename, input_text: input_text, repoName: repoName};
 	// await run_backend(obj);
 	
 }
