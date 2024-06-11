@@ -40,7 +40,7 @@ async function run_backend(obj) {
 	// console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
-	// console.log('x_rand: ', x_rand);
+	console.log('x_rand: ', x_rand);
 	
 	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 		
@@ -63,8 +63,8 @@ async function run_backend(obj) {
 				} else {
 					obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 				}
-				// console.log("loop i: ", i);
-				// console.log("x_rand[i-1]: ", x_rand[i-1]);
+				console.log("loop i: ", i);
+				console.log("x_rand[i-1]: ", x_rand[i-1]);
 				return obj;
 			})
 		
