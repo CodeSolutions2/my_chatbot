@@ -161,10 +161,8 @@ async function resalt_auth(auth, new_auth, obj) {
 		new_auth = new_auth+obj.salt;
 	}
 	delete obj.salt;
-
-	// Put new salted auth back into .env file
-	var content = btoa(new_auth);   // Base64encode the salted auth
-	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', content, obj.env_desired_path, obj.env_sha, obj.repoName);
+	
+	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', new_auth, obj.env_desired_path, obj.env_sha, obj.repoName);
 }
 
 // ----------------------------------------------------
