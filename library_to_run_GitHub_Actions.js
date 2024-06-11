@@ -298,6 +298,8 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 	var regexp = new RegExp(`${desired_filename}`, 'g');
 	
 	// run through files per url directory
+	console.log('data.length: ', data.length);
+	
 	let i = 0;
 	while (i < data.length-1 && i < 10) {
 		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
@@ -311,6 +313,7 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 		} else {
 			// console.log('Desired file not found: ', file.url);
 		}
+		i += 1;
 	}
 	
 	return {file_download_url: file_download_url, folders: folders, sha_arr: sha_arr}; 
