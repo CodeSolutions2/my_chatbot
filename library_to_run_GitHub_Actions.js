@@ -252,11 +252,13 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoName) {
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) {
+			console.log('data: ', data);
 			
 			while (flag == "run" && max_loop_limit < 5) {
 				// search over data for the desired_filename
 				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr);
-
+				console.log('obj: ', obj);
+				
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
 				
@@ -298,13 +300,13 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
 			file_download_url = data[i].download_url;
 			sha_arr = data[i].sha;
-			// console.log('Desired file found: ', file.url);
+			console.log('Desired file found: ', data[i].url);
 		} else if (data[i].type === 'dir') {
 			// Store url of directories found
 			folders.push(data[i].url);
-			// console.log('A directory was found: ', file.url);
+			console.log('A directory was found: ', data[i].url);
 		} else {
-			// console.log('Desired file not found: ', file.url);
+			console.log('Desired file not found: ', data[i].url);
 		}
 		i += 1;
 		console.log('i: ', i);
