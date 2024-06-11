@@ -20,7 +20,7 @@ jobs:
       - name: Get repository files (equivalent to git pull)
         uses: actions/checkout@v2
 
-      - name: Run commands
+      - name: Remove file
         run: rm response
         
       - name: Commit and push changes
