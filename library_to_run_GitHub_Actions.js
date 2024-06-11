@@ -6,11 +6,11 @@ var n = 2; // maximum salt length used
 // ----------------------------------------------------
 
 	
-export async function run_backend_process(filename, input_text, repoName) {
+export async function run_backend_process(filename, input_text, repoB_name) {
 	
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoName);
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoB_name);
 	
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, filename: filename, input_text: input_text, repoName: repoName};
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, filename: filename, input_text: input_text, repoB_name: repoB_name};
 	await run_backend(obj);
 	
 }
@@ -22,10 +22,10 @@ export async function run_backend_process(filename, input_text, repoName) {
 async function run_backend(obj) {
 	
 	// Try each of the 'de-salted' authorization keys to identify the correct key: loop over a REST API request and identify which key succeeds
-	// console.log('obj.repoName: ', obj.repoName);
+	// console.log('obj.repoB_name: ', obj.repoB_name);
 	
 	// [0] Determine if filename exists
-	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.repoName)
+	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.repoB_name)
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
@@ -56,12 +56,12 @@ async function run_backend(obj) {
 			.then(async function(obj) {
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
-					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoName)
+					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				} else {
 					// Option 1: modify an existing file
-					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoName)
+					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
 						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 						.catch(error => { document.getElementById("error").innerHTML = error; });
 				}
@@ -164,7 +164,7 @@ async function resalt_auth(auth, new_auth, obj) {
 	delete obj.salt;
 
 	// The key is base64_decoded so that the key is hidden in the file
-	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', btoa(new_auth), obj.env_desired_path, obj.env_sha, obj.repoName);
+	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', btoa(new_auth), obj.env_desired_path, obj.env_sha, obj.repoB_name);
 }
 
 // ----------------------------------------------------
@@ -215,11 +215,11 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	
 // ----------------------------------------------------
 
-async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoName) {
+async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoB_name) {
 
 	// Returns an object of strings
 	
-	return await GET_fileDownloadUrl_and_sha(desired_filename, repoName)
+	return await GET_fileDownloadUrl_and_sha(desired_filename, repoB_name)
 		.then(async function (obj) {
 			var text = "";
 			if (obj.file_download_url != ["No_file_found"]) {
@@ -235,11 +235,11 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoN
 
 // ----------------------------------------------------
 
-async function GET_fileDownloadUrl_and_sha(desired_filename, repoName) {
+async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 
 	// Returns an object of values that are an array
 	
-	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents`;
+	var url = `https://api.github.com/repos/${repoOwner}/${repoB_name}/contents`;
 	
 	var file_download_url = [];
 	var folders = [];
