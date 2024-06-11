@@ -78,7 +78,7 @@ const repoName = 'my_chatbot';
 	
 async function run_selection() {
 	 var filename = 'cb.txt'
-	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'run_GitHub_Actions')
+	 await module.run_backend_process(filename, document.getElementById("input_text").value+"|"+repoName, 'frontend_backend_message_passing_central_repository_v0')
 	 
 	document.getElementById('response').innerHTML = 'in progress';
 	await print_response_to_frontend();
