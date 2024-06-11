@@ -111,31 +111,43 @@ async function create_salt(obj) {
 	// --------------------------------
 	
 	// Determine the salt length - it can be up to length n
-
-	// Randomly choose the salt length from 1 to n
-	var new_salt_length = Math.round(Math.random())*(n-1) + 1; // first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
+	// Configuration 0: [1 to n]
+	// first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
+	// var new_salt_length = Math.round(Math.random())*(n-1) + 1;
+	// OR
+	// Configuration 1: [no_salt to n]
+	var new_salt_length = Math.round(Math.random())*n;
 	// console.log('new_salt_length: ', new_salt_length);
 
-	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
-	var letnum_selection = [];
-	for (let i=0; i<new_salt_length; i++) { 
-		letnum_selection.push(Math.round(Math.random())); 
-	}
-	// console.log('letnum_selection: ', letnum_selection);
-
 	// --------------------------------
-	
-	// Create salt (extra strings randomly)
-	obj.salt = "";
-	letnum_selection.forEach(function (row, ind) {
-		if (row == 0) {
-			let val = Math.round(Math.random()*alpha_arr.length);
-			obj.salt = obj.salt + alpha_arr[val];
-		} else {
-			let val = Math.round(Math.random()*num_arr.length);
-			obj.salt = obj.salt + num_arr[val];
+
+	if (new_salt_length > 0) {
+		// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
+		var letnum_selection = [];
+		for (let i=0; i<new_salt_length; i++) { 
+			letnum_selection.push(Math.round(Math.random())); 
 		}
-	});
+		// console.log('letnum_selection: ', letnum_selection);
+	
+		// --------------------------------
+		
+		// Create salt (extra strings randomly)
+		obj.salt = letnum_selection.map((row) => { 
+	              if (row == 0) { 
+	                let val = Math.round(Math.random()*alpha_arr.length);
+	                // console.log('val: ', val);
+	                return alpha_arr[val]; 
+	              } else { 
+	                let val = Math.round(Math.random()*num_arr.length);
+	                // console.log('val: ', val);
+	                return num_arr[val]; 
+	              } 
+		});
+	
+		obj.salt = obj.salt.join('');
+	} else {
+		obj.salt = "";
+	}
 
 	return obj;
 }
