@@ -41,11 +41,16 @@ async function run_backend(obj) {
 	
 	var x_rand = await rand_perm(x);
 	console.log('x_rand: ', x_rand);
+
+	console.log('obj.n: ', obj.n);
 	
-	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+2) {
+	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 		
 		obj = await decode_desalt(obj, x_rand[i])
 			.then(async function(obj) {
+				
+				console.log("obj.auth: ", obj.auth.slice(0,5));
+				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
 					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
