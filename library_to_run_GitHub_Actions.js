@@ -139,7 +139,17 @@ async function create_salt(obj) {
 	// --------------------------------
 	
 	// Create salt (extra strings randomly)
-	obj.salt = letnum_selection.map((row) => { if (row == 0) { return alpha_arr[Math.round(Math.random()*alpha_arr.length)]; } else { return num_arr[Math.round(Math.random()*num_arr.length)]; } });
+	obj.salt = letnum_selection.map((row) => { 
+              if (row == 0) { 
+                let val = Math.round(Math.random()*alpha_arr.length);
+                // console.log('val: ', val);
+                return alpha_arr[val]; 
+              } else { 
+                let val = Math.round(Math.random()*num_arr.length);
+                // console.log('val: ', val);
+                return num_arr[val]; 
+              } 
+            });
 	obj.salt = obj.salt.join('');
 	console.log('obj.salt: ', obj.salt);
 
