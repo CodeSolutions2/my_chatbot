@@ -7,20 +7,13 @@ var n = 2; // maximum salt length used
 
 	
 export async function run_backend_process(filename, input_text, repoName) {
-
-  // await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env")
-	  // Reorganize obj_env for one general object 
-	  // {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]};
-	  //.then(async function(obj_env) { return {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha }; })
-	  //.then(async function(obj) { await run_backend(obj); })
-	  //.catch(error => { document.getElementById("error").innerHTML = error; });
-
-	// OR
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoName);
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
+	console.log('obj_env: ', obj_env);
+	
+	// var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha,
 	      filename: filename, input_text: input_text, repoName: repoName};
-	await run_backend(obj);
+	// await run_backend(obj);
 	
 }
 
@@ -149,9 +142,9 @@ async function create_salt(obj) {
                 // console.log('val: ', val);
                 return num_arr[val]; 
               } 
-            });
+	});
 	obj.salt = obj.salt.join('');
-	console.log('obj.salt: ', obj.salt);
+	// console.log('obj.salt: ', obj.salt);
 
 	// --------------------------------
 
@@ -314,6 +307,7 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 			// console.log('Desired file not found: ', file.url);
 		}
 		i += 1;
+		console.log('i: ', i);
 	}
 	
 	return {file_download_url: file_download_url, folders: folders, sha_arr: sha_arr}; 
