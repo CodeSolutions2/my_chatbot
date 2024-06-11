@@ -161,8 +161,9 @@ async function resalt_auth(auth, new_auth, obj) {
 		new_auth = new_auth+obj.salt;
 	}
 	delete obj.salt;
-	
-	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', new_auth, obj.env_desired_path, obj.env_sha, obj.repoName);
+
+	// The key is base64_decoded so that the key is hidden in the file
+	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', btoa(new_auth), obj.env_desired_path, obj.env_sha, obj.repoName);
 }
 
 // ----------------------------------------------------
