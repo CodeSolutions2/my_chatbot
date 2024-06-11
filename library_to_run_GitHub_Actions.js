@@ -59,9 +59,7 @@ async function run_backend(obj) {
 				}
 				
 				if (regexp.test(obj.status) == true) {
-					obj = await create_salt(obj)
-						.then(async function(obj) { await resalt_auth(obj.auth, obj.auth, obj); delete obj.auth; delete obj.env_text; document.getElementById("notification").innerHTML += "Backend process launching..."; return obj; })
-						.catch(error => { document.getElementById("error").innerHTML = error; });
+					delete obj.auth;
 				} else {
 					obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 				}
@@ -96,70 +94,6 @@ async function decode_desalt(obj, i) {
 
 // ----------------------------------------------------
 
-async function create_salt(obj) {
-
-	// Resalt and save the key in .env, for the next time
-	var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var num = '0123456789';
-	let alpha_arr = alpha.split('');
-	let num_arr = num.split('');
-
-	// --------------------------------
-	
-	// Determine the salt length - it can be up to length obj.n
-
-	// Randomly choose the salt length from 1 to obj.n
-	var new_salt_length = Math.round(Math.random())*(obj.n-1) + 1; // first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
-	// console.log('new_salt_length: ', new_salt_length);
-
-	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
-	var letnum_selection = [];
-	for (let i=0; i<new_salt_length; i++) { 
-		letnum_selection.push(Math.round(Math.random())); 
-	}
-	// console.log('letnum_selection: ', letnum_selection);
-
-	// --------------------------------
-	
-	// Create salt (extra strings randomly)
-	obj.salt = letnum_selection.map((row) => { 
-              if (row == 0) { 
-                let val = Math.round(Math.random()*alpha_arr.length);
-                // console.log('val: ', val);
-                return alpha_arr[val]; 
-              } else { 
-                let val = Math.round(Math.random()*num_arr.length);
-                // console.log('val: ', val);
-                return num_arr[val]; 
-              } 
-	});
-	obj.salt = obj.salt.join('');
-	// console.log('obj.salt: ', obj.salt);
-
-	// --------------------------------
-
-	return obj;
-}
-
-// ----------------------------------------------------
-
-async function resalt_auth(auth, new_auth, obj) {
-	
-	// Add salt to auth_new
-	if (Math.round(Math.random()) == 0) {
-		// salt front
-		new_auth = obj.salt+new_auth;
-	} else {
-		// salt back
-		new_auth = new_auth+obj.salt;
-	}
-	delete obj.salt;
-
-	// The key is base64_decoded so that the key is hidden in the file
-	await PUT_add_to_a_file_RESTAPI(auth, 'resave the new value', btoa(new_auth), obj.env_desired_path, obj.env_sha, obj.repoB_name);
-}
-
-// ----------------------------------------------------
 	
 
 
