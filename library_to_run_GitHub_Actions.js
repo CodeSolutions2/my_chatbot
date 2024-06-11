@@ -195,7 +195,8 @@ async function resalt_auth(auth, new_auth, obj) {
 // Now, if the file temp exists it does not copy over the file; it gives a 422 error. One needs to delete the file temp and then use this function to create the file temp. 
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
-
+	
+	console.log('create repoName: ', repoName);
 	console.log('create desired_path: ', desired_path);
 	console.log('create auth: ', auth.slice(0,5));
 	
@@ -215,6 +216,7 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 
+	console.log('add repoName: ', repoName);
 	console.log('add desired_path: ', desired_path);
 	console.log('add auth: ', auth.slice(0,5));
 	
