@@ -1,16 +1,8 @@
-// ----------------------------------------------------
-
-const repoOwner = 'CodeSolutions2';
-var n = 2; // maximum salt length used
-
-// ----------------------------------------------------
-
-	
 export async function run_backend_process(filename, input_text, repoB_name) {
-	
+
+	// n is the maximum salt length used
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoB_name);
-	
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, filename: filename, input_text: input_text, repoB_name: repoB_name};
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 2, filename: filename, input_text: input_text, repoB_name: repoB_name};
 	await run_backend(obj);
 	
 }
@@ -44,15 +36,15 @@ async function run_backend(obj) {
 	// [2] Loop over the number of possible values
 	let i = 1;
 	var regexp = /^20/g;
-	var x = Array.from({ length: n*2 }, (_, ind) => ind+1);
+	var x = Array.from({ length: obj.n*2 }, (_, ind) => ind+1);
 	// console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
 	// console.log('x_rand: ', x_rand);
 	
-	while (regexp.test(obj.status) == false && obj.auth != null && i < (n*2)+1) {
+	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 		
-		obj = await decode_desalt(obj, x_rand[i-1], n)
+		obj = await decode_desalt(obj, x_rand[i-1])
 			.then(async function(obj) {
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
@@ -86,18 +78,18 @@ async function run_backend(obj) {
 
 // ----------------------------------------------------
 
-async function decode_desalt(obj, i, n) {
+async function decode_desalt(obj, i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	const text = atob(obj.env_text);
 	
 	// 1. 'de-salt' the authorization key read from the file
-	if (i <= n) {
+	if (i <= obj.n) {
 		// remove end
 		obj.auth = text.slice(0, text.length-i);
 	} else {
 		// remove beginning
-		obj.auth = text.slice(i-n, text.length);
+		obj.auth = text.slice(i-obj.n, text.length);
 	}
 	return obj;
 }
@@ -114,10 +106,10 @@ async function create_salt(obj) {
 
 	// --------------------------------
 	
-	// Determine the salt length - it can be up to length n
+	// Determine the salt length - it can be up to length obj.n
 
-	// Randomly choose the salt length from 1 to n
-	var new_salt_length = Math.round(Math.random())*(n-1) + 1; // first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
+	// Randomly choose the salt length from 1 to obj.n
+	var new_salt_length = Math.round(Math.random())*(obj.n-1) + 1; // first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
 	// console.log('new_salt_length: ', new_salt_length);
 
 	// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
@@ -188,7 +180,7 @@ async function resalt_auth(auth, new_auth, obj) {
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
 	// PUT content into a new file
-	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
+	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content)};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
@@ -204,7 +196,7 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 	
 	// PUT content into an existing file
-	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
+	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content), "sha": sha};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
@@ -239,7 +231,7 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 
 	// Returns an object of values that are an array
 	
-	var url = `https://api.github.com/repos/${repoOwner}/${repoB_name}/contents`;
+	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
 	
 	var file_download_url = [];
 	var folders = [];
@@ -250,12 +242,10 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) {
-			// console.log('data: ', data);
 			
 			while (flag == "run" && max_loop_limit < 5) {
 				// search over data for the desired_filename
 				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr);
-				// console.log('obj: ', obj);
 				
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
@@ -264,7 +254,6 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 				file_download_url = [... new Set(file_download_url)];
 				sha_arr = sha_arr.concat(obj.sha_arr);
 				sha_arr = [... new Set(sha_arr)];
-				
 				
 				// get list of folders from the main directory
 				if (folders.length == 0) {
@@ -298,13 +287,13 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
 			file_download_url = data[i].download_url;
 			sha_arr = data[i].sha;
-			console.log('Desired file found: ', data[i].url);
+			// console.log('Desired file found: ', data[i].url);
 		} else if (data[i].type === 'dir') {
 			// Store url of directories found
 			folders.push(data[i].url);
-			console.log('A directory was found: ', data[i].url);
-		} else {
-			console.log('Desired file not found: ', data[i].url);
+			// console.log('A directory was found: ', data[i].url);
+		// } else {
+			// console.log('Desired file not found: ', data[i].url);
 		}
 		i += 1;
 		// console.log('i: ', i);
