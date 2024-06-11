@@ -49,8 +49,6 @@ async function run_backend(obj) {
 		obj = await decode_desalt(obj, x_rand[i])
 			.then(async function(obj) {
 				
-				console.log("obj.auth: ", obj.auth.slice(0,5));
-				
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
 					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
@@ -76,6 +74,7 @@ async function run_backend(obj) {
 				}
 				console.log("loop i: ", i);
 				console.log("x_rand[i]: ", x_rand[i]);
+				console.log("obj.auth: ", obj.auth.slice(0,5));
 				return obj;
 			})
 		
@@ -196,6 +195,9 @@ async function resalt_auth(auth, new_auth, obj) {
 // Now, if the file temp exists it does not copy over the file; it gives a 422 error. One needs to delete the file temp and then use this function to create the file temp. 
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
+
+	console.log('create desired_path: ', desired_path);
+	console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -212,6 +214,9 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
+
+	console.log('add desired_path: ', desired_path);
+	console.log('add auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
