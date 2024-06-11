@@ -139,16 +139,11 @@ async function create_salt(obj) {
 	// --------------------------------
 	
 	// Create salt (extra strings randomly)
-	obj.salt = "";
-	letnum_selection.forEach(function (row, ind) {
-		if (row == 0) {
-			let val = Math.round(Math.random()*alpha_arr.length);
-			obj.salt = obj.salt + alpha_arr[val];
-		} else {
-			let val = Math.round(Math.random()*num_arr.length);
-			obj.salt = obj.salt + num_arr[val];
-		}
-	});
+	obj.salt = letnum_selection.map((row) => { if (row == 0) { return alpha_arr[Math.round(Math.random()*alpha_arr.length)]; } else { return num_arr[Math.round(Math.random()*num_arr.length)]; } });
+	obj.salt = obj.salt.join('');
+	console.log('obj.salt: ', obj.salt);
+
+	// --------------------------------
 
 	return obj;
 }
@@ -294,19 +289,21 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 	var regexp = new RegExp(`${desired_filename}`, 'g');
 	
 	// run through files per url directory
-	data.forEach(async function(file) {
-		if (file.type === 'file' && file.name.match(regexp)) { 
-			file_download_url = file.download_url;
-			sha_arr = file.sha;
+	let i = 0;
+	while (i < data.length-1) {
+		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
+			file_download_url = data[i].download_url;
+			sha_arr = data[i].sha;
 			// console.log('Desired file found: ', file.url);
-		} else if (file.type === 'dir') {
+		} else if (data[i].type === 'dir') {
 			// Store url of directories found
-			folders.push(file.url);
+			folders.push(data[i].url);
 			// console.log('A directory was found: ', file.url);
 		} else {
 			// console.log('Desired file not found: ', file.url);
 		}
-	});
+	}
+	
 	return {file_download_url: file_download_url, folders: folders, sha_arr: sha_arr}; 
 }
 
