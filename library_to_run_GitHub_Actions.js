@@ -299,7 +299,7 @@ async function loop_over_files_and_folders(data, desired_filename, file_download
 	
 	// run through files per url directory
 	let i = 0;
-	while (i < data.length-1) {
+	while (i < data.length-1 && i < 10) {
 		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
 			file_download_url = data[i].download_url;
 			sha_arr = data[i].sha;
