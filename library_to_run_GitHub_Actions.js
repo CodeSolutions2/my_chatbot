@@ -34,17 +34,17 @@ async function run_backend(obj) {
 	obj.status = 0; // Initialize value
 		
 	// [2] Loop over the number of possible values
-	let i = 1;
+	let i = 0;
 	var regexp = /^20/g;
-	var x = Array.from({ length: obj.n*2 }, (_, ind) => ind+1);
-	// console.log('x: ', x);
+	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
+	console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
 	console.log('x_rand: ', x_rand);
 	
-	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
+	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+2) {
 		
-		obj = await decode_desalt(obj, x_rand[i-1])
+		obj = await decode_desalt(obj, x_rand[i])
 			.then(async function(obj) {
 				if (obj.temp_file_download_url == "No_file_found") {
 					// Option 0: create a new file
@@ -70,7 +70,7 @@ async function run_backend(obj) {
 					obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 				}
 				console.log("loop i: ", i);
-				console.log("x_rand[i-1]: ", x_rand[i-1]);
+				console.log("x_rand[i]: ", x_rand[i]);
 				return obj;
 			})
 		
@@ -88,7 +88,9 @@ async function decode_desalt(obj, i) {
 	const text = atob(obj.env_text);
 	
 	// 1. 'de-salt' the authorization key read from the file
-	if (i <= obj.n) {
+	if (i == 0) {
+		obj.auth = text;
+	} else if (i <= obj.n) {
 		// remove end
 		obj.auth = text.slice(0, text.length-i);
 	} else {
