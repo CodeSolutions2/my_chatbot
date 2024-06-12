@@ -109,7 +109,7 @@ async function decode_desalt(obj, i) {
 	let N = ap.length + ep.length;
 	let out = [];
 	let i0 = 0;
-	let i1 = 1;
+	let i1 = 0;
 	for (let i=0; i<N; i++) {
 		if (i % 2 == 0){
 			out.push(ep[i0]);
