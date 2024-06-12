@@ -115,7 +115,7 @@ async function automatic_print_result() {
 					return "run";
 				}
 			})
-			.then(async function(flag) { await new Promise(r => setTimeout(r, 4000)); return flag; })
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 10000)); return flag; })
 			.catch(error => { document.getElementById("error").innerHTML = error; });
 		i += 1;
 		console.log('i: ', i);
