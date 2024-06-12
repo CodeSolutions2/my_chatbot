@@ -109,11 +109,11 @@ async function decode_desalt(obj, i) {
 	let base_arr = obj.auth.split('|');
 	let ep = base_arr.at(0).split('');
 	let ap = base_arr.at(1).split('');
-	let N = ep.length + ap.length;
 	let out = [];
 	let i0 = 0;
 	let i1 = 0;
-	for (let i=0; i<N; i++) {
+	let i = 0;
+	while (i < (ep.length + ap.length)) {
 		if (i % 2 == 0){
 			out.push(ep[i0]);
 			i0 += 1;
@@ -121,6 +121,7 @@ async function decode_desalt(obj, i) {
 			out.push(ap[i1]);
 			i1 += 1;
 		}
+		i += 1;
 	}
 	obj.auth = out.join('');
 	
@@ -224,7 +225,7 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 		.then(async function(data) {
 			
 			while (flag == "run" && max_loop_limit < 5) {
-				// search over data for the desired_filename
+				// search over data to find the desired_filename
 				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr);
 				
 				folders = folders.concat(obj.folders);
