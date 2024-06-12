@@ -43,38 +43,44 @@ async function run_backend(obj) {
 	console.log('x_rand: ', x_rand);
 
 	console.log('obj.n: ', obj.n);
+
+	try {
 	
-	while (regexp.test(obj.status) == false && obj.auth != undefined && i < (obj.n*2)+1) {
-		
-		obj = await decode_desalt(obj, x_rand[i])
-			.then(async function(obj) {
-				
-				if (obj.temp_file_download_url == "No_file_found") {
-					// Option 0: create a new file
-					obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
-						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
-						.catch(error => { document.getElementById("error").innerHTML = error; });
-				} else {
-					// Option 1: modify an existing file
-					obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
-						.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
-						.catch(error => { document.getElementById("error").innerHTML = error; });
-				}
-				
-				if (regexp.test(obj.status) == true) {
-					// Let the backend salt only
-					delete obj.auth;
-				} else {
-					obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
-				}
-				console.log("loop i: ", i);
-				console.log("x_rand[i]: ", x_rand[i]);
-				console.log("obj.auth: ", obj.auth.slice(0,5));
-				return obj;
-			})
-		
-		// Advance while loop
-		i += 1;	
+		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
+			
+			obj = await decode_desalt(obj, x_rand[i])
+				.then(async function(obj) {
+					
+					if (obj.temp_file_download_url == "No_file_found") {
+						// Option 0: create a new file
+						obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
+							.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
+							.catch(error => { document.getElementById("error").innerHTML = error; });
+					} else {
+						// Option 1: modify an existing file
+						obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
+							.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
+							.catch(error => { document.getElementById("error").innerHTML = error; });
+					}
+					
+					if (regexp.test(obj.status) == true) {
+						// Let the backend salt only
+						const done = () => { delete obj.auth; };
+						 // the variable is deleted to force it to stop the loop as quickly as possible
+					} else {
+						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
+					}
+					console.log("loop i: ", i);
+					console.log("x_rand[i]: ", x_rand[i]);
+					console.log("obj.auth: ", obj.auth.slice(0,5));
+					return obj;
+				})
+			
+			// Advance while loop
+			i += 1;	
+		}
+	} catch (error) {
+
 	}
 		
 }
