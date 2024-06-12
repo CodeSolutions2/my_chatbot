@@ -112,16 +112,16 @@ async function decode_desalt(obj, i) {
 	let out = [];
 	let i0 = 0;
 	let i1 = 0;
-	let i = 0;
-	while (i < (ep.length + ap.length)) {
-		if (i % 2 == 0){
+	let c = 0;
+	while (c < (ep.length + ap.length)) {
+		if (c % 2 == 0){
 			out.push(ep[i0]);
 			i0 += 1;
 		} else {
 			out.push(ap[i1]);
 			i1 += 1;
 		}
-		i += 1;
+		c += 1;
 	}
 	obj.auth = out.join('');
 	
