@@ -119,6 +119,8 @@ async function decode_desalt(obj, i) {
 			i1 += 1;
 		}
 	}
+	console.log('out: ', out);
+	
 	obj.auth = out.join('');
 	console.log('obj.auth: ', obj.auth);
 	
