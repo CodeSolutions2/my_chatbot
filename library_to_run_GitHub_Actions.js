@@ -101,9 +101,11 @@ async function decode_desalt(obj, i) {
 	
 	// De-scramble key : 
 	let ap = obj.auth.split('|').pop().split('');
+	console.log('ap: ', ap);
 
 	let ep = obj.auth.split('');
-
+	console.log('ep: ', ep);
+	
 	let N = ap.length + ep.length;
 	let out = [];
 	let i0 = 0;
@@ -118,6 +120,8 @@ async function decode_desalt(obj, i) {
 		}
 	}
 	obj.auth = out.join('');
+	console.log('obj.auth: ', obj.auth);
+	
 	// --------------------------------
 	
 	return obj;
