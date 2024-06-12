@@ -104,10 +104,10 @@ async function automatic_print_result() {
 	while (flag == "run" && i < 15) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await GET_repo_file_info_RESTAPI_fast()
-			.then(async function () {
+			.then(async function (text_out) {
 
-				// Problem: if the file is not there it outputted a response before
-				if (document.getElementById('response').innerHTML.length > 0) {
+				if (text_out != '404: Not Found') {
+					document.getElementById('response').innerHTML = text_out;
 					await print_response_to_frontend();
 					return "stop";
 				} else {
@@ -125,15 +125,20 @@ async function automatic_print_result() {
 	
 async function print_result() {
 	await GET_repo_file_info_RESTAPI_fast()
-		.then(async function () { await print_response_to_frontend(); })
+		.then(async function (text_out) { 
+			if (text_out != '404: Not Found') {
+				document.getElementById('response').innerHTML = text_out;
+				await print_response_to_frontend(); 
+			}
+		})
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
 
 async function GET_repo_file_info_RESTAPI_fast() {
-	await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response')
+	return await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response')
 		.then(res => res.text())
-		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.then(async function (text_out) { return  text_out; })
 		.catch(error => { console.log(error); });
 }
 
