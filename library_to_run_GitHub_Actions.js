@@ -37,14 +37,13 @@ async function run_backend(obj) {
 	let i = 0;
 	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
-	// console.log('x: ', x);
+	console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
-	// console.log('x_rand: ', x_rand);
-	// console.log('obj.n: ', obj.n);
+	console.log('x_rand: ', x_rand);
+	console.log('obj.n: ', obj.n);
 
 	try {
-	
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 			
 			obj = await decode_desalt(obj, x_rand[i])
@@ -67,9 +66,8 @@ async function run_backend(obj) {
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 					}
-					// console.log("loop i: ", i);
-					// console.log("x_rand[i]: ", x_rand[i]);
-					// console.log("obj.auth: ", obj.auth.slice(0,5));
+					console.log("loop i: ", i);
+					console.log("x_rand[i]: ", x_rand[i]);
 					return obj;
 				})
 			
@@ -121,6 +119,7 @@ async function decode_desalt(obj, i) {
 		c += 1;
 	}
 	obj.auth = out.join('');
+	console.log("obj.auth: ", obj.auth.slice(0,5));
 	
 	// --------------------------------
 	
