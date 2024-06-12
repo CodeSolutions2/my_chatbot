@@ -86,43 +86,74 @@ async function run_selection() {
 	var repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 	
 	await module.run_backend_process(filename, input, repoB_name)
-	 
+
+	// Last step: how does one know when to perform a GET request on the file to present it on the browser?
 	// document.getElementById('response').innerHTML = 'in progress';
 	// await print_response_to_frontend();
+	// OR
+	await automatic_print_result()
+}
+
+// -----------------------------------------------
+
+async function automatic_print_result() {
+
+	// Wait for file creation
+	var flag = "run";
+	var i = 0;
+	while (flag == "run" && i < 15) {
+		// keep doing GET on the repo files for 'response' until it appears
+		flag = await GET_repo_file_info_RESTAPI_fast()
+			.then(async function () {
+
+				// Problem: if the file is not there it outputted a response before
+				if (document.getElementById('response').innerHTML.length > 0) {
+					await print_response_to_frontend();
+					return "stop";
+				} else {
+					return "run";
+				}
+			})
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 4000)); return flag; })
+			.catch(error => { document.getElementById("error").innerHTML = error; });
+		i += 1;
+		console.log('i: ', i);
+	}
 }
 	
 // -----------------------------------------------
 	
 async function print_result() {
-	await GET_repo_file_info_RESTAPI()
+	await GET_repo_file_info_RESTAPI_fast()
 		.then(async function () { await print_response_to_frontend(); })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
 
+async function GET_repo_file_info_RESTAPI_fast() {
+	await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response')
+		.then(res => res.text())
+		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.catch(error => { console.log(error); });
+}
 
-
-async function GET_repo_file_info_RESTAPI() {
+	
+async function GET_repo_file_info_RESTAPI_slow(repoOwner, repoName, desired_filename) {
 	
 	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
 		.then(res => res.json())
 		.then(data => {
-			// let regexp = new RegExp(`${desired_filename}`, 'g');
-			let regexp = new RegExp('response', 'g');
+			let regexp = new RegExp(`${desired_filename}`, 'g');
 			let file_download_url = '';
 			data.forEach(file => {
 			      if (file.type === 'file' && file.name.match(regexp)) {
-				      // console.log("file.download_url: ", file.download_url);
+				      console.log("file.download_url: ", file.download_url);
 				      file_download_url = file.download_url;
 			      }
 			});
 			return file_download_url;
 		})
-		.then(async function (file_download_url) { 
-			// console.log("file_download_url: ", file_download_url);
-			// https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response
-			return await fetch(file_download_url); 
-		})
+		.then(async function (file_download_url) { return await fetch(file_download_url); })
 		.then(res => res.text())
 		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
 		.catch(error => { console.log(error); });
