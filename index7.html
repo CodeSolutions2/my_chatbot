@@ -68,6 +68,10 @@ module.run_backend_process = run_backend_process;
 	
 <script>
 
+window.addEventListener('beforeunload', function() {
+    window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+});
+
 // -----------------------------------------------
 
 const module = {};
