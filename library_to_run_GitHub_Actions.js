@@ -100,14 +100,9 @@ async function decode_desalt(obj, i) {
 	// --------------------------------
 	
 	// De-scramble key : 
-	let base_arr = obj.auth.split('|'); // there are to parts [ep, ap]
-	
+	let base_arr = obj.auth.split('|');
 	let ep = base_arr.at(0).split('');
-	console.log('ep: ', ep);
-
 	let ap = base_arr.at(1).split('');
-	console.log('ap: ', ap);
-	
 	let N = ep.length + ap.length;
 	let out = [];
 	let i0 = 0;
@@ -121,10 +116,7 @@ async function decode_desalt(obj, i) {
 			i1 += 1;
 		}
 	}
-	console.log('out: ', out);
-	
 	obj.auth = out.join('');
-	console.log('obj.auth: ', obj.auth);
 	
 	// --------------------------------
 	
