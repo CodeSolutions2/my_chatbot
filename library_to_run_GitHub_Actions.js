@@ -65,7 +65,7 @@ async function run_backend(obj) {
 					
 					if (regexp.test(obj.status) == true) {
 						// Let the backend salt only
-						const done = () => { delete obj.auth; };
+						const done = () => { delete obj.auth; return 'done'; };
 						 // the variable is deleted to force it to stop the loop as quickly as possible
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
