@@ -37,11 +37,11 @@ async function run_backend(obj) {
 	let i = 0;
 	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
-	console.log('x: ', x);
+	// console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
-	console.log('x_rand: ', x_rand);
-	console.log('obj.n: ', obj.n);
+	// console.log('x_rand: ', x_rand);
+	// console.log('obj.n: ', obj.n);
 
 	try {
 	
@@ -63,15 +63,13 @@ async function run_backend(obj) {
 					}
 					
 					if (regexp.test(obj.status) == true) {
-						// Let the backend salt only
-						delete obj.auth;
-						 // the variable is deleted to force it to stop the loop as quickly as possible
+						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 					}
-					console.log("loop i: ", i);
-					console.log("x_rand[i]: ", x_rand[i]);
-					console.log("obj.auth: ", obj.auth.slice(0,5));
+					// console.log("loop i: ", i);
+					// console.log("x_rand[i]: ", x_rand[i]);
+					// console.log("obj.auth: ", obj.auth.slice(0,5));
 					return obj;
 				})
 			
@@ -104,7 +102,7 @@ async function decode_desalt(obj, i) {
 
 	// --------------------------------
 	
-	// De-scramble key : 
+	// De-scramble key
 	let base_arr = obj.auth.split('|');
 	let ep = base_arr.at(0).split('');
 	let ap = base_arr.at(1).split('');
