@@ -41,7 +41,6 @@ async function run_backend(obj) {
 	
 	var x_rand = await rand_perm(x);
 	console.log('x_rand: ', x_rand);
-
 	console.log('obj.n: ', obj.n);
 
 	try {
@@ -65,7 +64,7 @@ async function run_backend(obj) {
 					
 					if (regexp.test(obj.status) == true) {
 						// Let the backend salt only
-						const done = () => { delete obj.auth; return 'done'; };
+						delete obj.auth;
 						 // the variable is deleted to force it to stop the loop as quickly as possible
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
@@ -80,7 +79,7 @@ async function run_backend(obj) {
 			i += 1;	
 		}
 	} catch (error) {
-
+		console.log("loop finished!");
 	}
 		
 }
@@ -152,9 +151,9 @@ async function decode_desalt(obj, i) {
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
-	console.log('create repoName: ', repoName);
-	console.log('create desired_path: ', desired_path);
-	console.log('create auth: ', auth.slice(0,5));
+	// console.log('create repoName: ', repoName);
+	// console.log('create desired_path: ', desired_path);
+	// console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -172,9 +171,9 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 
-	console.log('add repoName: ', repoName);
-	console.log('add desired_path: ', desired_path);
-	console.log('add auth: ', auth.slice(0,5));
+	// console.log('add repoName: ', repoName);
+	// console.log('add desired_path: ', desired_path);
+	// console.log('add auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
