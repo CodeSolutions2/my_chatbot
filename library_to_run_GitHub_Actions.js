@@ -44,7 +44,7 @@ async function run_backend(obj) {
 
 	console.log('obj.n: ', obj.n);
 	
-	while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
+	while (regexp.test(obj.status) == false && obj.auth != undefined && i < (obj.n*2)+1) {
 		
 		obj = await decode_desalt(obj, x_rand[i])
 			.then(async function(obj) {
