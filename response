@@ -1,3 +1,0 @@
-INPUT_TEXT - test
-json_string_var - {"model":"gpt-3.5-turbo","messages":[{"role":"system","content":"You are a helpful assistant"},{"role":"user","content":"test"},{"role":"assistant","content":"Respond concisely"}],"temperature":0}
-model_response - "Test successful"
