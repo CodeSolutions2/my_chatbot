@@ -478,16 +478,25 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 			var sha_arr = [];
 			
 			while (flag == "run" && max_loop_limit < 5) {
+				
+				console.log('flag: ', flag);
+				console.log('max_loop_limit: ', max_loop_limit);
+	
 				// search over data to find the desired_filename
 				var obj = await loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr);
+				console.log('obj: ', obj);
 				
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
+				console.log('folders: ', folders);
 				
 				file_download_url = file_download_url.concat(obj.file_download_url);
 				file_download_url = [... new Set(file_download_url)];
+				console.log('file_download_url: ', file_download_url);
+				
 				sha_arr = sha_arr.concat(obj.sha_arr);
 				sha_arr = [... new Set(sha_arr)];
+				console.log('sha_arr: ', sha_arr);
 				
 				// get list of folders from the main directory
 				if (folders.length == 0) {
