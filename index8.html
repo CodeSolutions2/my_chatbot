@@ -352,9 +352,9 @@ async function decode_desalt(obj, i) {
 	// --------------------------------
 	
 	// De-scramble key
-	let base_arr = obj.auth.split('|');
-	let ep = base_arr.at(0).split('');
-	let ap = base_arr.at(1).split('');
+	const base_arr = obj.auth.split('|');
+	const ep = base_arr.at(0).split('');
+	const ap = base_arr.at(1).split('');
 	let out = [];
 	let i0 = 0;
 	let i1 = 0;
