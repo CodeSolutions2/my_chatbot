@@ -62,7 +62,7 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 <script type="module">
 import { run_backend_process } from './library_to_run_GitHub_Actions.js';
-module.run_backend_process = run_backend_process;
+module1.run_backend_process = run_backend_process;
 </script>
 
 	
@@ -74,7 +74,7 @@ window.addEventListener('beforeunload', function() {
 
 // -----------------------------------------------
 
-const module = {};
+const module1 = {};
 const repoOwner = 'CodeSolutions2';
 const repoName = 'my_chatbot';
 
@@ -86,7 +86,7 @@ async function run_selection() {
 	var input = document.getElementById("input_text").value+"|"+repoName;
 	var repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 	
-	await module.run_backend_process(filename, foldername, input, repoB_name)
+	await module1.run_backend_process(filename, foldername, input, repoB_name)
 
 	// Last step: how does one know when to perform a GET request on the file to present it on the browser?
 	// document.getElementById('response').innerHTML = 'in progress';
