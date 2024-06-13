@@ -80,20 +80,28 @@ async function run_selection() {
 	var RepoAobj = {};
 	
 	const openAI3_5 = document.getElementById("openAI3_5").checked;
+	console.log("openAI3_5: ", openAI3_5);
+	
 	const openAIassistant = document.getElementById("openAIassistant").checked;
+	console.log("openAIassistant: ", openAIassistant);
+	
 	const custom_model = document.getElementById("custom_model").checked;
+	console.log("custom_model: ", custom_model);
 	
 	RepoAobj.repoOwner = 'CodeSolutions2';
 	RepoAobj.repoA_name = 'my_chatbot';
 	
 	if (openAI3_5 == true && openAIassistant == false && custom_model == false) {
 		RepoAobj.foldername = 'openAI3_5';
+		await selection_steps(RepoAobj);
 	}
 	if (openAI3_5 == false && openAIassistant == true && custom_model == false) {
 		RepoAobj.foldername = 'openAIassistant';
+		await selection_steps(RepoAobj);
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == true) {
 		RepoAobj.foldername = 'custom_model';
+		await selection_steps(RepoAobj);
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == false) {
 		document.getElementById('error').innerHTML = "Please select a chatbot model.";
