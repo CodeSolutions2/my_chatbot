@@ -1,10 +1,20 @@
-export async function run_backend_process(filename, foldername, input_text, repoB_name) {
+export async function run_backend_process(RepoAobj) {
 
-	// n is the maximum salt length used
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", repoB_name);
-	console.log('obj_env: ', obj_env);
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 	
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 1, filename: filename, foldername: foldername, input_text: input_text, repoB_name: repoB_name};
+	// n is the maximum salt length used
+	var n = 1;
+	
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
+	
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
+		   env_file_download_url: obj_env.file_download_url, 
+		   env_sha: obj_env.sha, 
+		   n: n, 
+		   filename: RepoAobj.filename, 
+		   foldername: RepoAobj.foldername, 
+		   input_text: RepoAobj.input, 
+		   repoB_name: RepoAobj.repoB_name};
 	await run_backend(obj);
 	
 }
@@ -130,13 +140,6 @@ async function decode_desalt(obj, i) {
 
 // ----------------------------------------------------
 
-
-	
-
-
-// ----------------------------------------------------
-// SUBFUNCTIONS
-// ----------------------------------------------------
 
 
 // ----------------------------------------------------
