@@ -246,7 +246,6 @@ async function run_backend_process(RepoAobj) {
 	var n = 1;
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
-	console.log('obj_env: ', obj_env);
 	
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
 		   env_file_download_url: obj_env.file_download_url, 
@@ -290,11 +289,11 @@ async function run_backend(obj) {
 	let i = 0;
 	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
-	console.log('x: ', x);
+	// console.log('x: ', x);
 	
 	var x_rand = await rand_perm(x);
-	console.log('x_rand: ', x_rand);
-	console.log('obj.n: ', obj.n);
+	// console.log('x_rand: ', x_rand);
+	// console.log('obj.n: ', obj.n);
 
 	try {
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
@@ -394,9 +393,9 @@ async function decode_desalt(obj, i) {
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
-	console.log('create repoName: ', repoName);
-	console.log('create desired_path: ', desired_path);
-	console.log('create auth: ', auth.slice(0,5));
+	// console.log('create repoName: ', repoName);
+	// console.log('create desired_path: ', desired_path);
+	// console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -414,9 +413,9 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 
-	console.log('add repoName: ', repoName);
-	console.log('add desired_path: ', desired_path);
-	console.log('add auth: ', auth.slice(0,5));
+	// console.log('add repoName: ', repoName);
+	// console.log('add desired_path: ', desired_path);
+	// console.log('add auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -433,10 +432,10 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of strings
-	console.log('GET_text_from_file_wo_auth_GitHub_RESTAPI: ');
-	console.log('desired_filename: ', desired_filename);
-	console.log('desired_foldername: ', desired_foldername);
-	console.log('repoB_name: ', repoB_name);
+	// console.log('GET_text_from_file_wo_auth_GitHub_RESTAPI: ');
+	// console.log('desired_filename: ', desired_filename);
+	// console.log('desired_foldername: ', desired_foldername);
+	// console.log('repoB_name: ', repoB_name);
 	
 	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name)
 		.then(async function (obj) {
@@ -480,11 +479,11 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 		
 		folders = folders.concat(obj.folders);
 		folders = [... new Set(folders)];
-		console.log('folders: ', folders);
+		// console.log('folders: ', folders);
 		
 		file_download_url = file_download_url.concat(obj.file_download_url);
 		file_download_url = [... new Set(file_download_url)];
-		console.log('file_download_url: ', file_download_url);
+		// console.log('file_download_url: ', file_download_url);
 		
 		sha_arr = sha_arr.concat(obj.sha_arr);
 		sha_arr = [... new Set(sha_arr)];
@@ -509,8 +508,6 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 
 	
 async function loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr) {
-
-	console.log('data: ', data);
 	
 	var regexp = new RegExp(`${desired_filename}`, 'g');
 	var regexp_foldername = new RegExp(`${desired_foldername}`, 'g');
@@ -523,13 +520,13 @@ async function loop_over_files_and_folders(data, desired_filename, desired_folde
 			file_download_url = data[i].download_url;
 			sha_arr = data[i].sha;
 			// console.log('file_download_url: ', file_download_url);
-			console.log('Desired file found: ', data[i].url);
+			// console.log('Desired file found: ', data[i].url);
 		} else if (data[i].type === 'dir') {
 			// Store url of directories found
 			folders.push(data[i].url);
-			console.log('A directory was found: ', data[i].url);
-		} else {
-			console.log('Desired file not found: ', data[i].url);
+			// console.log('A directory was found: ', data[i].url);
+		// } else {
+			// console.log('Desired file not found: ', data[i].url);
 		}
 		i += 1;
 		// console.log('i: ', i);
