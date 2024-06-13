@@ -1,2 +1,0 @@
-INPUT_TEXT = Read the content of a file respond to the following request:what is 9+8?. Format the output concisely with only the response, use the least number of words.
-json_string_add_messages_to_thread_var = {"role":"user","content":"Read the content of a file respond to the following request:what is 9+8?. Format the output concisely with only the response, use the least number of words."}
