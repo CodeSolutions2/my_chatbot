@@ -1,8 +1,8 @@
-export async function run_backend_process(filename, input_text, repoB_name) {
+export async function run_backend_process(filename, foldername, input_text, repoB_name) {
 
 	// n is the maximum salt length used
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", repoB_name);
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 1, filename: filename, input_text: input_text, repoB_name: repoB_name};
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", repoB_name);
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 1, filename: filename, foldername: foldername, input_text: input_text, repoB_name: repoB_name};
 	await run_backend(obj);
 	
 }
@@ -17,7 +17,7 @@ async function run_backend(obj) {
 	// console.log('obj.repoB_name: ', obj.repoB_name);
 	
 	// [0] Determine if filename exists
-	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.repoB_name)
+	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.foldername, obj.repoB_name)
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
@@ -51,7 +51,7 @@ async function run_backend(obj) {
 					
 					if (obj.temp_file_download_url == "No_file_found") {
 						// Option 0: create a new file
-						obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.filename, obj.repoB_name)
+						obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
 							.then(async function(out) { await new Promise(r => setTimeout(r, 2000)); return out.status; })
 							.catch(error => { document.getElementById("error").innerHTML = error; });
 					} else {
@@ -148,8 +148,8 @@ async function decode_desalt(obj, i) {
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
-	// console.log('create repoName: ', repoName);
-	// console.log('create desired_path: ', desired_path);
+	console.log('create repoName: ', repoName);
+	console.log('create desired_path: ', desired_path);
 	// console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
@@ -168,8 +168,8 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 
-	// console.log('add repoName: ', repoName);
-	// console.log('add desired_path: ', desired_path);
+	console.log('add repoName: ', repoName);
+	console.log('add desired_path: ', desired_path);
 	// console.log('add auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
@@ -184,11 +184,11 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	
 // ----------------------------------------------------
 
-async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoB_name) {
+async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of strings
 	
-	return await GET_fileDownloadUrl_and_sha(desired_filename, repoB_name)
+	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name)
 		.then(async function (obj) {
 			var text = "";
 			if (obj.file_download_url != ["No_file_found"]) {
@@ -204,7 +204,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, repoB
 
 // ----------------------------------------------------
 
-async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
+async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of values that are an array
 	
@@ -222,7 +222,7 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 			
 			while (flag == "run" && max_loop_limit < 5) {
 				// search over data to find the desired_filename
-				var obj = await loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr);
+				var obj = await loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr);
 				
 				folders = folders.concat(obj.folders);
 				folders = [... new Set(folders)];
@@ -252,16 +252,17 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, repoB_name) {
 }
 
 	
-async function loop_over_files_and_folders(data, desired_filename, file_download_url, folders, sha_arr) {
+async function loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr) {
 
 	var regexp = new RegExp(`${desired_filename}`, 'g');
+	var regexp_foldername = new RegExp(`${desired_foldername}`, 'g');
 	
 	// run through files per url directory
 	// console.log('data.length: ', data.length);
 	
 	let i = 0;
 	while (i < data.length-1 && i < 10) {
-		if (data[i].type === 'file' && data[i].name.match(regexp)) { 
+		if (data[i].type === 'file' && data[i].name.match(regexp) && regexp_foldername.test(data[i].download_url) == true) { 
 			file_download_url = data[i].download_url;
 			sha_arr = data[i].sha;
 			// console.log('Desired file found: ', data[i].url);
