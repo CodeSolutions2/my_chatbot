@@ -2,6 +2,8 @@ export async function run_backend_process(filename, foldername, input_text, repo
 
 	// n is the maximum salt length used
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", repoB_name);
+	console.log('obj_env: ', obj_env);
+	
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 1, filename: filename, foldername: foldername, input_text: input_text, repoB_name: repoB_name};
 	await run_backend(obj);
 	
@@ -187,6 +189,7 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of strings
+	console.log('in GET_text_from_file_wo_auth_GitHub_RESTAPI');
 	console.log('desired_filename: ', desired_filename);
 	console.log('desired_foldername: ', desired_foldername);
 	
@@ -261,7 +264,8 @@ async function loop_over_files_and_folders(data, desired_filename, desired_folde
 	
 	// run through files per url directory
 	// console.log('data.length: ', data.length);
-
+	
+	console.log('in loop_over_files_and_folders');
 	console.log('desired_filename: ', desired_filename);
 	console.log('desired_foldername: ', desired_foldername);
 	console.log('regexp_foldername.test(data[i].download_url): ', regexp_foldername.test(data[i].download_url));
