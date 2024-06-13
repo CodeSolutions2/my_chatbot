@@ -110,11 +110,13 @@ async function run_selection() {
 	}
 	if (openAI3_5 == false && openAIassistant == true && custom_model == false) {
 		RepoAobj.foldername = 'openAIassistant';
-		await selection_steps(RepoAobj);
+		document.getElementById('response').innerHTML = "In progress";
+		await print_response_to_frontend();
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == true) {
 		RepoAobj.foldername = 'custom_model';
-		await selection_steps(RepoAobj);
+		document.getElementById('response').innerHTML = "In progress";
+		await print_response_to_frontend();
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == false) {
 		document.getElementById('error').innerHTML = "Please select a chatbot model.";
