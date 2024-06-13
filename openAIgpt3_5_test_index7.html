@@ -13,7 +13,18 @@
 
 <h1></h1>
 
-<h3>[Step 0]</h3>
+<h3>[Step 0] Select a chatbot model</h3>
+<fieldset>
+<input type="radio" id="openAI3_5" name="radio_name" value="openAI3_5" />
+<label openAI3_5="openai">OpenAI 3.5</label>
+<br>
+<input type="radio" id="openAIassistant" name="radio_name" value="openAIassistant" />
+<label for="openAIassistant">OpenAI Assistant</label>
+<br>
+<input type="radio" id="custom_model" name="radio_name" value="custom_model" />
+<label for="custom_model">Custom Model</label>
+</fieldset>
+<br>
 <div id="notification"></div>
 <div id="error"></div>
 <div id="response"></div>
@@ -59,12 +70,6 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 <!-- --------------------------------------------------- -->	  
 
-
-<!--<script type="module">
-import { run_backend_process } from './library_to_run_GitHub_Actions.js';
-module.run_backend_process = run_backend_process;
-</script>-->
-
 	
 <script>
 
@@ -72,24 +77,45 @@ window.addEventListener('beforeunload', function() {
     window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 });
 
-// -----------------------------------------------
-
-// const module = {};
-const repoOwner = 'CodeSolutions2';
-const repoName = 'my_chatbot';
 
 // -----------------------------------------------
 	
 async function run_selection() {
+
+	var RepoAobj = {};
 	
-	var filename = 'cb.txt';
-	var foldername = 'openAI3_5';
-	var input = document.getElementById("input_text").value+"|"+repoName;
-	var repoB_name = 'frontend_backend_message_passing_central_repository_v0';
+	const openAI3_5 = document.getElementById("openAI3_5").checked;
+	const openAIassistant = document.getElementById("openAIassistant").checked;
+	const custom_model = document.getElementById("custom_model").checked;
 	
-	// await module.run_backend_process(filename, foldername, input, repoB_name)
-	// OR
-	await run_backend_process(filename, foldername, input, repoB_name);
+	RepoAobj.repoOwner = 'CodeSolutions2';
+	RepoAobj.repoA_name = 'my_chatbot';
+	
+	if (openAI3_5 == true && openAIassistant == false && custom_model == false) {
+		RepoAobj.foldername = 'openAI3_5';
+	}
+	if (openAI3_5 == false && openAIassistant == true && custom_model == false) {
+		RepoAobj.foldername = 'openAIassistant';
+	}
+	if (openAI3_5 == false && openAIassistant == false && custom_model == true) {
+		RepoAobj.foldername = 'custom_model';
+	}
+	if (openAI3_5 == false && openAIassistant == false && custom_model == false) {
+		document.getElementById('error').innerHTML = "Please select a chatbot model.";
+	}
+}
+
+async function selection_steps(RepoAobj) {
+
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername
+	
+	RepoAobj.filename = 'cb.txt';
+	RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
+	
+	await run_backend_process(RepoAobj);
+
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 
 	// Last step: how does one know when to perform a GET request on the file to present it on the browser?
 	// document.getElementById('response').innerHTML = 'in progress';
@@ -214,13 +240,24 @@ async function print_response_to_frontend() {
 // ----------------------------------------------------
 // SUBFUNCTIONS
 // ----------------------------------------------------
-async function run_backend_process(filename, foldername, input_text, repoB_name) {
+async function run_backend_process(RepoAobj) {
 
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
+	
 	// n is the maximum salt length used
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", repoB_name);
+	var n = 1;
+	
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
 	console.log('obj_env: ', obj_env);
 	
-	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), env_file_download_url: obj_env.file_download_url, env_sha: obj_env.sha, n: 1, filename: filename, foldername: foldername, input_text: input_text, repoB_name: repoB_name};
+	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
+		   env_file_download_url: obj_env.file_download_url, 
+		   env_sha: obj_env.sha, 
+		   n: n, 
+		   filename: RepoAobj.filename, 
+		   foldername: RepoAobj.foldername, 
+		   input_text: RepoAobj.input, 
+		   repoB_name: RepoAobj.repoB_name};
 	await run_backend(obj);
 	
 }
@@ -398,7 +435,7 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of strings
-	console.log('in GET_text_from_file_wo_auth_GitHub_RESTAPI');
+	console.log('GET_text_from_file_wo_auth_GitHub_RESTAPI: ');
 	console.log('desired_filename: ', desired_filename);
 	console.log('desired_foldername: ', desired_foldername);
 	console.log('repoB_name: ', repoB_name);
@@ -422,21 +459,20 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desir
 async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of values that are an array
-	
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
 	console.log('url: ', url);
-	
-	var file_download_url = [];
-	var folders = [];
-	var sha_arr = [];
-	var flag = "run";
-	var max_loop_limit = 0;
 	
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) {
 
 			console.log('data: ', data);
+
+			var flag = "run";
+			var max_loop_limit = 0;
+			var file_download_url = [];
+			var folders = [];
+			var sha_arr = [];
 			
 			while (flag == "run" && max_loop_limit < 5) {
 				// search over data to find the desired_filename
