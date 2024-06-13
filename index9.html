@@ -28,6 +28,7 @@
 <div id="notification"></div>
 <div id="error"></div>
 <div id="response"></div>
+<div id="output_file_path"></div>
 <br>
 
 </th>
@@ -57,6 +58,7 @@ div { padding: 10px; display:block; font-family:courier; font-size:15px; height:
 div#notification { position: relative; color: #3236a8; }
 div#error { position: relative; color: #bd1f17; }
 div#response { display:none; color: #3236a8; }
+div#output_file_path { display:none; }
 
 table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
 
@@ -127,6 +129,9 @@ async function selection_steps(RepoAobj) {
 	RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 
+	// Save file name to DOM
+	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
+	
 	console.log('RepoAobj: ', RepoAobj);
 	
 	await module.run_backend_process(RepoAobj);
@@ -137,13 +142,13 @@ async function selection_steps(RepoAobj) {
 	// document.getElementById('response').innerHTML = 'in progress';
 	// await print_response_to_frontend();
 	// OR
-	await automatic_print_result()
+	await automatic_print_result(RepoAobj)
 }
 
 // -----------------------------------------------
 
-async function automatic_print_result() {
-
+async function automatic_print_result(RepoAobj) {
+	
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
@@ -183,7 +188,8 @@ async function print_result() {
 
 
 async function GET_repo_file_info_RESTAPI_fast() {
-	return await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response')
+	
+	return await fetch(`https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/${document.getElementById('output_file_path').innerHTML}`)
 		.then(res => res.text())
 		.then(async function (text_out) { return  text_out; })
 		.catch(error => { console.log(error); });
@@ -192,20 +198,20 @@ async function GET_repo_file_info_RESTAPI_fast() {
 	
 async function GET_repo_file_info_RESTAPI_slow(repoOwner, repoName, desired_filename) {
 	
-	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
+	var data = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
 		.then(res => res.json())
-		.then(data => {
-			let regexp = new RegExp(`${desired_filename}`, 'g');
-			let file_download_url = '';
-			data.forEach(file => {
-			      if (file.type === 'file' && file.name.match(regexp)) {
-				      console.log("file.download_url: ", file.download_url);
-				      file_download_url = file.download_url;
-			      }
-			});
-			return file_download_url;
-		})
-		.then(async function (file_download_url) { return await fetch(file_download_url); })
+		.then(data => { return data; })
+	
+	let regexp = new RegExp(`${desired_filename}`, 'g');
+	let file_download_url = '';
+	data.forEach(file => {
+	      if (file.type === 'file' && file.name.match(regexp)) {
+		      console.log("file.download_url: ", file.download_url);
+		      file_download_url = file.download_url;
+	      }
+	});
+		
+	await fetch(file_download_url)
 		.then(res => res.text())
 		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
 		.catch(error => { console.log(error); });
