@@ -480,11 +480,11 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 		
 		folders = folders.concat(obj.folders);
 		folders = [... new Set(folders)];
-		// console.log('folders: ', folders);
+		console.log('folders: ', folders);
 		
 		file_download_url = file_download_url.concat(obj.file_download_url);
 		file_download_url = [... new Set(file_download_url)];
-		// console.log('file_download_url: ', file_download_url);
+		console.log('file_download_url: ', file_download_url);
 		
 		sha_arr = sha_arr.concat(obj.sha_arr);
 		sha_arr = [... new Set(sha_arr)];
@@ -492,9 +492,9 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 		
 		// get list of folders from the main directory
 		if (folders.length == 0) {
-			flag = "stop";
 			if (file_download_url.length == 0) { file_download_url = ["No_file_found"]; }
 			if (sha_arr.length == 0) { sha_arr = ["No_file_found"]; }
+			flag = "stop";
 		} else {
 			// There are directories in the main file
 			data = await fetch(folders.shift())
@@ -517,7 +517,7 @@ async function loop_over_files_and_folders(data, desired_filename, desired_folde
 	
 	// run through files per url directory
 	let i = 0;
-	while (i < data.length-1 && i < 10) {
+	while (i < data.length && i < 10) {
 		
 		if (data[i].type === 'file' && data[i].name.match(regexp) && regexp_foldername.test(data[i].download_url) == true) { 
 			file_download_url = data[i].download_url;
