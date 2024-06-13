@@ -132,8 +132,6 @@ async function selection_steps(RepoAobj) {
 	// Save file name to DOM
 	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
 	
-	console.log('RepoAobj: ', RepoAobj);
-	
 	await module.run_backend_process(RepoAobj);
 
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
