@@ -187,6 +187,8 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
 
 	// Returns an object of strings
+	console.log('desired_filename: ', desired_filename);
+	console.log('desired_foldername: ', desired_foldername);
 	
 	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name)
 		.then(async function (obj) {
@@ -259,17 +261,22 @@ async function loop_over_files_and_folders(data, desired_filename, desired_folde
 	
 	// run through files per url directory
 	// console.log('data.length: ', data.length);
+
+	console.log('desired_filename: ', desired_filename);
+	console.log('desired_foldername: ', desired_foldername);
+	console.log('regexp_foldername.test(data[i].download_url): ', regexp_foldername.test(data[i].download_url));
 	
 	let i = 0;
 	while (i < data.length-1 && i < 10) {
 		if (data[i].type === 'file' && data[i].name.match(regexp) && regexp_foldername.test(data[i].download_url) == true) { 
 			file_download_url = data[i].download_url;
+			console.log('file_download_url: ', file_download_url);
 			sha_arr = data[i].sha;
-			// console.log('Desired file found: ', data[i].url);
+			console.log('Desired file found: ', data[i].url);
 		} else if (data[i].type === 'dir') {
 			// Store url of directories found
 			folders.push(data[i].url);
-			// console.log('A directory was found: ', data[i].url);
+			console.log('A directory was found: ', data[i].url);
 		// } else {
 			// console.log('Desired file not found: ', data[i].url);
 		}
