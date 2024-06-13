@@ -127,6 +127,8 @@ async function selection_steps(RepoAobj) {
 	RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 
+	console.log('RepoAobj: ', RepoAobj);
+	
 	await module.run_backend_process(RepoAobj);
 
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
