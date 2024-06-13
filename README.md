@@ -5,7 +5,7 @@ There are several different chatbot models used with the XXX syncrhonization sof
 2. OpenAI Assistant - a standard AI model using personal text
 3. Custom model - a finetunned model using personal text
 
-[OpenAI 3.5 model] https://codesolutions2.github.io/my_chatbot/openAIgpt3_5_test_index7.html
+[OpenAI 3.5 model] https://codesolutions2.github.io/my_chatbot/index8.html
 
 [OpenAI Assistant model] In progress
 
