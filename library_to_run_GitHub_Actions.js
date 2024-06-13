@@ -14,7 +14,7 @@ export async function run_backend_process(RepoAobj) {
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
 		   repoB_name: RepoAobj.repoB_name};
-	delete obj_env;
+	
 	Object.freeze(obj.env_text); // make the original value non-changeable
 	await run_backend(obj);
 }
@@ -41,7 +41,6 @@ async function run_backend(obj) {
 	obj.temp_file_download_url = obj_temp.file_download_url[0]; // this is a string
 	obj.temp_desired_path = obj.temp_file_download_url.split('main/').pop();
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
-	delete obj_temp;
 	
 	obj.auth = obj.env_text; // Initialize value
 	obj.status = 0; // Initialize value
