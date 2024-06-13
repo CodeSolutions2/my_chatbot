@@ -192,6 +192,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desir
 	console.log('in GET_text_from_file_wo_auth_GitHub_RESTAPI');
 	console.log('desired_filename: ', desired_filename);
 	console.log('desired_foldername: ', desired_foldername);
+	console.log('repoB_name: ', repoB_name);
 	
 	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name)
 		.then(async function (obj) {
@@ -214,6 +215,7 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 	// Returns an object of values that are an array
 	
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
+	console.log('url: ', url);
 	
 	var file_download_url = [];
 	var folders = [];
@@ -224,6 +226,8 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 	return await fetch(url)
 		.then(res => res.json())
 		.then(async function(data) {
+
+			console.log('data: ', data);
 			
 			while (flag == "run" && max_loop_limit < 5) {
 				// search over data to find the desired_filename
