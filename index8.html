@@ -464,57 +464,52 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 	// Returns an object of values that are an array
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
 	console.log('url: ', url);
-	
-	return await fetch(url)
-		.then(res => res.json())
-		.then(async function(data) {
 
-			console.log('data: ', data);
+	var data = await fetch(url).then(res => res.json());
+	console.log('data: ', data);
 
-			var flag = "run";
-			var max_loop_limit = 0;
-			var file_download_url = [];
-			var folders = [];
-			var sha_arr = [];
-			
-			while (flag == "run" && max_loop_limit < 5) {
-				
-				console.log('flag: ', flag);
-				console.log('max_loop_limit: ', max_loop_limit);
+	var flag = "run";
+	var max_loop_limit = 0;
+	var file_download_url = [];
+	var folders = [];
+	var sha_arr = [];
 	
-				// search over data to find the desired_filename
-				var obj = await loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr);
-				console.log('obj: ', obj);
-				
-				folders = folders.concat(obj.folders);
-				folders = [... new Set(folders)];
-				console.log('folders: ', folders);
-				
-				file_download_url = file_download_url.concat(obj.file_download_url);
-				file_download_url = [... new Set(file_download_url)];
-				console.log('file_download_url: ', file_download_url);
-				
-				sha_arr = sha_arr.concat(obj.sha_arr);
-				sha_arr = [... new Set(sha_arr)];
-				console.log('sha_arr: ', sha_arr);
-				
-				// get list of folders from the main directory
-				if (folders.length == 0) {
-					flag = "stop";
-					if (file_download_url.length == 0) { file_download_url = ["No_file_found"]; }
-					if (sha_arr.length == 0) { sha_arr = ["No_file_found"]; }
-				} else {
-					// There are directories in the main file
-					data = await fetch(folders.shift())
-						.then(res => res.json())
-						.then(async function(data) { return data; });
-				}
-				max_loop_limit += 1;
-			}
-			return {file_download_url: file_download_url, sha_arr: sha_arr};
-		})
-		.catch(error => { document.getElementById("error").innerHTML = error; });
+	while (flag == "run" && max_loop_limit < 5) {
+		
+		console.log('flag: ', flag);
+		console.log('max_loop_limit: ', max_loop_limit);
+
+		// search over data to find the desired_filename
+		var obj = await loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr);
+		console.log('obj: ', obj);
+		
+		folders = folders.concat(obj.folders);
+		folders = [... new Set(folders)];
+		// console.log('folders: ', folders);
+		
+		file_download_url = file_download_url.concat(obj.file_download_url);
+		file_download_url = [... new Set(file_download_url)];
+		// console.log('file_download_url: ', file_download_url);
+		
+		sha_arr = sha_arr.concat(obj.sha_arr);
+		sha_arr = [... new Set(sha_arr)];
+		// console.log('sha_arr: ', sha_arr);
+		
+		// get list of folders from the main directory
+		if (folders.length == 0) {
+			flag = "stop";
+			if (file_download_url.length == 0) { file_download_url = ["No_file_found"]; }
+			if (sha_arr.length == 0) { sha_arr = ["No_file_found"]; }
+		} else {
+			// There are directories in the main file
+			data = await fetch(folders.shift())
+				.then(res => res.json())
+				.then(async function(data) { return data; });
+		}
+		max_loop_limit += 1;
+	}
 	
+	return {file_download_url: file_download_url, sha_arr: sha_arr};
 }
 
 	
