@@ -523,12 +523,14 @@ async function loop_over_files_and_folders(data, desired_filename, desired_folde
 	
 	console.log('in loop_over_files_and_folders');
 	console.log('desired_filename: ', desired_filename);
-	console.log('desired_foldername: ', desired_foldername);
-	console.log('data[i].download_url: ', data[i].download_url);
-	console.log('regexp_foldername.test(data[i].download_url): ', regexp_foldername.test(data[i].download_url) );
+	console.log('desired_foldername: ', desired_foldername);;
 	
 	let i = 0;
 	while (i < data.length-1 && i < 10) {
+		
+		console.log('data[i].download_url: ', data[i].download_url);
+		console.log('regexp_foldername.test(data[i].download_url): ', regexp_foldername.test(data[i].download_url) )
+		
 		if (data[i].type === 'file' && data[i].name.match(regexp) && regexp_foldername.test(data[i].download_url) == true) { 
 			file_download_url = data[i].download_url;
 			console.log('file_download_url: ', file_download_url);
