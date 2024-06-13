@@ -254,6 +254,8 @@ async function run_backend_process(RepoAobj) {
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
 		   repoB_name: RepoAobj.repoB_name};
+
+	Object.freeze(obj.env_text); // make the original value non-changeable
 	await run_backend(obj);
 	
 }
