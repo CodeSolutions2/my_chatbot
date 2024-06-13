@@ -80,13 +80,8 @@ async function run_selection() {
 	var RepoAobj = {};
 	
 	const openAI3_5 = document.getElementById("openAI3_5").checked;
-	console.log("openAI3_5: ", openAI3_5);
-	
 	const openAIassistant = document.getElementById("openAIassistant").checked;
-	console.log("openAIassistant: ", openAIassistant);
-	
 	const custom_model = document.getElementById("custom_model").checked;
-	console.log("custom_model: ", custom_model);
 	
 	RepoAobj.repoOwner = 'CodeSolutions2';
 	RepoAobj.repoA_name = 'my_chatbot';
@@ -377,7 +372,7 @@ async function decode_desalt(obj, i) {
 		c += 1;
 	}
 	obj.auth = out.join('');
-	console.log("obj.auth: ", obj.auth.slice(0,5));
+	// console.log("obj.auth: ", obj.auth.slice(0,5));
 	
 	// --------------------------------
 	
@@ -401,7 +396,7 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 	
 	console.log('create repoName: ', repoName);
 	console.log('create desired_path: ', desired_path);
-	// console.log('create auth: ', auth.slice(0,5));
+	console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -421,7 +416,7 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 
 	console.log('add repoName: ', repoName);
 	console.log('add desired_path: ', desired_path);
-	// console.log('add auth: ', auth.slice(0,5));
+	console.log('add auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -463,10 +458,10 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 
 	// Returns an object of values that are an array
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
-	console.log('url: ', url);
+	// console.log('url: ', url);
 
 	var data = await fetch(url).then(res => res.json());
-	console.log('data: ', data);
+	// console.log('data: ', data);
 
 	var flag = "run";
 	var max_loop_limit = 0;
@@ -476,12 +471,12 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 	
 	while (flag == "run" && max_loop_limit < 5) {
 		
-		console.log('flag: ', flag);
-		console.log('max_loop_limit: ', max_loop_limit);
+		// console.log('flag: ', flag);
+		// console.log('max_loop_limit: ', max_loop_limit);
 
 		// search over data to find the desired_filename
 		var obj = await loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr);
-		console.log('obj: ', obj);
+		// console.log('obj: ', obj);
 		
 		folders = folders.concat(obj.folders);
 		folders = [... new Set(folders)];
@@ -515,33 +510,26 @@ async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername,
 	
 async function loop_over_files_and_folders(data, desired_filename, desired_foldername, file_download_url, folders, sha_arr) {
 
+	console.log('data: ', data);
+	
 	var regexp = new RegExp(`${desired_filename}`, 'g');
 	var regexp_foldername = new RegExp(`${desired_foldername}`, 'g');
 	
 	// run through files per url directory
-	// console.log('data.length: ', data.length);
-	
-	console.log('in loop_over_files_and_folders');
-	console.log('desired_filename: ', desired_filename);
-	console.log('desired_foldername: ', desired_foldername);;
-	
 	let i = 0;
 	while (i < data.length-1 && i < 10) {
 		
-		console.log('data[i].download_url: ', data[i].download_url);
-		console.log('regexp_foldername.test(data[i].download_url): ', regexp_foldername.test(data[i].download_url) )
-		
 		if (data[i].type === 'file' && data[i].name.match(regexp) && regexp_foldername.test(data[i].download_url) == true) { 
 			file_download_url = data[i].download_url;
-			console.log('file_download_url: ', file_download_url);
 			sha_arr = data[i].sha;
+			// console.log('file_download_url: ', file_download_url);
 			console.log('Desired file found: ', data[i].url);
 		} else if (data[i].type === 'dir') {
 			// Store url of directories found
 			folders.push(data[i].url);
 			console.log('A directory was found: ', data[i].url);
-		// } else {
-			// console.log('Desired file not found: ', data[i].url);
+		} else {
+			console.log('Desired file not found: ', data[i].url);
 		}
 		i += 1;
 		// console.log('i: ', i);
