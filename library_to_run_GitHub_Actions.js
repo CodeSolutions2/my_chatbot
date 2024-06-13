@@ -3,20 +3,20 @@ export async function run_backend_process(RepoAobj) {
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 	
 	// n is the maximum salt length used
-	var n = 1;
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
 	
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
 		   env_file_download_url: obj_env.file_download_url, 
 		   env_sha: obj_env.sha, 
-		   n: n, 
+		   n: 1, 
 		   filename: RepoAobj.filename, 
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
 		   repoB_name: RepoAobj.repoB_name};
+	delete obj_env;
+	Object.freeze(obj.env_text); // make the original value non-changeable
 	await run_backend(obj);
-	
 }
 
 
@@ -41,6 +41,7 @@ async function run_backend(obj) {
 	obj.temp_file_download_url = obj_temp.file_download_url[0]; // this is a string
 	obj.temp_desired_path = obj.temp_file_download_url.split('main/').pop();
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
+	delete obj_temp;
 	
 	obj.auth = obj.env_text; // Initialize value
 	obj.status = 0; // Initialize value
@@ -113,9 +114,9 @@ async function decode_desalt(obj, i) {
 	// --------------------------------
 	
 	// De-scramble key
-	let base_arr = obj.auth.split('|');
-	let ep = base_arr.at(0).split('');
-	let ap = base_arr.at(1).split('');
+	const base_arr = obj.auth.split('|');
+	const ep = base_arr.at(0).split('');
+	const ap = base_arr.at(1).split('');
 	let out = [];
 	let i0 = 0;
 	let i1 = 0;
