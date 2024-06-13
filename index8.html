@@ -243,14 +243,13 @@ async function run_backend_process(RepoAobj) {
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 	
 	// n is the maximum salt length used
-	var n = 1;
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
 	
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
 		   env_file_download_url: obj_env.file_download_url, 
 		   env_sha: obj_env.sha, 
-		   n: n, 
+		   n: 1, 
 		   filename: RepoAobj.filename, 
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
