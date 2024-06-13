@@ -20,8 +20,13 @@ jobs:
       - name: Get repository files (equivalent to git pull)
         uses: actions/checkout@v2
 
-      - name: Remove file
-        run: rm response; rm openAIassistant_response
+      - name: Remove file if it exists
+        run: if [ -f response ]; then
+          rm response; 
+          fi; 
+          if [ -f openAIassistant_response ]; then
+            rm openAIassistant_response;
+          fi;
         
       - name: Commit and push changes
         run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
