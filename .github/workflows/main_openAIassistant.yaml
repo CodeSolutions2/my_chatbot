@@ -16,19 +16,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create input text
-        run: INPUT_TEXT=$(echo "Read the content of a file respond to the following request:${{ github.event.client_payload.fromrepob }}. Format the output concisely with only the response, use the least number of words."); echo "INPUT_TEXT = $INPUT_TEXT"; 
-
-      - name: Add a message to a THREAD
-        run: json_string_add_messages_to_thread_var="$(echo '{"role":"user", "content":"'$INPUT_TEXT'"}' | jq -c)"; echo "json_string_add_messages_to_thread_var = $json_string_add_messages_to_thread_var"; THREAD_MESSAGE_ID=$(curl https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/messages -H "Content-Type:application/json" -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" -d "$json_string_add_messages_to_thread_var" | jq); echo "THREAD_MESSAGE_ID = $THREAD_MESSAGE_ID"; 
+        run: INPUT_TEXT=$(echo "Read the content of a file respond to the following request:${{ github.event.client_payload.fromrepob }}. Format the output concisely with only the response, use the least number of words."); echo "INPUT_TEXT = $INPUT_TEXT"; json_string_add_messages_to_thread_var="$(echo '{"role":"user", "content":"'$INPUT_TEXT'"}' | jq -c)"; echo "json_string_add_messages_to_thread_var = $json_string_add_messages_to_thread_var"; THREAD_MESSAGE_ID=$(curl -X POST https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/messages -H "Content-Type:application/json" -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" -d "$json_string_add_messages_to_thread_var" | jq); echo "THREAD_MESSAGE_ID = $THREAD_MESSAGE_ID"; 
 
       - name: Create RUN_ID payload
-        run: json_string_create_run_var="$(echo '{"assistant_id":"'${{ secrets.ASSISTANT_ID }}'"}' | jq -c)"; echo "json_string_create_run_var = $json_string_create_run_var"; RUN_ID=$(curl -X POST https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/runs -H "Content-Type:application/json" -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" -d "$json_string_create_run_var" | jq '.id' | sed 's/"//g'); echo "RUN_ID = $RUN_ID";
-
-      - name: Initialize while loop to determine if done
-        run: c=0; max_allowed_loops=30; run_status=$(curl -X GET https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/runs/$RUN_ID -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" | jq '.status' | sed 's/"//g'); echo "run_status = $run_status"; sleep 50; 
-
-      - name: While loop to determine if done
-        run: while [[ $run_status != "completed" ]] && [[ $c < $max_allowed_loops ]]; do
+        run: json_string_create_run_var="$(echo '{"assistant_id":"'${{ secrets.ASSISTANT_ID }}'"}' | jq -c)"; echo "json_string_create_run_var = $json_string_create_run_var"; RUN_ID=$(curl -X POST https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/runs -H "Content-Type:application/json" -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" -d "$json_string_create_run_var" | jq '.id' | sed 's/"//g'); echo "RUN_ID = $RUN_ID"; run_status="queued"; c=0; max_allowed_loops=30; while [[ $run_status != "completed" ]] && [[ $c < $max_allowed_loops ]]; do
             run_status=$(curl -X GET https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/runs/$RUN_ID -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY }}" -H "OpenAI-Beta:assistants=v2" | jq '.status' | sed 's/"//g'); 
             echo "c = $c";
             echo "run_status = $run_status";
