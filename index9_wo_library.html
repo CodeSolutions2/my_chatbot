@@ -240,7 +240,6 @@ async function run_backend_process(RepoAobj) {
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
 		   repoB_name: RepoAobj.repoB_name};
-	console.log('obj: ', obj);
 
 	Object.freeze(obj.env_text); // make the original value non-changeable
 	await run_backend(obj);
@@ -281,7 +280,7 @@ async function run_backend(obj) {
 	var x_rand = await rand_perm(x);
 	
 	// console.log('x: ', x);
-	console.log('x_rand: ', x_rand);
+	// console.log('x_rand: ', x_rand);
 
 	try {
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
@@ -314,8 +313,8 @@ async function run_backend(obj) {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 					}
           
-					console.log("loop i: ", i);
-					console.log("x_rand[i]: ", x_rand[i]);
+					// console.log("loop i: ", i);
+					// console.log("x_rand[i]: ", x_rand[i]);
 					return obj;
 				})
 				.then(async function(obj) { await new Promise(r => setTimeout(r, 2000)); return obj; })
@@ -414,9 +413,9 @@ async function descramble_ver1() {
 // ----------------------------------------------------
 async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
 	
-	console.log('create repoName: ', repoName);
-	console.log('create desired_path: ', desired_path);
-	console.log('create auth: ', auth.slice(0,5));
+	// console.log('create repoName: ', repoName);
+	// console.log('create desired_path: ', desired_path);
+	// console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
@@ -434,9 +433,9 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 
 async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
 
-	console.log('create repoName: ', repoName);
-	console.log('create desired_path: ', desired_path);
-	console.log('create auth: ', auth.slice(0,5));
+	// console.log('create repoName: ', repoName);
+	// console.log('create desired_path: ', desired_path);
+	// console.log('create auth: ', auth.slice(0,5));
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
