@@ -319,7 +319,13 @@ async function run_backend(obj) {
 			// Advance while loop
 			i += 1;	
 		}
+
+		console.log('1st requirement for loop to run: ', regexp.test(obj.status) == false);
+		console.log('2nd requirement for loop to run: ', obj.auth != null);
+		console.log('3rd requirement for loop to run: ', i < (obj.n*2)+1);
+		
 	} catch (error) {
+		console.log("error: ", error);
 		console.log("loop finished!");
 	}
 		
@@ -331,9 +337,9 @@ async function decode_desalt(obj, i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	document.getElementById('var0').innerHTML = atob(obj.env_text);
-  document.getElementById('var1').innerHTML = i;
-  document.getElementById('var2').innerHTML = obj.n;
-  document.getElementById('var3').innerHTML = obj.auth;
+	document.getElementById('var1').innerHTML = i;
+	document.getElementById('var2').innerHTML = obj.n;
+	document.getElementById('var3').innerHTML = obj.auth;
 
 	await new Promise(r => setTimeout(r, 10))
 		.then(async function() {
