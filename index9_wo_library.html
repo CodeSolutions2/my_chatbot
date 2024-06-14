@@ -278,14 +278,14 @@ async function run_backend(obj) {
 	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
 	var x_rand = await rand_perm(x);
-
+	
 	// console.log('x: ', x);
 	console.log('x_rand: ', x_rand);
 
 	try {
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
-			document.getElementById('var1').innerHTML = x_rand[i];
-			obj = await decode_desalt(obj)
+			
+			obj = await decode_desalt(obj,  x_rand[i])
 				.then(async function(obj) {
 
 					// Test 
@@ -332,29 +332,27 @@ async function run_backend(obj) {
 
 // ----------------------------------------------------
 
-async function decode_desalt(obj) {
+async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	document.getElementById('var0').innerHTML = atob(obj.env_text);
+	document.getElementById('var1').innerHTML = x_i;
 	document.getElementById('var2').innerHTML = obj.n;
-
+	
 	await new Promise(r => setTimeout(r, 10))
 		.then(async function() {
 			// 1. 'de-salt' the authorization key read from the file
 			if (document.getElementById('var1').innerHTML == 0) {
 				console.log('Remove nothing:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML;
-				// console.log(document.getElementById('var0').innerHTML)
 				await descramble_ver0();
 			} else if (document.getElementById('var1').innerHTML <= document.getElementById('var2').innerHTML) {
 				console.log('Remove end:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
-				// console.log(document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML))
 				await descramble_ver0();
 			} else {
 				console.log('Remove beginning:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
-				// console.log(document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length));
 				await descramble_ver1();
 			}
 		})
@@ -372,13 +370,10 @@ async function decode_desalt(obj) {
 
 
 async function descramble_ver0() {
-	// De-scramble key: will be a function
 	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
 		if (ind % 2 == 0){
-			// console.log('ind, p, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
 			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
 		} else {
-			// console.log('ind, ap, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
 			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
 		}
 	});
@@ -391,13 +386,10 @@ async function descramble_ver0() {
 // ----------------------------------------------------
 
 async function descramble_ver1() {
-	// De-scramble key: will be a function
 	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
 		if (ind % 2 == 0){
-			// console.log('ind, p, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
 			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
 		} else {
-			// console.log('ind, ap, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
 			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
 		}
 	});
