@@ -126,7 +126,7 @@ async function selection_steps(RepoAobj) {
 	// document.getElementById('response').innerHTML = 'in progress';
 	// await print_response_to_frontend();
 	// OR
-	await automatic_print_result()
+	// await automatic_print_result()
 }
 
 // -----------------------------------------------
@@ -238,6 +238,7 @@ async function run_backend_process(RepoAobj) {
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
 		   repoB_name: RepoAobj.repoB_name};
+	console.log('obj: ', obj);
 
 	Object.freeze(obj.env_text); // make the original value non-changeable
 	await run_backend(obj);
