@@ -277,9 +277,9 @@ async function run_backend(obj) {
 	let i = 0;
 	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
-	// console.log('x: ', x);
-	
 	var x_rand = await rand_perm(x);
+
+	// console.log('x: ', x);
 	console.log('x_rand: ', x_rand);
 	console.log('obj.n: ', obj.n);
 	console.log('(obj.n*2)+1: ', (obj.n*2)+1);
@@ -340,22 +340,21 @@ async function decode_desalt(obj, i) {
 	document.getElementById('var0').innerHTML = atob(obj.env_text);
 	document.getElementById('var1').innerHTML = i;
 	document.getElementById('var2').innerHTML = obj.n;
-	document.getElementById('var3').innerHTML = obj.auth;
 
 	await new Promise(r => setTimeout(r, 10))
 		.then(async function() {
 			// 1. 'de-salt' the authorization key read from the file
 			if (document.getElementById('var1').innerHTML == 0) {
 				console.log('remove nothing:');
-				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML;
+				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML;
 				console.log(document.getElementById('var0').innerHTML)
 			} else if (document.getElementById('var1').innerHTML <= document.getElementById('var2').innerHTML) {
 				console.log('remove end:');
-				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
+				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
 				console.log(document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML))
 			} else {
 				console.log('remove beginning:');
-				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
+				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
 				console.log(document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length));
 			}
 		})
@@ -379,7 +378,7 @@ async function decode_desalt(obj, i) {
 			      const vals_to_Keep = (x) => x != '|';
 			      arr = arr.filter(vals_to_Keep).join('');
 			      console.log('arr: ', arr);
-			      document.getElementById('var3').innerHTML += arr;
+			      document.getElementById('var3').innerHTML = arr;
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
