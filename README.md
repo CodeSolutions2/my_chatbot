@@ -5,4 +5,4 @@ There are several different chatbot models used with the library_to_run_GitHub_A
 2. OpenAI Assistant - a standard AI model using personal text *(in progress)*
 3. Custom model - a finetunned model using personal text *(in progress)*
 
-https://codesolutions2.github.io/my_chatbot/index9.html
+https://codesolutions2.github.io/my_chatbot/index9_wo_library.html
