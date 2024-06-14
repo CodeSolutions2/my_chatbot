@@ -269,7 +269,7 @@ async function run_backend(obj) {
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
 	
 	obj.auth = obj.env_text; // Initialize value
-	obj.status = 0; // Initialize value
+	obj.status = false; // Initialize value
 		
 	// [2] Loop over the number of possible values
 	let i = 0;
@@ -280,6 +280,7 @@ async function run_backend(obj) {
 	var x_rand = await rand_perm(x);
 	console.log('x_rand: ', x_rand);
 	console.log('obj.n: ', obj.n);
+	console.log('(obj.n*2)+1): ', (obj.n*2)+1));
 
 	try {
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
@@ -305,7 +306,7 @@ async function run_backend(obj) {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 					}
           
-					// console.log("loop i: ", i);
+					console.log("loop i: ", i);
 					console.log("x_rand[i]: ", x_rand[i]);
 					return obj;
 				})
