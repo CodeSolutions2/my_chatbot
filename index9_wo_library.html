@@ -346,71 +346,24 @@ async function decode_desalt(obj) {
 				console.log('Remove nothing:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML;
 				console.log(document.getElementById('var0').innerHTML)
-
-				// De-scramble key: will be a function
-				let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
-					if (ind % 2 == 0){
-						console.log('ind, p, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
-				        } else {
-						console.log('ind, ap, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
-				        }
-				});
-				console.log('arr: ', arr);
-				const vals_to_Keep = (x) => x != '|';
-				arr = arr.filter(vals_to_Keep).join('');
-				console.log('arr: ', arr);
-				document.getElementById('var3').innerHTML = arr;
-				
+				await descramble_ver0();
 			} else if (document.getElementById('var1').innerHTML <= document.getElementById('var2').innerHTML) {
 				console.log('Remove end:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
 				console.log(document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML))
-
-				// De-scramble key: will be a function
-				let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
-					if (ind % 2 == 0){
-						console.log('ind, p, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
-				        } else {
-						console.log('ind, ap, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
-				        }
-				});
-				console.log('arr: ', arr);
-				const vals_to_Keep = (x) => x != '|';
-				arr = arr.filter(vals_to_Keep).join('');
-				console.log('arr: ', arr);
-				document.getElementById('var3').innerHTML = arr;
+				await descramble_ver0();
 				
 			} else {
-				console.log('remove beginning:');
+				console.log('Remove beginning:');
 				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
 				console.log(document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length));
-
-				// De-scramble key: will be a function
-				let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
-					if (ind % 2 == 0){
-						console.log('ind, p, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
-				        } else {
-						console.log('ind, ap, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
-						return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
-				        }
-				});
-				console.log('arr: ', arr);
-				const vals_to_Keep = (x) => x != '|';
-				arr = arr.filter(vals_to_Keep).join('');
-				console.log('arr: ', arr);
-				document.getElementById('var3').innerHTML = arr;
+				await descramble_ver1();
 			}
 		})
 		.then(async function() {
 			document.getElementById('var0').innerHTML = "";
 			document.getElementById('var1').innerHTML = "";
 			document.getElementById('var2').innerHTML = "";
-			
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
@@ -420,7 +373,43 @@ async function decode_desalt(obj) {
 // ----------------------------------------------------
 
 
+async function descramble_ver0() {
+	// De-scramble key: will be a function
+	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+		if (ind % 2 == 0){
+			// console.log('ind, p, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
+			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+		} else {
+			// console.log('ind, ap, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
+			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+		}
+	});
+	const vals_to_Keep = (x) => x != '|';
+	arr = arr.filter(vals_to_Keep).join('');
+	console.log('arr: ', arr);
+	document.getElementById('var3').innerHTML = arr;
+}
+	
+// ----------------------------------------------------
 
+async function descramble_ver1() {
+	// De-scramble key: will be a function
+	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+		if (ind % 2 == 0){
+			// console.log('ind, p, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
+			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+		} else {
+			// console.log('ind, ap, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
+			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+		}
+	});
+	const vals_to_Keep = (x) => x != '|';
+	arr = arr.filter(vals_to_Keep).join('');
+	console.log('arr: ', arr);
+	document.getElementById('var3').innerHTML = arr;
+}
+	
+// ----------------------------------------------------
 
 
 // ----------------------------------------------------
