@@ -269,7 +269,7 @@ async function run_backend(obj) {
 	obj.temp_desired_path = obj.temp_file_download_url.split('main/').pop();
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
 	
-	obj.auth = obj.env_text; // Initialize value
+	obj.auth = "MHRlc3QgdGVzdA==";// obj.env_text; // Initialize value
 	obj.status = false; // Initialize value
 		
 	// [2] Loop over the number of possible values
@@ -284,26 +284,29 @@ async function run_backend(obj) {
 	console.log('(obj.n*2)+1: ', (obj.n*2)+1);
 
 	try {
-		console.log('1st requirement for loop to run: ', regexp.test(obj.status) == false);
-		console.log('2nd requirement for loop to run: ', obj.auth != null);
-		console.log('3rd requirement for loop to run: ', i < (obj.n*2)+1);
-		
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 			
 			obj = await decode_desalt(obj, x_rand[i])
 				.then(async function(obj) {
-					
-					if (obj.temp_file_download_url == "No_file_found") {
-						// Option 0: create a new file
-						obj.status = await PUT_create_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
-              .then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
-							.catch(error => { document.getElementById("error").innerHTML = error; });
-					} else {
-						// Option 1: modify an existing file
-						obj.status = await PUT_add_to_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
-              .then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
-							.catch(error => { document.getElementById("error").innerHTML = error; });
+
+					// Test 
+					if (document.getElementById('var3').innerHTML == 'test test') {
+						obj.status = true;
+						document.getElementById('var3').innerHTML = "";
 					}
+					
+					// Non test program
+					// if (obj.temp_file_download_url == "No_file_found") {
+						// Option 0: create a new file
+					// 	obj.status = await PUT_create_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
+             //  .then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
+		// 					.catch(error => { document.getElementById("error").innerHTML = error; });
+			// 		} else {
+						// Option 1: modify an existing file
+				// 		obj.status = await PUT_add_to_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
+             //  .then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
+		// 					.catch(error => { document.getElementById("error").innerHTML = error; });
+			// 		}
 					
 					if (regexp.test(obj.status) == true) {
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
@@ -320,10 +323,6 @@ async function run_backend(obj) {
 			// Advance while loop
 			i += 1;	
 		}
-
-		console.log('1st requirement for loop to run: ', regexp.test(obj.status) == false);
-		console.log('2nd requirement for loop to run: ', obj.auth != null);
-		console.log('3rd requirement for loop to run: ', i < (obj.n*2)+1);
 		
 	} catch (error) {
 		console.log("error: ", error);
