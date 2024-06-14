@@ -268,7 +268,6 @@ async function run_backend(obj) {
 	obj.temp_file_download_url = obj_temp.file_download_url[0]; // this is a string
 	obj.temp_desired_path = obj.temp_file_download_url.split('main/').pop();
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
-
 	obj.env_text = "MGV0dHN8dHMgZXQ=";
 	obj.auth = obj.env_text; // Initialize value
 	obj.status = false; // Initialize value
@@ -286,8 +285,8 @@ async function run_backend(obj) {
 
 	try {
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
-			
-			obj = await decode_desalt(obj, x_rand[i])
+			document.getElementById('var1').innerHTML = x_rand[i];
+			obj = await decode_desalt(obj)
 				.then(async function(obj) {
 
 					// Test 
@@ -334,11 +333,10 @@ async function run_backend(obj) {
 
 // ----------------------------------------------------
 
-async function decode_desalt(obj, i) {
+async function decode_desalt(obj) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	document.getElementById('var0').innerHTML = atob(obj.env_text);
-	document.getElementById('var1').innerHTML = i;
 	document.getElementById('var2').innerHTML = obj.n;
 
 	await new Promise(r => setTimeout(r, 10))
@@ -364,21 +362,20 @@ async function decode_desalt(obj, i) {
 			document.getElementById('var2').innerHTML = "";
 			
 			// De-scramble key
-			      // Way 1
-			      const arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
-			        if (ind % 2 == 0){
-			            console.log('ind, p: ', ind, Math.floor(ind/2));
-			            return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+			let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+				if (ind % 2 == 0){
+					console.log('ind, p, val: ', ind, Math.floor(ind/2), document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2)));
+					return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
 			        } else {
-			          console.log('ind, ap: ', ind, Math.floor(ind/2) + 1);
-			          return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+					console.log('ind, ap, val: ', ind, Math.floor(ind/2) + 1, document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|')));
+					return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
 			        }
-			      });
-			      console.log('arr: ', arr);
-			      const vals_to_Keep = (x) => x != '|';
-			      arr = arr.filter(vals_to_Keep).join('');
-			      console.log('arr: ', arr);
-			      document.getElementById('var3').innerHTML = arr;
+		});
+			console.log('arr: ', arr);
+			const vals_to_Keep = (x) => x != '|';
+			arr = arr.filter(vals_to_Keep).join('');
+			console.log('arr: ', arr);
+			document.getElementById('var3').innerHTML = arr;
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
