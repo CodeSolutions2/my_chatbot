@@ -32,7 +32,7 @@
 <div id="var0" style="display:none;"></div>
 <div id="var1" style="display:none;"></div>
 <div id="var2" style="display:none;"></div>
-<div id="var3" style="display:none;"></div>
+<div id="var3" style="display:block;"></div>
 <br>
 
 </th>
@@ -346,13 +346,17 @@ async function decode_desalt(obj, i) {
 		.then(async function() {
 			// 1. 'de-salt' the authorization key read from the file
 			if (document.getElementById('var1').innerHTML == 0) {
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML;
+				console.log('remove nothing:');
+				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML;
+				console.log(document.getElementById('var0').innerHTML)
 			} else if (document.getElementById('var1').innerHTML <= document.getElementById('var2').innerHTML) {
-				// remove end
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
+				console.log('remove end:');
+				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
+				console.log(document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML))
 			} else {
-				// remove beginning 
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
+				console.log('remove beginning:');
+				document.getElementById('var3').innerHTML += document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
+				console.log(document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length));
 			}
 		})
 		.then(async function() {
@@ -373,8 +377,9 @@ async function decode_desalt(obj, i) {
 			      });
 			      console.log('arr: ', arr);
 			      const vals_to_Keep = (x) => x != '|';
-			      document.getElementById(var3).innerHTML = arr.filter(vals_to_Keep).join('');
-			      console.log('document.getElementById(var3).innerHTML: ', document.getElementById('var3').innerHTML);
+			      arr = arr.filter(vals_to_Keep).join('');
+			      console.log('arr: ', arr);
+			      document.getElementById('var3').innerHTML += arr;
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
