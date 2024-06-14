@@ -358,21 +358,22 @@ async function decode_desalt(obj, i) {
 			document.getElementById('var0').innerHTML = "";
 			document.getElementById('var1').innerHTML = "";
 			document.getElementById('var2').innerHTML = "";
-      // De-scramble key
-      // Way 1
-      document.getElementById(var3).innerHTML.join('') = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
-        if (ind % 2 == 0){
-            console.log('ind, p: ', ind, Math.floor(ind/2));
-            return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
-        } else {
-          console.log('ind, ap: ', ind, Math.floor(ind/2) + 1);
-          return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
-        }
-      });
-      console.log('arr: ', arr);
-      const vals_to_Keep = (x) => x != '|';
-      document.getElementById(var3).innerHTML = document.getElementById('var3').innerHTML.split('').filter(vals_to_Keep).join('');
-      console.log('document.getElementById(var3).innerHTML: ', document.getElementById('var3').innerHTML);
+			
+			// De-scramble key
+			      // Way 1
+			      const arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+			        if (ind % 2 == 0){
+			            console.log('ind, p: ', ind, Math.floor(ind/2));
+			            return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+			        } else {
+			          console.log('ind, ap: ', ind, Math.floor(ind/2) + 1);
+			          return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+			        }
+			      });
+			      console.log('arr: ', arr);
+			      const vals_to_Keep = (x) => x != '|';
+			      document.getElementById(var3).innerHTML = arr.filter(vals_to_Keep).join('');
+			      console.log('document.getElementById(var3).innerHTML: ', document.getElementById('var3').innerHTML);
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
