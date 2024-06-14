@@ -42,7 +42,7 @@
 <h3 id="table_h3" style="display:block">[Step 1]</h3>
 <!-- ---------------------------------------- -->
 <!-- View output in table -->
-<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button><button id="run_selection" onclick="print_result()">Print result</button>
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
 <table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
 <!-- dynamically add rows here -->
 </table>
@@ -127,7 +127,7 @@ async function selection_steps(RepoAobj) {
 	// document.getElementById('response').innerHTML = 'in progress';
 	// await print_response_to_frontend();
 	// OR
-	// await automatic_print_result()
+	await automatic_print_result()
 }
 
 // -----------------------------------------------
@@ -160,6 +160,7 @@ async function automatic_print_result() {
 	
 // -----------------------------------------------
 	
+// <button id="run_selection" onclick="print_result()">Print result</button>
 async function print_result() {
 	await GET_repo_file_info_RESTAPI_fast()
 		.then(async function (text_out) { 
