@@ -283,6 +283,10 @@ async function run_backend(obj) {
 	console.log('(obj.n*2)+1: ', (obj.n*2)+1);
 
 	try {
+		console.log('1st requirement for loop to run: ', regexp.test(obj.status) == false);
+		console.log('2nd requirement for loop to run: ', obj.auth != null);
+		console.log('3rd requirement for loop to run: ', i < (obj.n*2)+1);
+		
 		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 			
 			obj = await decode_desalt(obj, x_rand[i])
