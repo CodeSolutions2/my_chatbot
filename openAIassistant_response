@@ -1,5 +1,0 @@
-INPUT_TEXT = Read the content of a file respond to the following request:why are difficult things beautiful?. Format the output concisely with only the response, use the least number of words.
-json_string_add_messages_to_thread_var = {"role":"user","content":"Read the content of a file respond to the following request:why are difficult things beautiful?. Format the output concisely with only the response, use the least number of words."}
-THREAD_MESSAGE_ID = msg_yCLlM0UCPLwUZgZiuzlIdjYf
-json_string_create_run_var = {"assistant_id":"asst_7Xf4LiFpR6sQUjcsAzF9HxCD"}
-RUN_ID = null
