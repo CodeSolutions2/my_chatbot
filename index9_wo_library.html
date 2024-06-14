@@ -43,7 +43,7 @@
 <!-- ---------------------------------------- -->
 <!-- View output in table -->
 <input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
-<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'><button id="run_selection" onclick="print_result()">Print result</button>
 <!-- dynamically add rows here -->
 </table>
 <!-- ---------------------------------------- -->
@@ -160,7 +160,6 @@ async function automatic_print_result() {
 	
 // -----------------------------------------------
 	
-// <button id="run_selection" onclick="print_result()">Print result</button>
 async function print_result() {
 	await GET_repo_file_info_RESTAPI_fast()
 		.then(async function (text_out) { 
