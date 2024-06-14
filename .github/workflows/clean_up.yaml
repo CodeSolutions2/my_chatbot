@@ -21,11 +21,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Remove file if it exists
-        run: if [ -f response ]; then
-          rm response; 
+        run: if [ -f openAI3_5_response ]; then
+          rm openAI3_5_response; 
           fi; 
           if [ -f openAIassistant_response ]; then
             rm openAIassistant_response;
+          fi;
+          if [ -f custom_model_response ]; then
+            rm custom_model_response;
           fi;
         
       - name: Commit and push changes
