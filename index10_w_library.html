@@ -189,32 +189,9 @@ async function print_result() {
 async function GET_repo_file_info_RESTAPI_fast() {
 	
 	return await fetch(`https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/${document.getElementById('output_file_path').innerHTML}`)
-		.then(res => res.text())
-		.then(async function (text_out) { return  text_out; })
-		.catch(error => { console.log(error); });
-}
-
-	
-async function GET_repo_file_info_RESTAPI_slow(repoOwner, repoName, desired_filename) {
-	
-	var data = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
 		.then(res => res.json())
-		.then(data => { return data; })
-	
-	let regexp = new RegExp(`${desired_filename}`, 'g');
-	let file_download_url = '';
-	data.forEach(file => {
-	      if (file.type === 'file' && file.name.match(regexp)) {
-		      console.log("file.download_url: ", file.download_url);
-		      file_download_url = file.download_url;
-	      }
-	});
-		
-	await fetch(file_download_url)
-		.then(res => res.text())
-		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.then(async function (result) { return  JSON.parse(JSON.stringify(result)); })
 		.catch(error => { console.log(error); });
-
 }
 
 // -----------------------------------------------
