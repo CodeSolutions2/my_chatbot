@@ -73,8 +73,8 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 <!-- --------------------------------------------------- -->	  
 
 
-<script type="module">
-import { run_backend_process } from './library_to_run_GitHub_Actions.js';
+<script type="module" src="./library_to_run_GitHub_Actions.js">
+import { run_backend_process } from "./library_to_run_GitHub_Actions.js";
 module.run_backend_process = run_backend_process;
 </script>
 
@@ -141,13 +141,13 @@ async function selection_steps(RepoAobj) {
 	// document.getElementById('response').innerHTML = 'in progress';
 	// await print_response_to_frontend();
 	// OR
-	await automatic_print_result(RepoAobj)
+	// await automatic_print_result()
 }
 
 // -----------------------------------------------
 
-async function automatic_print_result(RepoAobj) {
-	
+async function automatic_print_result() {
+
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
@@ -187,10 +187,9 @@ async function print_result() {
 
 
 async function GET_repo_file_info_RESTAPI_fast() {
-	
 	return await fetch(`https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/${document.getElementById('output_file_path').innerHTML}`)
-		.then(res => res.json())
-		.then(async function (result) { return  JSON.parse(JSON.stringify(result)); })
+		.then(res => res.text())
+		.then(async function (text_out) { return  text_out; })
 		.catch(error => { console.log(error); });
 }
 
