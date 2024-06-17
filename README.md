@@ -1,8 +1,8 @@
 # my_chatbot
 
 There are several different chatbot models used with the library_to_run_GitHub_Actions.js syncrhonization software architecture: 
-1. OpenAI gpt3.5 - a standard AI model used with a personal OpenAI key (fastest way to put a model online with focus on software architecture)
-2. OpenAI Assistant - a standard AI model using personal text *(in progress)*
+1. OpenAI gpt3.5 - a standard AI model without finetuning or text file usage (for testing the architecture)
+2. OpenAI Assistant - a standard AI model using a personal text file
 3. Custom model - a finetunned model using personal text *(in progress)*
 
-https://codesolutions2.github.io/my_chatbot/index9_wo_library.html
+https://codesolutions2.github.io/my_chatbot/index10_w_library.html
