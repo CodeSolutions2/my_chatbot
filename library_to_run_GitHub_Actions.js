@@ -111,21 +111,19 @@ async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	const var0_str = atob(obj.env_text);
-	let var3_str = "";
 	
 	// 1. 'de-salt' the authorization key read from the file
 	if (x_i == 0) {
 		console.log('Remove nothing:');
-		var3_str = var0_str;
-		obj.auth = await descramble_ver0(var3_str);
+		obj.auth = await descramble_ver0(var0_str);
 	} else if (x_i <= obj.n) {
 		console.log('Remove end:');
-		var3_str = var0_str.slice(0, var0_str.length - x_i);
-		obj.auth = await descramble_ver0(var3_str);
+		obj.auth = var0_str.slice(0, var0_str.length - x_i);
+		obj.auth = await descramble_ver0(obj.auth);
 	} else {
 		console.log('Remove beginning:');
-		var3_str = var0_str.slice(x_i - obj.n, var0_str.length);
-		obj.auth = await descramble_ver1(var3_str);
+		obj.auth = var0_str.slice(x_i - obj.n, var0_str.length);
+		obj.auth = await descramble_ver1(obj.auth);
 	}
 	
   return obj;
@@ -143,9 +141,8 @@ async function descramble_ver0(var3_str) {
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	var3_str = arr.filter(vals_to_Keep).join('');
-	console.log('result: ', var3_str.slice(0, 5));
-	return var3_str;
+	console.log('output: ', arr.filter(vals_to_Keep).join(''));
+	return arr.filter(vals_to_Keep).join('');
 }
 	
 // ----------------------------------------------------
@@ -159,9 +156,8 @@ async function descramble_ver1(var3_str) {
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	var3_str = arr.filter(vals_to_Keep).join('');
-	console.log('result: ', var3_str.slice(0, 5));
-	return var3_str;
+	console.log('output: ', arr.filter(vals_to_Keep).join(''));
+	return arr.filter(vals_to_Keep).join('');
 }
 	
 // ----------------------------------------------------
