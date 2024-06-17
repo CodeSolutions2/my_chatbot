@@ -91,11 +91,12 @@ Loading module from “https://codesolutions2.github.io/my_chatbot/library_to_ru
 <!-- --------------------------------------------------- -->
 
 
-<script type="text/javascript">
+<script>
 
 // -----------------------------------------------
 
-const module = {};
+// Way 1
+// const module = {};
 	
 // -----------------------------------------------
 	
@@ -145,7 +146,7 @@ async function selection_steps(RepoAobj) {
 	// Save file name to DOM
 	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
 	
-	// await module.run_backend_process(RepoAobj);
+	// await module.run_backend_process(RepoAobj); // Way 1
 	await run_backend_process(RepoAobj);
 
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
