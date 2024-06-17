@@ -34,7 +34,7 @@ async function run_backend(obj) {
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
-	// obj.env_text = "MGV0dHN8dHMgZXQ=";  // for testing
+	obj.env_text = "MGV0dHN8dHMgZXQ=";  // for testing
 	
 	// obj.env_file_download_url
 	// obj.env_sha
@@ -63,23 +63,23 @@ async function run_backend(obj) {
 				.then(async function(obj) {
 
 					// Test 
-					// if (document.getElementById('var3').innerHTML == 'test test') {
-					// 	obj.status = true;
-					// 	document.getElementById('var3').innerHTML = "";
-					// }
+					if (obj.auth == 'test test') {
+					 	obj.status = true;
+					 	obj.auth = "";
+					}
 					
 					// Non test program
-					if (obj.temp_file_download_url == "No_file_found") {
+					// if (obj.temp_file_download_url == "No_file_found") {
 						// Option 0: create a new file
-					 	obj.status = await PUT_create_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
-							.then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
-		 					.catch(error => { document.getElementById("error").innerHTML = error; });
-			 		} else {
+					//  	obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
+					// 		.then(async function(out) { obj.auth = ""; return out.status; })
+		 			// 		.catch(error => { console.log("error: ", error); });
+			 		// } else {
 						// Option 1: modify an existing file
-				 		obj.status = await PUT_add_to_a_file_RESTAPI(document.getElementById('var3').innerHTML, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
-							.then(async function(out) { document.getElementById('var3').innerHTML = ""; return out.status; })
-		 					.catch(error => { document.getElementById("error").innerHTML = error; });
-			 		}
+				 	// 	obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
+					// 		.then(async function(out) { obj.auth = ""; return out.status; })
+		 			// 		.catch(error => { console.log("error: ", error); });
+			 		// }
 					
 					if (regexp.test(obj.status) == true) {
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
@@ -109,68 +109,57 @@ async function run_backend(obj) {
 async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
-	document.getElementById('var0').innerHTML = atob(obj.env_text);
-	document.getElementById('var1').innerHTML = x_i;
-	document.getElementById('var2').innerHTML = obj.n;
+	const var0_str = atob(obj.env_text);
 	
-	await new Promise(r => setTimeout(r, 10))
-		.then(async function() {
-			// 1. 'de-salt' the authorization key read from the file
-			if (document.getElementById('var1').innerHTML == 0) {
-				console.log('Remove nothing:');
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML;
-				await descramble_ver0();
-			} else if (document.getElementById('var1').innerHTML <= document.getElementById('var2').innerHTML) {
-				console.log('Remove end:');
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(0, document.getElementById('var0').innerHTML.length - document.getElementById('var1').innerHTML);
-				await descramble_ver0();
-			} else {
-				console.log('Remove beginning:');
-				document.getElementById('var3').innerHTML = document.getElementById('var0').innerHTML.slice(document.getElementById('var1').innerHTML - document.getElementById('var2').innerHTML, document.getElementById('var0').innerHTML.length);
-				await descramble_ver1();
-			}
-		})
-		.then(async function() {
-			document.getElementById('var0').innerHTML = "";
-			document.getElementById('var1').innerHTML = "";
-			document.getElementById('var2').innerHTML = "";
-		})
-		.catch(error => { document.getElementById('error').innerHTML = error; });
-
+	// 1. 'de-salt' the authorization key read from the file
+	if (x_i == 0) {
+		console.log('Remove nothing:');
+		var3_str = var0_str;
+		obj.auth = await descramble_ver0(var3_str);
+	} else if (x_i <= obj.n) {
+		console.log('Remove end:');
+		var3_str = var0_str.slice(0, var0_str.length - x_i);
+		obj.auth = await descramble_ver0(var3_str);
+	} else {
+		console.log('Remove beginning:');
+		var3_str = var0_str.slice(x_i - obj.n, var0_str.length);
+		obj.auth = await descramble_ver1(var3_str);
+	}
+	
   return obj;
 }
 
 // ----------------------------------------------------
 
 
-async function descramble_ver0() {
-	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+async function descramble_ver0(var3_str) {
+	let arr = var3_str.split('').map((val, ind) => {
 		if (ind % 2 == 0){
-			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+			return var3_str.split('').at(Math.floor(ind/2));
 		} else {
-			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+			return var3_str.split('').at(Math.floor(ind/2) + 1  + var3_str.split('').indexOf('|'));
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	arr = arr.filter(vals_to_Keep).join('');
-	console.log('result: ', arr.slice(0, 5));
-	document.getElementById('var3').innerHTML = arr;
+	var3_str = arr.filter(vals_to_Keep).join('');
+	console.log('result: ', var3_str.slice(0, 5));
+	return var3_str;
 }
 	
 // ----------------------------------------------------
 
-async function descramble_ver1() {
-	let arr = document.getElementById('var3').innerHTML.split('').map((val, ind) => {
+async function descramble_ver1(var3_str) {
+	let arr = var3_str.split('').map((val, ind) => {
 		if (ind % 2 == 0){
-			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2) + 1  + document.getElementById('var3').innerHTML.split('').indexOf('|'));
+			return var3_str.split('').at(Math.floor(ind/2) + 1  + var3_str.split('').indexOf('|'));
 		} else {
-			return document.getElementById('var3').innerHTML.split('').at(Math.floor(ind/2));
+			return var3_str.split('').at(Math.floor(ind/2));
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	arr = arr.filter(vals_to_Keep).join('');
-	console.log('result: ', arr.slice(0, 5));
-	document.getElementById('var3').innerHTML = arr;
+	var3_str = arr.filter(vals_to_Keep).join('');
+	console.log('result: ', var3_str.slice(0, 5));
+	return var3_str;
 }
 	
 // ----------------------------------------------------
@@ -205,7 +194,7 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
 	return await fetch(url, options)
-		.catch(error => { document.getElementById("error").innerHTML = error; });
+		.catch(error => { console.log("error: ", error); });
 }
 
 
@@ -225,7 +214,7 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
 	
 	return await fetch(url, options)
-		.catch(error => { document.getElementById("error").innerHTML = error; });
+		.catch(error => { console.log("error: ", error); });
 }
 	
 // ----------------------------------------------------
@@ -249,7 +238,7 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desir
 			}
 			return {text: text, file_download_url: obj.file_download_url[0], sha: obj.sha_arr[0]};
 		})
-		.catch(error => { document.getElementById("error").innerHTML = error; });
+		.catch(error => { console.log("error: ", error); });
 }
 
 // ----------------------------------------------------
