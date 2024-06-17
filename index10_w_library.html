@@ -150,12 +150,8 @@ async function selection_steps(RepoAobj) {
 	await run_backend_process(RepoAobj);
 
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
-
-	// Last step: how does one know when to perform a GET request on the file to present it on the browser?
-	// document.getElementById('response').textContent = 'in progress';
-	// await print_response_to_frontend();
-	// OR
-	// await automatic_print_result()
+	
+	await automatic_print_result()
 }
 
 // -----------------------------------------------
