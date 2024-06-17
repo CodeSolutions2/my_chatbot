@@ -145,7 +145,7 @@ async function automatic_print_result() {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await GET_repo_file_info_RESTAPI_fast()
 			.then(async function (text_out) {
-				console.log('text_out: ', text_out);
+				// console.log('text_out: ', text_out);
 				
 				if (text_out != '404: Not Found') {
 					document.getElementById('response').textContent = text_out;
