@@ -74,19 +74,21 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 
 
 
-<script type="text/javascript" src="library_to_run_GitHub_Actions.js"></script>
-	
-<!-- <script type="module">
+<!-- <script type="text/javascript" src="library_to_run_GitHub_Actions.js"></script>
+Loading failed for the <script> with source “https://codesolutions2.github.io/my_chatbot/library_to_run_GitHub_Actions.js”.
+Uncaught (in promise) ReferenceError: run_backend_process is not defined -->
+
+<script type="module">
 import { run_backend_process } from "./library_to_run_GitHub_Actions.js";
 module.run_backend_process = run_backend_process;
-</script> -->
+</script>
 
 	
-<script>
+<script type="text/javascript">
 
 // -----------------------------------------------
 
-//const module = {};
+const module = {};
 	
 // -----------------------------------------------
 	
@@ -136,8 +138,8 @@ async function selection_steps(RepoAobj) {
 	// Save file name to DOM
 	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
 	
-	// await module.run_backend_process(RepoAobj);
-	await run_backend_process(RepoAobj);
+	await module.run_backend_process(RepoAobj);
+	// await run_backend_process(RepoAobj);
 
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 
