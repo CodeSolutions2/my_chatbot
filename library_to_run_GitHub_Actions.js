@@ -111,6 +111,7 @@ async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
 	const var0_str = atob(obj.env_text);
+	let var3_str = "";
 	
 	// 1. 'de-salt' the authorization key read from the file
 	if (x_i == 0) {
