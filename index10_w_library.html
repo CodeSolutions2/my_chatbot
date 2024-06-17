@@ -110,8 +110,7 @@ async function run_selection() {
 	}
 	if (openAI3_5 == false && openAIassistant == true && custom_model == false) {
 		RepoAobj.foldername = 'openAIassistant';
-		document.getElementById('response').innerHTML = "In progress";
-		await print_response_to_frontend();
+		await selection_steps(RepoAobj);
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == true) {
 		RepoAobj.foldername = 'custom_model';
