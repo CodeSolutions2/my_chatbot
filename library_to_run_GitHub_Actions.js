@@ -66,6 +66,7 @@ async function run_backend(obj) {
 					if (obj.auth == 'test test') {
 					 	obj.status = true;
 					 	obj.auth = "";
+						console.log('HERE');
 					}
 					
 					// Non test program
@@ -83,20 +84,22 @@ async function run_backend(obj) {
 					return obj;
 				})
 				.then(async function(obj) {
+					console.log("obj.status:", obj.status);
+					
 					if (regexp.test(obj.status) == true) {
 						console.log("Match found");
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
 					}
-          
-					// console.log("loop i: ", i);
-					// console.log("x_rand[i]: ", x_rand[i]);
+					
 					return obj;
 				})
 				.then(async function(obj) { await new Promise(r => setTimeout(r, 2000)); return obj; })
 			
 			// Advance while loop
+			console.log("loop i: ", i);
+			console.log("x_rand[i]: ", x_rand[i]);
 			i += 1;	
 		}
 		
