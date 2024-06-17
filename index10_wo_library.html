@@ -165,7 +165,7 @@ async function print_result() {
 	await GET_repo_file_info_RESTAPI_fast()
 		.then(async function (text_out) { 
 			if (text_out != '404: Not Found') {
-				document.getElementById('response').innerHTML = text_out;
+				document.getElementById('response').innerHTML = text_out.replace(/\n/g, "<br>");
 				await print_response_to_frontend(); 
 			}
 		})
