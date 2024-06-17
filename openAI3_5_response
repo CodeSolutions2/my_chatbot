@@ -1,1 +1,0 @@
-The `nomodule` attribute in a script tag is used to specify that the script should only be executed if the browser does not support modules. This allows you to provide a fallback for older browsers that do not support ES6 modules.
