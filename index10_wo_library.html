@@ -172,13 +172,10 @@ async function print_result() {
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
-
 async function GET_repo_file_info_RESTAPI_fast() {
-	
 	return await fetch(`https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/${document.getElementById('output_file_path').innerHTML}`)
-		.then(res => res.json())
-		.then(async function (result) { console.log(result);
-					       return JSON.parse(JSON.stringify(result)); })
+		.then(res => res.text())
+		.then(async function (text_out) { return  text_out; })
 		.catch(error => { console.log(error); });
 }
 
