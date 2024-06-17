@@ -117,7 +117,7 @@ async function run_selection() {
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == true) {
 		RepoAobj.foldername = 'custom_model';
-		document.getElementById('response').innerHTML = "In progress";
+		document.getElementById('response').textContent = "In progress";
 		await print_response_to_frontend();
 	}
 	if (openAI3_5 == false && openAIassistant == false && custom_model == false) {
@@ -142,7 +142,7 @@ async function selection_steps(RepoAobj) {
 	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
 
 	// Last step: how does one know when to perform a GET request on the file to present it on the browser?
-	// document.getElementById('response').innerHTML = 'in progress';
+	// document.getElementById('response').textContent = 'in progress';
 	// await print_response_to_frontend();
 	// OR
 	// await automatic_print_result()
@@ -162,7 +162,7 @@ async function automatic_print_result() {
 				console.log('text_out: ', text_out);
 				
 				if (text_out != '404: Not Found') {
-					document.getElementById('response').innerHTML = text_out;
+					document.getElementById('response').textContent = text_out;
 					await print_response_to_frontend();
 					return "stop";
 				} else {
@@ -182,7 +182,7 @@ async function print_result() {
 	await GET_repo_file_info_RESTAPI_fast()
 		.then(async function (text_out) { 
 			if (text_out != '404: Not Found') {
-				document.getElementById('response').innerHTML = text_out;
+				document.getElementById('response').textContent = text_out;
 				await print_response_to_frontend(); 
 			}
 		})
@@ -222,7 +222,7 @@ async function print_response_to_frontend() {
 	row = document.createElement("tr");
 	cell = document.createElement("td");
 	cell.style.backgroundColor = "#dbc49e";
-	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
+	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').textContent}`);
 	cell.appendChild(cellText);
 	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
 	row.appendChild(cell);
@@ -230,7 +230,7 @@ async function print_response_to_frontend() {
 	tbl.appendChild(tblBody);
 
 	// Reset response
-	document.getElementById('response').innerHTML = "";
+	document.getElementById('response').textContent = "";
 	
 }
 
