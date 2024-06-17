@@ -45,7 +45,7 @@ async function run_backend(obj) {
 	obj.temp_desired_path = obj.temp_file_download_url.split('main/').pop();
 	obj.temp_sha = obj_temp.sha_arr[0]; // this is a string
 	obj.auth = obj.env_text; // Initialize value
-	obj.status = false; // Initialize value
+	obj.status = 404; // Initialize value
 		
 	// [2] Loop over the number of possible values
 	let i = 0;
@@ -57,14 +57,14 @@ async function run_backend(obj) {
 	// console.log('x_rand: ', x_rand);
 
 	try {
-		while (regexp.test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
+		while ((/^20/g).test(obj.status) == false && obj.auth != null && i < (obj.n*2)+1) {
 			
 			obj = await decode_desalt(obj,  x_rand[i])
 				.then(async function(obj) {
 
 					// Test 
 					if (obj.auth == 'test test') {
-					 	obj.status = true;
+					 	obj.status = 200;
 					 	obj.auth = "";
 						console.log('HERE');
 					}
@@ -86,7 +86,7 @@ async function run_backend(obj) {
 				.then(async function(obj) {
 					console.log("obj.status:", obj.status);
 					
-					if (regexp.test(obj.status) == true) {
+					if ((/^20/g).test(obj.status) == true) {
 						console.log("Match found");
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
 					} else {
