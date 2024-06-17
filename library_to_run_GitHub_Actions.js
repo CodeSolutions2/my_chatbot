@@ -34,7 +34,7 @@ async function run_backend(obj) {
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
-	obj.env_text = "MGV0dHN8dHMgZXQ=";  // for testing
+	// obj.env_text = "MGV0dHN8dHMgZXQ=";  // for testing
 	
 	// obj.env_file_download_url
 	// obj.env_sha
@@ -49,7 +49,6 @@ async function run_backend(obj) {
 		
 	// [2] Loop over the number of possible values
 	let i = 0;
-	var regexp = /^20/g;
 	var x = Array.from({ length: (obj.n*2)+1 }, (_, ind) => ind);
 	var x_rand = await rand_perm(x);
 	
@@ -63,28 +62,28 @@ async function run_backend(obj) {
 				.then(async function(obj) {
 
 					// Test 
-					if (obj.auth == 'test test') {
-					 	obj.status = 200;
-					 	obj.auth = "";
-						console.log('HERE');
-					}
+					// if (obj.auth == 'test test') {
+					// 	obj.status = 200;
+					// 	obj.auth = "";
+					//	console.log('HERE');
+					// }
 					
 					// Non test program
-					// if (obj.temp_file_download_url == "No_file_found") {
+					if (obj.temp_file_download_url == "No_file_found") {
 						// Option 0: create a new file
-					//  	obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
-					// 		.then(async function(out) { obj.auth = ""; return out.status; })
-		 			// 		.catch(error => { console.log("error: ", error); });
-			 		// } else {
+					  	obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
+					 		.then(async function(out) { obj.auth = ""; return out.status; })
+		 			 		.catch(error => { console.log("error: ", error); });
+			 		} else {
 						// Option 1: modify an existing file
-				 	// 	obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
-					// 		.then(async function(out) { obj.auth = ""; return out.status; })
-		 			// 		.catch(error => { console.log("error: ", error); });
-			 		// }
+				 	 	obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
+					 		.then(async function(out) { obj.auth = ""; return out.status; })
+		 			 		.catch(error => { console.log("error: ", error); });
+			 		}
 					return obj;
 				})
 				.then(async function(obj) {
-					console.log("obj.status:", obj.status);
+					// console.log("obj.status:", obj.status);
 					
 					if ((/^20/g).test(obj.status) == true) {
 						console.log("Match found");
@@ -98,8 +97,8 @@ async function run_backend(obj) {
 				.then(async function(obj) { await new Promise(r => setTimeout(r, 2000)); return obj; })
 			
 			// Advance while loop
-			console.log("loop i: ", i);
-			console.log("x_rand[i]: ", x_rand[i]);
+			// console.log("loop i: ", i);
+			// console.log("x_rand[i]: ", x_rand[i]);
 			i += 1;	
 		}
 		
@@ -146,7 +145,6 @@ async function descramble_ver0(var3_str) {
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	console.log('output: ', arr.filter(vals_to_Keep).join(''));
 	return arr.filter(vals_to_Keep).join('');
 }
 	
@@ -161,7 +159,6 @@ async function descramble_ver1(var3_str) {
 		}
 	});
 	const vals_to_Keep = (x) => x != '|';
-	console.log('output: ', arr.filter(vals_to_Keep).join(''));
 	return arr.filter(vals_to_Keep).join('');
 }
 	
