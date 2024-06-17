@@ -80,7 +80,9 @@ async function run_backend(obj) {
 					// 		.then(async function(out) { obj.auth = ""; return out.status; })
 		 			// 		.catch(error => { console.log("error: ", error); });
 			 		// }
-					
+					return obj;
+				})
+				.then(async function(obj) {
 					if (regexp.test(obj.status) == true) {
 						console.log("Match found");
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
