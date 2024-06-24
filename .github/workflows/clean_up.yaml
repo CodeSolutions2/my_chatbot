@@ -2,7 +2,7 @@ name: Clean up
 
 on:
   workflow_run:
-    workflows: ["Process Frontend data on the Backend", "openAIassistant Process Frontend data on the Backend"]
+    workflows: ["custom_model Process Frontend data on the Backend", "openAIassistant Process Frontend data on the Backend"]
     types:
       - completed
 
@@ -21,9 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Remove file if it exists
-        run: if [ -f openAI3_5_response ]; then
-          rm openAI3_5_response; 
-          fi; 
+        run: 
           if [ -f openAIassistant_response ]; then
             rm openAIassistant_response;
           fi;
