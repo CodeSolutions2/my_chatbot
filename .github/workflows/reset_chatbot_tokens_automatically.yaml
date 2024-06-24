@@ -1,9 +1,10 @@
 name: automatically reset chatbot tokens
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types:
+      - completed
 
 jobs:
   reset_key:
