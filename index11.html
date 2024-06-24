@@ -168,15 +168,15 @@ async function selection_steps(RepoAobj) {
 		Object.freeze(obj.THREAD_ID_text); // make the original value non-changeable
 
 		// Decode_desalt
-		obj.auth = OPENAI_API_KEY_ASSISTANT_text; // Initialize 
+		obj.auth = obj.OPENAI_API_KEY_ASSISTANT_text; // Initialize 
 		obj = await decode_desalt(obj, 0);
 		document.getElementById("OPENAI_API_KEY").innerHTML = obj.auth;
 		
-		obj.auth = ASSISTANT_text; // Initialize 
+		obj.auth = obj.ASSISTANT_text; // Initialize 
 		obj = await decode_desalt(obj, 0);
 		document.getElementById('output_ASSISTANT_ID').innerHTML = obj.auth;
 
-		obj.auth = THREAD_ID_text; // Initialize 
+		obj.auth = obj.THREAD_ID_text; // Initialize 
 		obj = await decode_desalt(obj, 0);
 		document.getElementById('output_THREAD_ID').innerHTML = obj.auth;
 		delete obj.auth;
