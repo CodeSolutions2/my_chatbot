@@ -1,0 +1,22 @@
+name: custom_model Process Frontend data on the Backend
+
+on:
+  repository_dispatch:
+    types: [trigger-event]
+
+jobs:
+  call_endpoint_after_trigger:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Get repository files (equivalent to git pull)
+        uses: actions/checkout@v2
+
+      - name: Run commands
+        run: INPUT_TEXT=$(echo "${{ github.event.client_payload.fromrepob }}"); model_response="custom_model in progress"; echo "$model_response" >> custom_model_response;
+
+      - name: Commit and push changes
+        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add .; git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
