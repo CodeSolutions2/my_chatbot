@@ -27,7 +27,7 @@ jobs:
           github-token: ${{ secrets.REPOA_MY_CHATBOT }}
           script: |
             // --------------------------------
-            var n = 1;
+            var n = 0;
 
             // Resalt and save the key in .env, for the next time
             var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
