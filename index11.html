@@ -402,7 +402,7 @@ async function automatic_print_result() {
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
-	while (flag == "run" && i < 15) {
+	while (flag == "run" && i < 20) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await GET_repo_file_info_RESTAPI_fast()
 			.then(async function (text_out) {
