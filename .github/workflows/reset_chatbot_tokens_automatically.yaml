@@ -78,60 +78,115 @@ jobs:
             console.log('salt: ', salt);
             
             // --------------------------------
-            async function salt(new_auth) {
-              // Add salt to auth_new
-              if (Math.round(Math.random()) == 0) {
-                // salt front
-                new_auth = salt+new_auth;
-              } else {
-                // salt back
-                new_auth = new_auth+salt;
-              }
-              
-              return new_auth;
-            }
-            // --------------------------------
-            async function scramble(new_auth) {
-              // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
-              
-              // obtain even values of string
-              new_auth_arr = new_auth.split('');
-              // console.log('new_auth_arr: ', new_auth_arr);
-  
-              ep = [];
-              ap = [];
-              for (let i=0; i<new_auth_arr.length; i++) {
-                if (i % 2 == 0) { 
-                  ep.push(new_auth_arr[i]);
-                } else {
-                  ap.push(new_auth_arr[i]);
-                }
-              }
-              // console.log('ep: ', ep);
-              // console.log('ap: ', ap);
-  
-              let new_auth1 = ep.join('') + "|" + ap.join('');
-              // console.log('new_auth1: ', new_auth1);
-              
-              return btoa(new_auth1); // This will be displayed in the file
-            }
-            // --------------------------------
 
             const { OPENAI_API_KEY_ASSISTANT } = process.env;
-            OPENAI_API_KEY_ASSISTANT = await salt(OPENAI_API_KEY_ASSISTANT);
-            OPENAI_API_KEY_ASSISTANT = await scramble(OPENAI_API_KEY_ASSISTANT);
+            
+            // Add salt to auth_new
+            if (Math.round(Math.random()) == 0) {
+              // salt front
+              OPENAI_API_KEY_ASSISTANT = salt+OPENAI_API_KEY_ASSISTANT;
+            } else {
+              // salt back
+              OPENAI_API_KEY_ASSISTANT = OPENAI_API_KEY_ASSISTANT+salt;
+            }
+
+            // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
+            
+            // obtain even values of string
+            let new_auth_arr = OPENAI_API_KEY_ASSISTANT.split('');
+            // console.log('new_auth_arr: ', new_auth_arr);
+
+            ep = [];
+            ap = [];
+            for (let i=0; i<new_auth_arr.length; i++) {
+              if (i % 2 == 0) { 
+                ep.push(new_auth_arr[i]);
+              } else {
+                ap.push(new_auth_arr[i]);
+              }
+            }
+            // console.log('ep: ', ep);
+            // console.log('ap: ', ap);
+
+            let new_auth1 = ep.join('') + "|" + ap.join('');
+            // console.log('new_auth1: ', new_auth1);
+
+            // This will be displayed in the file
+            OPENAI_API_KEY_ASSISTANT = btoa(new_auth1);
             
             // --------------------------------
 
             const { ASSISTANT_ID } = process.env;
-            ASSISTANT_ID = await salt(ASSISTANT_ID);
-            ASSISTANT_ID = await scramble(ASSISTANT_ID);
+
+            // Add salt to auth_new
+            if (Math.round(Math.random()) == 0) {
+              // salt front
+              ASSISTANT_ID = salt+ASSISTANT_ID;
+            } else {
+              // salt back
+              ASSISTANT_ID = ASSISTANT_ID+salt;
+            }
+
+            // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
+            
+            // obtain even values of string
+            let new_auth_arr = ASSISTANT_ID.split('');
+            // console.log('new_auth_arr: ', new_auth_arr);
+
+            ep = [];
+            ap = [];
+            for (let i=0; i<new_auth_arr.length; i++) {
+              if (i % 2 == 0) { 
+                ep.push(new_auth_arr[i]);
+              } else {
+                ap.push(new_auth_arr[i]);
+              }
+            }
+            // console.log('ep: ', ep);
+            // console.log('ap: ', ap);
+
+            let new_auth1 = ep.join('') + "|" + ap.join('');
+            // console.log('new_auth1: ', new_auth1);
+
+            // This will be displayed in the file
+            ASSISTANT_ID = btoa(new_auth1); 
 
             // --------------------------------
 
             const { THREAD_ID } = process.env;
-            THREAD_ID = await salt(THREAD_ID);
-            THREAD_ID = await scramble(THREAD_ID);
+
+            // Add salt to auth_new
+            if (Math.round(Math.random()) == 0) {
+              // salt front
+              THREAD_ID = salt+THREAD_ID;
+            } else {
+              // salt back
+              THREAD_ID = THREAD_ID+salt;
+            }
+
+            // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
+            
+            // obtain even values of string
+            let new_auth_arr = THREAD_ID.split('');
+            // console.log('new_auth_arr: ', new_auth_arr);
+
+            ep = [];
+            ap = [];
+            for (let i=0; i<new_auth_arr.length; i++) {
+              if (i % 2 == 0) { 
+                ep.push(new_auth_arr[i]);
+              } else {
+                ap.push(new_auth_arr[i]);
+              }
+            }
+            // console.log('ep: ', ep);
+            // console.log('ap: ', ap);
+
+            let new_auth1 = ep.join('') + "|" + ap.join('');
+            // console.log('new_auth1: ', new_auth1);
+
+            // This will be displayed in the file
+            THREAD_ID = btoa(new_auth1);
             
             // --------------------------------
 
