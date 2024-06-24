@@ -82,11 +82,8 @@ div#output_THREAD_MESSAGE_ID { display:none; }
 div#output_RUN_ID { display:none; }
 
 table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
-
 tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
-
 th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
-
 input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
 </style>
 
@@ -192,21 +189,20 @@ async function selection_steps(RepoAobj) {
 		document.getElementById("OPENAI_API_KEY").innerHTML = "";
 		document.getElementById('output_ASSISTANT_ID').innerHTML = "";
 		document.getElementById('output_THREAD_ID').innerHTML = "";
-  }
+	}
+	
+	if (frontend == false && backend == true) {
+		RepoAobj.filename = 'cb.txt';
+		RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+		RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
+		
+		// Save file name to DOM
+		document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
+		await run_backend_process(RepoAobj);
+		await automatic_print_result();
+	}
   
-  if (frontend == false && backend == true) {
-  
-  	RepoAobj.filename = 'cb.txt';
-  	RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
-  	RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
-  
-  	// Save file name to DOM
-  	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
-  	await run_backend_process(RepoAobj);
-  	await automatic_print_result();
-  }
-  
-  if (frontend == false && backend == false) {
+	if (frontend == false && backend == false) {
 		document.getElementById('notification').innerHTML = "The fastest processing type: XXX was selected.";
 	}
   
