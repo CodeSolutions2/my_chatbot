@@ -96,8 +96,8 @@ jobs:
             let new_auth_arr = OPENAI_API_KEY_ASSISTANT.split('');
             // console.log('new_auth_arr: ', new_auth_arr);
 
-            ep = [];
-            ap = [];
+            let ep = [];
+            let ap = [];
             for (let i=0; i<new_auth_arr.length; i++) {
               if (i % 2 == 0) { 
                 ep.push(new_auth_arr[i]);
@@ -130,7 +130,7 @@ jobs:
             // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
             
             // obtain even values of string
-            let new_auth_arr = ASSISTANT_ID.split('');
+            new_auth_arr = ASSISTANT_ID.split('');
             // console.log('new_auth_arr: ', new_auth_arr);
 
             ep = [];
@@ -145,7 +145,7 @@ jobs:
             // console.log('ep: ', ep);
             // console.log('ap: ', ap);
 
-            let new_auth1 = ep.join('') + "|" + ap.join('');
+            new_auth1 = ep.join('') + "|" + ap.join('');
             // console.log('new_auth1: ', new_auth1);
 
             // This will be displayed in the file
@@ -167,7 +167,7 @@ jobs:
             // Scramble key : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
             
             // obtain even values of string
-            let new_auth_arr = THREAD_ID.split('');
+            new_auth_arr = THREAD_ID.split('');
             // console.log('new_auth_arr: ', new_auth_arr);
 
             ep = [];
@@ -182,7 +182,7 @@ jobs:
             // console.log('ep: ', ep);
             // console.log('ap: ', ap);
 
-            let new_auth1 = ep.join('') + "|" + ap.join('');
+            new_auth1 = ep.join('') + "|" + ap.join('');
             // console.log('new_auth1: ', new_auth1);
 
             // This will be displayed in the file
