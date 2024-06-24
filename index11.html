@@ -408,6 +408,7 @@ async function display_the_assistants_response() {
 	 	.then(response => response.json())
 	 	.then(async function(result) {
 			let output = JSON.parse(JSON.stringify(result));
+			console.log("output: ", output);
 			
 			document.getElementById('response').innerHTML = "Assistant Response:";
 			document.getElementById('response').innerHTML += "\n\n";
