@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<!-- ---------------------------------------- -->
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 500px; display:block'>
+<tr>
+
+<th id="inputs">
+
+<h1></h1>
+
+<h3>[Step 0] Select a chatbot model</h3>
+<fieldset>
+<input type="radio" id="openAIassistant" name="radio_name" value="openAIassistant" />
+<label for="openAIassistant">OpenAI Assistant</label>
+<br>
+<input type="radio" id="custom_model" name="radio_name" value="custom_model" />
+<label for="custom_model">Custom Model</label>
+</fieldset>
+<br>
+<h3>[Step 1] Select processing architecture (optional: default fastest response)</h3>
+<fieldset>
+<input type="radio" id="frontend" name="radio_name1" value="frontend" />
+<label for="frontend">Frontend: XX min response time</label>
+<br>
+<input type="radio" id="backend" name="radio_name1" value="backend" />
+<label for="backend">Backend: 2 min response time</label>
+</fieldset>
+<br>
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+<div id="output_file_path"></div>
+<br>
+
+
+  
+</th>
+
+<!-- ---------------------------------------- -->
+<th id="outputs">
+<h3 id="table_h3" style="display:block">[Step 1]</h3>
+<!-- ---------------------------------------- -->
+<!-- View output in table -->
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button><button id="run_selection" onclick="print_result()">Print result</button>
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<!-- dynamically add rows here -->
+</table>
+<!-- ---------------------------------------- -->
+</th>
+
+</tr>
+</table>
+</div>  
+<!-- ---------------------------------------- -->
+
+<!-- ---------------------------------------- -->
+<!-- CSS -->
+<style>
+div { padding: 10px; display:block; font-family:courier; font-size:15px; height:10px; }
+	
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+div#response { display:none; color: #3236a8; }
+div#output_file_path { display:none; }
+
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+
+tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
+
+input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+</style>
+
+
+<!-- --------------------------------------------------- -->
+
+<script type="module" src="./index.js"></script>
+
+<!-- --------------------------------------------------- -->
+
+
+<script>
+	
+// -----------------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+    window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+});
+
+// -----------------------------------------------
+	
+async function run_selection() {
+
+	var RepoAobj = {};
+	
+	const openAIassistant = document.getElementById("openAIassistant").checked;
+	const custom_model = document.getElementById("custom_model").checked;
+	
+	RepoAobj.repoOwner = 'CodeSolutions2';
+	RepoAobj.repoA_name = 'my_chatbot';
+  
+	if (openAIassistant == true && custom_model == false) {
+		RepoAobj.foldername = 'openAIassistant';
+		await selection_steps(RepoAobj);
+	}
+	if (openAIassistant == false && custom_model == true) {
+		RepoAobj.foldername = 'custom_model';
+		document.getElementById('response').textContent = "In progress";
+		await print_response_to_frontend();
+	}
+	if (openAIassistant == false && custom_model == false) {
+		document.getElementById('error').innerHTML = "Please select a chatbot model.";
+	}
+}
+
+// -----------------------------------------------
+
+async function selection_steps(RepoAobj) {
+
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername
+
+  if (frontend == true && backend == false) {
+
+    // 0. put the keys in one file: encoded in a file (encode_chatbot_keys.yaml)
+    // 1. GET on file - call processes on frontend
+
+    // *** remember to call this from library in index.js - GET_text_from_file_wo_auth_GitHub_RESTAPI
+    var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
+
+    // split the tokens 
+    //ASSISTANT_ID, THREAD_ID, 
+    var text = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
+
+    var OPENAI_API_KEY_ASSISTANT = text.shift();
+    var OPENAI_API_KEY_ASSISTANT = text.shift();
+    
+    
+    env_text: , 
+			   env_file_download_url: obj_tokens.file_download_url, 
+			   env_sha: obj_tokens.sha, 
+  }
+  
+  if (frontend == false && backend == true) {
+  
+  	RepoAobj.filename = 'cb.txt';
+  	RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+  	RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
+  
+  	// Save file name to DOM
+  	document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
+  	await run_backend_process(RepoAobj);
+  	await automatic_print_result();
+  }
+  
+  if (frontend == false && backend == false) {
+		document.getElementById('notification').innerHTML = "The fastest processing type: XXX was selected.";
+	}
+  
+}
+
+// -----------------------------------------------
+
+
+
+// -----------------------------------------------
+
+
+
+// -----------------------------------------------
+
+
+// -----------------------------------------------
+// Backend
+// -----------------------------------------------
+async function automatic_print_result() {
+
+	// Wait for file creation
+	var flag = "run";
+	var i = 0;
+	while (flag == "run" && i < 15) {
+		// keep doing GET on the repo files for 'response' until it appears
+		flag = await GET_repo_file_info_RESTAPI_fast()
+			.then(async function (text_out) {
+				// console.log('text_out: ', text_out);
+				
+				if (text_out != '404: Not Found') {
+					document.getElementById('response').textContent = text_out;
+					await print_response_to_frontend();
+					return "stop";
+				} else {
+					return "run";
+				}
+			})
+			.then(async function(flag) { await new Promise(r => setTimeout(r, 10000)); return flag; })
+			.catch(error => { document.getElementById("error").innerHTML = error; });
+		i += 1;
+		console.log('i: ', i);
+	}
+}
+	
+// -----------------------------------------------
+	
+async function print_result() {
+	await GET_repo_file_info_RESTAPI_fast()
+		.then(async function (text_out) { 
+			if (text_out != '404: Not Found') {
+				document.getElementById('response').textContent = text_out;
+				await print_response_to_frontend(); 
+			}
+		})
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+}
+
+
+async function GET_repo_file_info_RESTAPI_fast() {
+	return await fetch(`https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/${document.getElementById('output_file_path').innerHTML}`)
+		.then(res => res.text())
+		.then(async function (text_out) { return  text_out; })
+		.catch(error => { console.log(error); });
+}
+
+// -----------------------------------------------
+	
+async function print_response_to_frontend() {
+
+	document.getElementById("chatbot_output").style.display = "block";
+	
+	// Print response to Frontend here
+	let tbl = document.getElementById("chatbot_output");
+	let tblBody = document.createElement("tbody");
+	
+	// Add to Frontend: Create a cellText OR textarea
+	let row = document.createElement("tr");
+	let cell = document.createElement("td");
+	cell.style.backgroundColor = "#cacccf";
+	let cellText = document.createTextNode(`User: ${document.getElementById("input_text").value}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+	
+	// Add chatbot output to Frontend: Create a cellText OR textarea
+	row = document.createElement("tr");
+	cell = document.createElement("td");
+	cell.style.backgroundColor = "#dbc49e";
+	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').textContent}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+
+	// Reset response
+	document.getElementById('response').textContent = "";
+	
+}
+
+// -----------------------------------------------
+
+
+
+</script>
+
+  
+</body>
+</html>
