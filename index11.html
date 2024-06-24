@@ -144,7 +144,7 @@ async function selection_steps(RepoAobj) {
 	
 	if (frontend == false && backend == true) {
 		RepoAobj.filename = 'cb.txt';
-		RepoAobj.input = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+		RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
 		RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 		
 		// Save file name to DOM
@@ -273,8 +273,6 @@ async function run_stepsD_to_G_OpenAI_assistant() {
 
 // Step D
 async function add_a_message_to_a_thread() {
-
-	var add_a_message_to_a_thread_content = "Read the content of a file that I call 'my journal' and respond to the following request: "+document.getElementById("input_text").value+". Format the output concisely with only the response, use the least number of words.";
 	
 	// ------------------------------------------
 	
@@ -283,7 +281,7 @@ async function add_a_message_to_a_thread() {
 		       "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").innerHTML, 
 		       "OpenAI-Beta": 'assistants=v2'};
 	
-	var data = {"role": "user", "content": add_a_message_to_a_thread_content};
+	var data = {"role": "user", "content": "Read the content of a file that I call 'my journal' and respond to the following request: "+document.getElementById("input_text").value+". Format the output concisely with only the response, use the least number of words."};
 	var options = {method : 'post', headers: headers, body : JSON.stringify(data)};
 
 	await fetch(url, options)
