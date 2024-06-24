@@ -142,7 +142,7 @@ async function selection_steps(RepoAobj) {
 		// 1. GET on file - call processes on frontend
 	  
 		// *** remember to call this from library in index.js - GET_text_from_file_wo_auth_GitHub_RESTAPI
-		var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
+		var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
 	
 		var tokens = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
 		  
