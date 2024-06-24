@@ -1,15 +1,16 @@
-export async function run_backend_process(RepoAobj) {
+async function run_backend_process(RepoAobj) {
 
-	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name, RepoAobj.repoOwner
 	
 	// n is the maximum salt length used
 	
-	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name);
+	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
 	
 	var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
 		   env_file_download_url: obj_env.file_download_url, 
 		   env_sha: obj_env.sha, 
-		   n: 1, 
+		   n: 1,
+		   repoOwner: RepoAobj.repoOwner,
 		   filename: RepoAobj.filename, 
 		   foldername: RepoAobj.foldername, 
 		   input_text: RepoAobj.input, 
@@ -30,7 +31,7 @@ async function run_backend(obj) {
 	// console.log('obj.repoB_name: ', obj.repoB_name);
 	
 	// [0] Determine if filename exists
-	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.foldername, obj.repoB_name)
+	var obj_temp = await GET_fileDownloadUrl_and_sha(obj.filename, obj.foldername, obj.repoB_name, obj.repoOwner)
 
 	// [1] Add obj_env and obj_temp to the general object (obj)
 	// obj.env_text
@@ -60,23 +61,15 @@ async function run_backend(obj) {
 			
 			obj = await decode_desalt(obj,  x_rand[i])
 				.then(async function(obj) {
-
-					// Test 
-					// if (obj.auth == 'test test') {
-					// 	obj.status = 200;
-					// 	obj.auth = "";
-					//	console.log('HERE');
-					// }
 					
-					// Non test program
 					if (obj.temp_file_download_url == "No_file_found") {
 						// Option 0: create a new file
-					  	obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name)
+					  	obj.status = await PUT_create_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.foldername+"/"+obj.filename, obj.repoB_name, obj.repoOwner)
 					 		.then(async function(out) { obj.auth = ""; return out.status; })
 		 			 		.catch(error => { console.log("error: ", error); });
 			 		} else {
 						// Option 1: modify an existing file
-				 	 	obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name)
+				 	 	obj.status = await PUT_add_to_a_file_RESTAPI(obj.auth, 'run GitHub Action', obj.input_text, obj.temp_desired_path, obj.temp_sha, obj.repoB_name, obj.repoOwner)
 					 		.then(async function(out) { obj.auth = ""; return out.status; })
 		 			 		.catch(error => { console.log("error: ", error); });
 			 		}
@@ -86,7 +79,7 @@ async function run_backend(obj) {
 					// console.log("obj.status:", obj.status);
 					
 					if ((/^20/g).test(obj.status) == true) {
-						console.log("Match found");
+						// console.log("Match found");
 						delete obj.auth; // the variable is deleted to force it to stop the loop as quickly as possible, it will then throw an error for the while loop thus the while loop is called in a try catch to prevent errors.
 					} else {
 						obj.auth = obj.env_text; // reinitialize value to keep the value obj.auth non-visible
@@ -111,25 +104,25 @@ async function run_backend(obj) {
 
 // ----------------------------------------------------
 
-async function decode_desalt(obj, x_i) {
+export async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
-	const var0_str = atob(obj.env_text);
+	const var0_str = atob(obj.auth);
 	
 	// 1. 'de-salt' the authorization key read from the file
 	if (x_i == 0) {
-		console.log('Remove nothing:');
+		// console.log('Remove nothing:');
 		obj.auth = await descramble_ver0(var0_str);
 	} else if (x_i <= obj.n) {
-		console.log('Remove end:');
+		// console.log('Remove end:');
 		obj.auth = var0_str.slice(0, var0_str.length - x_i);
 		obj.auth = await descramble_ver0(obj.auth);
 	} else {
-		console.log('Remove beginning:');
+		// console.log('Remove beginning:');
 		obj.auth = var0_str.slice(x_i - obj.n, var0_str.length);
 		obj.auth = await descramble_ver1(obj.auth);
 	}
-	
+	// console.log('result: ', obj.auth.slice(0,5));
   return obj;
 }
 
@@ -171,24 +164,10 @@ async function descramble_ver1(var3_str) {
 // SUBFUNCTIONS
 // ----------------------------------------------------
 
-
-// ----------------------------------------------------
-// PUT create a file - Way 0: REST API (WORKS!)
-// Can only write to a public repository, can not write to a private repository even if the key grants access
-// https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents
-// 
-// Before, GitHub copied over the temp file with a new temp.
-//
-// Now, if the file temp exists it does not copy over the file; it gives a 422 error. One needs to delete the file temp and then use this function to create the file temp. 
-// ----------------------------------------------------
-async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName) {
-	
-	// console.log('create repoName: ', repoName);
-	// console.log('create desired_path: ', desired_path);
-	// console.log('create auth: ', auth.slice(0,5));
+export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName, repoOwner) {
 	
 	// PUT content into a new file
-	var url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
+	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content)};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
@@ -201,14 +180,10 @@ async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, r
 // ----------------------------------------------------
 
 
-async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName) {
-
-	// console.log('create repoName: ', repoName);
-	// console.log('create desired_path: ', desired_path);
-	// console.log('create auth: ', auth.slice(0,5));
+export async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName, repoOwner) {
 	
 	// PUT content into an existing file
-	let url = `https://api.github.com/repos/CodeSolutions2/${repoName}/contents/${desired_path}`;
+	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
 	var data = {"message": message, "committer":{"name":"App name","email":"App email"}, "content": btoa(content), "sha": sha};
 	var headers = {"Accept": "application/vnd.github+json", "Authorization": `Bearer ${auth}`, "X-GitHub-Api-Version": "2022-11-28"};
 	var options = {method : 'PUT', headers: headers, body : JSON.stringify(data)};
@@ -219,15 +194,9 @@ async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, s
 	
 // ----------------------------------------------------
 
-async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name) {
+export async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desired_foldername, repoB_name, repoOwner) {
 
-	// Returns an object of strings
-	// console.log('GET_text_from_file_wo_auth_GitHub_RESTAPI: ');
-	// console.log('desired_filename: ', desired_filename);
-	// console.log('desired_foldername: ', desired_foldername);
-	// console.log('repoB_name: ', repoB_name);
-	
-	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name)
+	return await GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name, repoOwner)
 		.then(async function (obj) {
 			var text = "";
 			if (obj.file_download_url != ["No_file_found"]) {
@@ -243,10 +212,10 @@ async function GET_text_from_file_wo_auth_GitHub_RESTAPI(desired_filename, desir
 
 // ----------------------------------------------------
 
-async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name) {
+export async function GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name, repoOwner) {
 
 	// Returns an object of values that are an array
-	var url = `https://api.github.com/repos/CodeSolutions2/${repoB_name}/contents`;
+	var url = `https://api.github.com/repos/${repoOwner}/${repoB_name}/contents`;
 	// console.log('url: ', url);
 
 	var data = await fetch(url).then(res => res.json());
@@ -331,7 +300,7 @@ async function get_number(x) {
 	return x[Math.round(x.length*Math.random())-1];
 }
 	  
-async function rand_perm(x) {
+export async function rand_perm(x) {
 
 	var out = [];
 	while (out.length != x.length) {
