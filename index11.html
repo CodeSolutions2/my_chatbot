@@ -129,21 +129,31 @@ async function selection_steps(RepoAobj) {
 
     // 0. put the keys in one file: encoded in a file (encode_chatbot_keys.yaml)
     // 1. GET on file - call processes on frontend
+	  
+	  // *** remember to call this from library in index.js - GET_text_from_file_wo_auth_GitHub_RESTAPI
+	  var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
 
-    // *** remember to call this from library in index.js - GET_text_from_file_wo_auth_GitHub_RESTAPI
-    var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
+	  var toks = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
+	  
+	  var obj = {
+		OPENAI_API_KEY_ASSISTANT_text: toks.at(0),
+		ASSISTANT_text: toks.at(1),
+		THREAD_ID_text: toks.at(2),
+		env_file_download_url: obj_tokens.file_download_url, 
+		env_sha: obj_tokens.sha,
+		n: 1,
+		repoOwner: this.RepoAobj.repoOwner,
+	   filename: this.RepoAobj.filename, 
+	   foldername: this.RepoAobj.foldername, 
+	   input_text: this.RepoAobj.input_text, 
+	   repoB_name: this.RepoAobj.repoB_name,
+		};
+	
+		Object.freeze(obj.env_text); // make the original value non-changeable
+		Object.freeze(obj.public_text); // make the original value non-changeable
+		Object.freeze(obj.private_text); // make the original value non-changeable
 
-    // split the tokens 
-    //ASSISTANT_ID, THREAD_ID, 
-    var text = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
-
-    var OPENAI_API_KEY_ASSISTANT = text.shift();
-    var OPENAI_API_KEY_ASSISTANT = text.shift();
-    
-    
-    env_text: , 
-			   env_file_download_url: obj_tokens.file_download_url, 
-			   env_sha: obj_tokens.sha, 
+	  
   }
   
   if (frontend == false && backend == true) {
