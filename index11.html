@@ -139,7 +139,7 @@ async function selection_steps(RepoAobj) {
 	const backend = document.getElementById("backend").checked;
 
 	if (frontend == true && backend == false) {
-		await frontend_processing();
+		await frontend_processing(RepoAobj);
 	}
 	
 	if (frontend == false && backend == true) {
@@ -155,7 +155,7 @@ async function selection_steps(RepoAobj) {
   
 	if (frontend == false && backend == false) {
 		document.getElementById('notification').innerHTML = "The fastest processing type: Frontend was selected.";
-		await frontend_processing();
+		await frontend_processing(RepoAobj);
 	}
   
 }
@@ -166,7 +166,7 @@ async function selection_steps(RepoAobj) {
 // -----------------------------------------------
 // Frontend
 // -----------------------------------------------
-async function frontend_processing() {
+async function frontend_processing(RepoAobj) {
 	
 	var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
 	
