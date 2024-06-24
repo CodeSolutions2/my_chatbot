@@ -79,7 +79,7 @@ jobs:
             
             // --------------------------------
 
-            const { OPENAI_API_KEY_ASSISTANT } = process.env;
+            var { OPENAI_API_KEY_ASSISTANT } = process.env;
             
             // Add salt to auth_new
             if (Math.round(Math.random()) == 0) {
@@ -116,7 +116,7 @@ jobs:
             
             // --------------------------------
 
-            const { ASSISTANT_ID } = process.env;
+            var { ASSISTANT_ID } = process.env;
 
             // Add salt to auth_new
             if (Math.round(Math.random()) == 0) {
@@ -153,7 +153,7 @@ jobs:
 
             // --------------------------------
 
-            const { THREAD_ID } = process.env;
+            var { THREAD_ID } = process.env;
 
             // Add salt to auth_new
             if (Math.round(Math.random()) == 0) {
