@@ -154,13 +154,50 @@ async function selection_steps(RepoAobj) {
 	}
   
 	if (frontend == false && backend == false) {
-		document.getElementById('notification').innerHTML = "The fastest processing type: Frontend was selected.";
 		await frontend_processing(RepoAobj);
 	}
   
 }
 
 // -----------------------------------------------
+
+async function print_response_to_frontend() {
+
+	document.getElementById("chatbot_output").style.display = "block";
+	
+	// Print response to Frontend here
+	let tbl = document.getElementById("chatbot_output");
+	let tblBody = document.createElement("tbody");
+	
+	// Add to Frontend: Create a cellText OR textarea
+	let row = document.createElement("tr");
+	let cell = document.createElement("td");
+	cell.style.backgroundColor = "#cacccf";
+	let cellText = document.createTextNode(`User: ${document.getElementById("input_text").value}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+	
+	// Add chatbot output to Frontend: Create a cellText OR textarea
+	row = document.createElement("tr");
+	cell = document.createElement("td");
+	cell.style.backgroundColor = "#dbc49e";
+	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+
+	// Reset response
+	document.getElementById('response').textContent = "";
+	
+}
+
+// -----------------------------------------------
+	
 
 
 // -----------------------------------------------
@@ -446,42 +483,6 @@ async function GET_repo_file_info_RESTAPI_fast() {
 
 // -----------------------------------------------
 	
-async function print_response_to_frontend() {
-
-	document.getElementById("chatbot_output").style.display = "block";
-	
-	// Print response to Frontend here
-	let tbl = document.getElementById("chatbot_output");
-	let tblBody = document.createElement("tbody");
-	
-	// Add to Frontend: Create a cellText OR textarea
-	let row = document.createElement("tr");
-	let cell = document.createElement("td");
-	cell.style.backgroundColor = "#cacccf";
-	let cellText = document.createTextNode(`User: ${document.getElementById("input_text").value}`);
-	cell.appendChild(cellText);
-	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
-	row.appendChild(cell);
-	tblBody.appendChild(row);
-	tbl.appendChild(tblBody);
-	
-	// Add chatbot output to Frontend: Create a cellText OR textarea
-	row = document.createElement("tr");
-	cell = document.createElement("td");
-	cell.style.backgroundColor = "#dbc49e";
-	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
-	cell.appendChild(cellText);
-	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
-	row.appendChild(cell);
-	tblBody.appendChild(row);
-	tbl.appendChild(tblBody);
-
-	// Reset response
-	document.getElementById('response').textContent = "";
-	
-}
-
-// -----------------------------------------------
 
 
 
