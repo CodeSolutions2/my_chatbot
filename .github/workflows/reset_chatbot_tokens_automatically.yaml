@@ -200,4 +200,4 @@ jobs:
 
 
       - name: Commit and push changes back to repository
-        run:  git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global push.autoSetupRemote true; git pull origin main; git checkout main; git branch --set-upstream-to origin/main; git merge main --ff-only; git add -A; git diff-index --quiet HEAD || git commit -m "add files" --allow-empty; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/frontend_backend_message_passing_central_repository_v0.git
+        run:  git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global push.autoSetupRemote true; git pull origin main; git checkout main; git branch --set-upstream-to origin/main; git merge main --ff-only; git add -A; git diff-index --quiet HEAD || git commit -m "add files" --allow-empty; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
