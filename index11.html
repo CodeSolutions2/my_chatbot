@@ -138,7 +138,12 @@ async function selection_steps(RepoAobj) {
 	const backend = document.getElementById("backend").checked;
 
 	if (frontend == true && backend == false) {
-		await frontend_processing(RepoAobj);
+		if (RepoAobj.foldername == 'openAIassistant') {
+			await frontend_processing(RepoAobj);
+		} else {
+			document.getElementById('response').textContent = "In progress";
+			await print_response_to_frontend();
+		}
 	}
 	
 	if (frontend == false && backend == true) {
@@ -156,11 +161,15 @@ async function selection_steps(RepoAobj) {
 			document.getElementById('response').textContent = "In progress";
 			await print_response_to_frontend();
 		}
-		
 	}
   
 	if (frontend == false && backend == false) {
-		await frontend_processing(RepoAobj);
+		if (RepoAobj.foldername == 'openAIassistant') {
+			await frontend_processing(RepoAobj);
+		} else {
+			document.getElementById('response').textContent = "In progress";
+			await print_response_to_frontend();
+		}
 	}
   
 }
