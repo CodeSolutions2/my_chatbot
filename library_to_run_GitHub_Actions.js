@@ -13,7 +13,7 @@ export async function run_backend_process(RepoAobj) {
 		   repoOwner: RepoAobj.repoOwner,
 		   filename: RepoAobj.filename, 
 		   foldername: RepoAobj.foldername, 
-		   input_text: RepoAobj.input, 
+		   input_text: RepoAobj.input_text, 
 		   repoB_name: RepoAobj.repoB_name};
 
 	Object.freeze(obj.env_text); // make the original value non-changeable
