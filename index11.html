@@ -123,8 +123,7 @@ async function run_selection() {
 	}
 	if (openAIassistant == false && custom_model == true) {
 		RepoAobj.foldername = 'custom_model';
-		document.getElementById('response').textContent = "In progress";
-		await print_response_to_frontend();
+		await selection_steps(RepoAobj);
 	}
 	if (openAIassistant == false && custom_model == false) {
 		document.getElementById('error').innerHTML = "Please select a chatbot model.";
@@ -150,7 +149,14 @@ async function selection_steps(RepoAobj) {
 		// Save file name to DOM
 		document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
 		await run_backend_process(RepoAobj);
-		await automatic_print_result();
+
+		if (RepoAobj.foldername == 'openAIassistant') {
+			await automatic_print_result();
+		} else {
+			document.getElementById('response').textContent = "In progress";
+			await print_response_to_frontend();
+		}
+		
 	}
   
 	if (frontend == false && backend == false) {
