@@ -1,6 +1,6 @@
 export async function run_backend_process(RepoAobj) {
 
-	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input, RepoAobj.repoB_name, RepoAobj.repoOwner
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input_text, RepoAobj.repoB_name, RepoAobj.repoOwner
 	
 	// n is the maximum salt length used
 	
