@@ -30,4 +30,15 @@ jobs:
           fi;
         
       - name: Commit and push changes
-        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add -A; git diff-index --quiet HEAD || git commit -m "add files" --allow-empty; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
+        run: |
+          repoOwner="CodeSolutions2";
+          repoName="my_chatbot";
+          repoOwnerEmail="j622amilah@gmail.com";
+          REPOA_MY_CHATBOT="${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}";
+          
+          git config --global user.email ${repoOwnerEmail};
+          git config --global user.name ${repoOwner};
+          git config --global pull.rebase true;
+          git add -A; 
+          git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
+          git push https:/${REPOA_MY_CHATBOT}@github.com/${repoOwner}/${repoName}.git
