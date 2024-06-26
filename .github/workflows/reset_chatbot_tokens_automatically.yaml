@@ -1,8 +1,9 @@
 name: automatically reset chatbot tokens
 
 on:
-  schedule:
-    - cron: '0 3,7,11,15,19,23 * * *'
+  push:
+    branches:
+      - main
 
 jobs:
   reset_key:
@@ -200,9 +201,7 @@ jobs:
       - name: Commit and push changes back to repository
         run: |
           repoOwner="CodeSolutions2";
-          repoName="my_chatbot";
           repoOwnerEmail="j622amilah@gmail.com";
-          REPOA_MY_CHATBOT="${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}";
           
           git config --global user.email ${repoOwnerEmail};
           git config --global user.name ${repoOwner};
@@ -213,4 +212,4 @@ jobs:
           git merge main --ff-only;
           git add -A;
           git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
-          git push https:/${REPOA_MY_CHATBOT}@github.com/${repoOwner}/${repoName}.git
+          git push
