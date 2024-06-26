@@ -1,8 +1,10 @@
 name: Updating a GitHub key - REPOA_MY_CHATBOT_TOKEN0
 
+
 on:
-  schedule:
-    - cron: '0 0,12 * * *'
+  push:
+    branches:
+      - main
 
 jobs:
   job0_update_REPOA_MY_CHATBOT_TOKEN0:
@@ -12,7 +14,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Get repository files - probably do not need it
+      - name: Get repository files
         uses: actions/checkout@v2
         
       - name: Assign a new value to the secret
