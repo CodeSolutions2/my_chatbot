@@ -1,0 +1,44 @@
+name: Updating a GitHub key - REPOA_MY_CHATBOT_TOKEN1
+
+on:
+  schedule:
+    - cron: '0 6,18 * * *'
+
+jobs:
+  job0_update_REPOA_MY_CHATBOT_TOKEN1:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Get repository files - probably do not need it
+        uses: actions/checkout@v2
+        
+      - name: Assign a new value to the secret
+        uses: actions/github-script@v6
+        env:
+          REPOA_MY_CHATBOT_TOKEN1: '${{ secrets.REPOA_MY_CHATBOT_TOKEN1 }}'
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}
+          script: |
+
+            // --------------------------------
+            
+            // Get id information about Github Actions Secret
+            const publicKey_str = await github.rest.actions.getRepoPublicKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            // --------------------------------
+            
+            // Re-assign the new_secret_value to Github Actions Secret
+            await github.rest.actions.createOrUpdateRepoSecret({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                secret_name: 'REPOA_MY_CHATBOT_TOKEN1',
+                encrypted_value: btoa(publicKey_str),
+                key_id: publicKey_str.data.key_id,
+              });
