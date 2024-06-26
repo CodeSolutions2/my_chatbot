@@ -161,6 +161,8 @@ async function descramble_ver1(var3_str) {
 // ----------------------------------------------------
 
 export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName, repoOwner) {
+
+	console.log('PUT_create_a_file_RESTAPI');
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
@@ -178,11 +180,7 @@ export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_
 
 export async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName, repoOwner) {
 
-	console.log('message: ', message);
-	console.log('content: ', content);
-	console.log('desired_path: ', desired_path);
-	console.log('repoName: ', repoName);
-	console.log('repoOwner: ', repoOwner);
+	console.log('PUT_add_to_a_file_RESTAPI');
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
