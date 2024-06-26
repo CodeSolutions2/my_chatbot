@@ -1,8 +1,4 @@
 export async function run_backend_process(RepoAobj) {
-
-	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input_text, RepoAobj.repoB_name, RepoAobj.repoOwner
-	
-	// n is the maximum salt length used
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
 	
@@ -181,6 +177,12 @@ export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_
 
 
 export async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName, repoOwner) {
+
+	console.log('message: ', message);
+	console.log('content: ', content);
+	console.log('desired_path: ', desired_path);
+	console.log('repoName: ', repoName);
+	console.log('repoOwner: ', repoOwner);
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
