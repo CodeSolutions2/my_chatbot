@@ -24,11 +24,13 @@ jobs:
       - name: Commit and push changes
         run: |
           repoOwner="CodeSolutions2";
+          repoName="my_chatbot";
           repoOwnerEmail="j622amilah@gmail.com";
+          REPOA_MY_CHATBOT="${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}";
           
           git config --global user.email ${repoOwnerEmail};
           git config --global user.name ${repoOwner};
           git config --global pull.rebase true; 
           git add .;
           git commit -m "add files";
-          git push
+          git push https:/${REPOA_MY_CHATBOT}@github.com/${repoOwner}/${repoName}.git
