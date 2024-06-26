@@ -31,4 +31,15 @@ jobs:
         run: model_response=$(curl -X GET https://api.openai.com/v1/threads/${{ secrets.THREAD_ID }}/messages -H "Authorization:Bearer ${{ secrets.OPENAI_API_KEY_ASSISTANT }}" -H "Content-Type:application/json" -H "OpenAI-Beta:assistants=v2" | jq '.data[0].content[0].text.value' | sed 's/"//g'); echo "model_response = $model_response"; echo "$model_response" >> openAIassistant_response;
         
       - name: Commit and push changes
-        run: git config --global user.email "j622amilah@gmail.com"; git config --global user.name "CodeSolutions2"; git config --global pull.rebase true; git add -A; git diff-index --quiet HEAD || git commit -m "add files"; git push https://${{ secrets.REPOA_MY_CHATBOT }}@github.com/CodeSolutions2/my_chatbot.git
+        run: |
+          repoOwner="CodeSolutions2";
+          repoName="my_chatbot";
+          repoOwnerEmail="j622amilah@gmail.com";
+          REPOA_MY_CHATBOT="${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}";
+          
+          git config --global user.email ${repoOwnerEmail};
+          git config --global user.name ${repoOwner};
+          git config --global pull.rebase true; 
+          git add -A;
+          git diff-index --quiet HEAD || git commit -m "add files";
+          git push https:/${REPOA_MY_CHATBOT}@github.com/${repoOwner}/${repoName}.git
