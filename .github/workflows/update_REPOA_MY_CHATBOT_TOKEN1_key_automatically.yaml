@@ -18,7 +18,7 @@ jobs:
           repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
           repoOwnerEmail="j622amilah@gmail.com";
           repoName=$(echo "${{ github.repository }}" | cut -d '/' -f 2);
-          main_directory=$(echo "/home/runner/work/$repoName");
+          main_directory=$(echo "/home/runner/work");
           cd $main_directory;
           URL=$(echo "https://${{ env.GH_TOKEN }}@github.com/$repoOwner/$repoName.git");
           
