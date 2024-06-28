@@ -18,7 +18,7 @@ jobs:
         run: |
           repoOwner="CodeSolutions2";
           repoOwnerEmail="j622amilah@gmail.com";
-          repoName="frontend_backend_message_passing_central_repository_v0";
+          repoName="my_chatbot";
           main_directory=$(echo "/home/runner/work/$repoName");
           cd $main_directory;
           URL=$(echo "https://${{ env.GH_TOKEN }}@github.com/$repoOwner/$repoName.git");
