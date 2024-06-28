@@ -23,7 +23,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          repoOwner="CodeSolutions2";
+          repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
           repoOwnerEmail="j622amilah@gmail.com";
           
           git config --global user.email ${repoOwnerEmail};
