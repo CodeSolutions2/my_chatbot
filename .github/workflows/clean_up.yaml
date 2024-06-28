@@ -31,9 +31,9 @@ jobs:
         
       - name: Commit and push changes
         run: |
-          repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
+          repoOwner="$(echo "${{ github.repository }}" | cut -d '/' -f 1)";
           repoOwnerEmail="j622amilah@gmail.com";
-          repoName=$(echo "${{ github.repository }}" | cut -d '/' -f 2);
+          repoName="$(echo "${{ github.repository }}" | cut -d '/' -f 2)";
           REPOA_MY_CHATBOT="${{ secrets.REPOA_MY_CHATBOT_TOKEN0 || secrets.REPOA_MY_CHATBOT_TOKEN1 }}";
           
           git config --global user.email ${repoOwnerEmail};
