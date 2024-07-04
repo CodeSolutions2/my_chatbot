@@ -1,8 +1,9 @@
 name: Updating a GitHub key - REPOA_MY_CHATBOT_TOKEN0
 
 on:
-  schedule:
-    - cron: '0 0,12 * * *'
+  push:
+    branches:
+      - main
       
 jobs:
   update_token:
