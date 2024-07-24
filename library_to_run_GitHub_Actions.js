@@ -1,4 +1,8 @@
 export async function run_backend_process(RepoAobj) {
+
+	// RepoAobj.repoOwner, RepoAobj.repoA_name, RepoAobj.foldername, RepoAobj.filename, RepoAobj.input_text, RepoAobj.repoB_name, RepoAobj.repoOwner
+	
+	// n is the maximum salt length used
 	
 	var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", RepoAobj.repoB_name, RepoAobj.repoOwner);
 	
@@ -19,7 +23,6 @@ export async function run_backend_process(RepoAobj) {
 
 
 // ----------------------------------------------------
-
 	
 async function run_backend(obj) {
 	
@@ -103,7 +106,13 @@ async function run_backend(obj) {
 export async function decode_desalt(obj, x_i) {
 	
 	// 0. Decode the Base64-encoded string --> obtain the salted data in binary string format
-	const var0_str = atob(obj.auth);
+	const bool = await isbase64(obj.auth);
+	var var0_str;
+	if (bool == true) {
+		var0_str = atob(obj.auth);
+	} else {
+		var0_str = obj.auth;
+	}
 	
 	// 1. 'de-salt' the authorization key read from the file
 	if (x_i == 0) {
@@ -124,6 +133,15 @@ export async function decode_desalt(obj, x_i) {
 
 // ----------------------------------------------------
 
+export async function isbase64(text) {
+	try {
+		return btoa(atob(text)) === text;
+	} catch (error) {
+		return false;
+	}
+}
+
+// ----------------------------------------------------
 
 async function descramble_ver0(var3_str) {
 	let arr = var3_str.split('').map((val, ind) => {
@@ -161,8 +179,6 @@ async function descramble_ver1(var3_str) {
 // ----------------------------------------------------
 
 export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_path, repoName, repoOwner) {
-
-	console.log('PUT_create_a_file_RESTAPI');
 	
 	// PUT content into a new file
 	var url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
@@ -179,8 +195,6 @@ export async function PUT_create_a_file_RESTAPI(auth, message, content, desired_
 
 
 export async function PUT_add_to_a_file_RESTAPI(auth, message, content, desired_path, sha, repoName, repoOwner) {
-
-	console.log('PUT_add_to_a_file_RESTAPI');
 	
 	// PUT content into an existing file
 	let url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${desired_path}`;
