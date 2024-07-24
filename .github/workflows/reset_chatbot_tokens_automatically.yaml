@@ -1,9 +1,8 @@
 name: automatically reset chatbot tokens
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '1 0,3,6,7,11,12,15,19,18,23 * * *'
 
 jobs:
   reset_key:
