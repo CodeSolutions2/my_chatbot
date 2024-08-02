@@ -147,15 +147,16 @@ async function selection_steps(RepoAobj) {
 	}
 	
 	if (frontend == false && backend == true) {
-		RepoAobj.filename = 'cb.txt';
-		RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
-		RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
+		// RepoAobj.filename = 'cb.txt';
+		// RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+		// RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
 		
 		// Save file name to DOM
-		document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
-		await run_backend_process(RepoAobj);
+		// document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
+		// await run_backend_process(RepoAobj);
 
 		if (RepoAobj.foldername == 'openAIassistant') {
+			document.getElementById('response').textContent = "In progress";
 			await automatic_print_result();
 		} else {
 			document.getElementById('response').textContent = "In progress";
