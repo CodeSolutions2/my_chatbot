@@ -156,8 +156,9 @@ async function selection_steps(RepoAobj) {
 		// await run_backend_process(RepoAobj);
 
 		if (RepoAobj.foldername == 'openAIassistant') {
+			// await automatic_print_result();
 			document.getElementById('response').textContent = "In progress";
-			await automatic_print_result();
+			await print_response_to_frontend();
 		} else {
 			document.getElementById('response').textContent = "In progress";
 			await print_response_to_frontend();
