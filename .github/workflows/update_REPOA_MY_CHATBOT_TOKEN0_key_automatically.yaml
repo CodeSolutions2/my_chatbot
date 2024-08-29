@@ -31,7 +31,7 @@ jobs:
           git branch --set-upstream-to origin/main;
           git merge main --ff-only;
 
-          gh secret set REPOA_MY_CHATBOT_TOKEN0 --app actions --body ${{ secrets.REPOA_MY_CHATBOT_TOKEN0 }} --org $repoOwner --repos $repoOwner/$repoName
+          gh secret set REPOA_MY_CHATBOT_TOKEN0 --app actions --body ${{ secrets.REPOA_MY_CHATBOT_TOKEN0 }} --repos $repoOwner/$repoName
           
           git add -A; 
           git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
