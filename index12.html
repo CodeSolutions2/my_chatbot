@@ -93,10 +93,9 @@ input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-
 <!-- --------------------------------------------------- -->
 
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { run_backend_process, GET_text_from_file_wo_auth_GitHub_RESTAPI, decode_desalt } from "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
-module.run_backend_process = run_backend_process;
-module.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
-module.decode_desalt = decode_desalt;
+import { GET_text_from_file_wo_auth_GitHub_RESTAPI, decode_desalt } from "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
+module1.GET_text_from_file_wo_auth_GitHub_RESTAPI = GET_text_from_file_wo_auth_GitHub_RESTAPI;
+module2.decode_desalt = decode_desalt;
 </script>
 	
 <!-- --------------------------------------------------- -->
@@ -106,7 +105,8 @@ module.decode_desalt = decode_desalt;
 
 // -----------------------------------------------
 
-const module = {};
+const module1 = {};
+const module2 = {};
   
 // -----------------------------------------------
 	
@@ -225,7 +225,7 @@ async function print_response_to_frontend() {
 // -----------------------------------------------
 async function frontend_processing(RepoAobj) {
 	
-	var obj_tokens = await module.GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
+	var obj_tokens = await module1.GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
 	
 	var tokens = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
 	  
@@ -248,15 +248,15 @@ async function frontend_processing(RepoAobj) {
 	Object.freeze(obj.THREAD_ID_text); // make the original value non-changeable
 
 	obj.auth = obj.OPENAI_API_KEY_ASSISTANT_text; // Initialize 
-	obj = await module.decode_desalt(obj, 0);
+	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById("OPENAI_API_KEY").innerHTML = obj.auth;
 	
 	obj.auth = obj.ASSISTANT_text; // Initialize 
-	obj = await module.decode_desalt(obj, 0);
+	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById('output_ASSISTANT_ID').innerHTML = obj.auth;
 
 	obj.auth = obj.THREAD_ID_text; // Initialize 
-	obj = await module.decode_desalt(obj, 0);
+	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById('output_THREAD_ID').innerHTML = obj.auth;
 	delete obj.auth;
 
