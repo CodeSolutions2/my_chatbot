@@ -247,15 +247,15 @@ async function frontend_processing(RepoAobj) {
 	Object.freeze(obj.ASSISTANT_text); // make the original value non-changeable
 	Object.freeze(obj.THREAD_ID_text); // make the original value non-changeable
 
-	obj.auth = obj.OPENAI_API_KEY_ASSISTANT_text; // Initialize 
+	obj.env_text = obj.OPENAI_API_KEY_ASSISTANT_text; // Initialize 
 	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById("OPENAI_API_KEY").innerHTML = obj.auth;
 	
-	obj.auth = obj.ASSISTANT_text; // Initialize 
+	obj.env_text = obj.ASSISTANT_text; // Initialize 
 	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById('output_ASSISTANT_ID').innerHTML = obj.auth;
 
-	obj.auth = obj.THREAD_ID_text; // Initialize 
+	obj.env_text = obj.THREAD_ID_text; // Initialize 
 	obj = await module2.decode_desalt(obj, 0);
 	document.getElementById('output_THREAD_ID').innerHTML = obj.auth;
 	delete obj.auth;
