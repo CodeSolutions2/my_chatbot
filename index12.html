@@ -125,6 +125,7 @@ async function run_selection() {
 	
 	RepoAobj.repoOwner = 'CodeSolutions2';
 	RepoAobj.repoA_name = 'my_chatbot';
+	RepoAobj.repoB_name = 'my_chatbot';
   
 	if (openAIassistant == true && custom_model == false) {
 		RepoAobj.foldername = 'openAIassistant';
@@ -156,13 +157,6 @@ async function selection_steps(RepoAobj) {
 	}
 	
 	if (frontend == false && backend == true) {
-		// RepoAobj.filename = 'cb.txt';
-		// RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
-		// RepoAobj.repoB_name = 'frontend_backend_message_passing_central_repository_v0';
-		
-		// Save file name to DOM
-		// document.getElementById('output_file_path').innerHTML = RepoAobj.foldername+'_response';
-		// await run_backend_process(RepoAobj);
 
 		if (RepoAobj.foldername == 'openAIassistant') {
 			// await automatic_print_result();
@@ -231,7 +225,7 @@ async function print_response_to_frontend() {
 // -----------------------------------------------
 async function frontend_processing(RepoAobj) {
 	
-	var obj_tokens = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
+	var obj_tokens = await module.GET_text_from_file_wo_auth_GitHub_RESTAPI(".chatbot_tokens", ".github", RepoAobj.repoA_name, RepoAobj.repoOwner);
 	
 	var tokens = obj_tokens.text.replace(/[\n\s]/g, "").split("|");
 	  
@@ -253,17 +247,16 @@ async function frontend_processing(RepoAobj) {
 	Object.freeze(obj.ASSISTANT_text); // make the original value non-changeable
 	Object.freeze(obj.THREAD_ID_text); // make the original value non-changeable
 
-	// Decode_desalt
 	obj.auth = obj.OPENAI_API_KEY_ASSISTANT_text; // Initialize 
-	obj = await decode_desalt(obj, 0);
+	obj = await module.decode_desalt(obj, 0);
 	document.getElementById("OPENAI_API_KEY").innerHTML = obj.auth;
 	
 	obj.auth = obj.ASSISTANT_text; // Initialize 
-	obj = await decode_desalt(obj, 0);
+	obj = await module.decode_desalt(obj, 0);
 	document.getElementById('output_ASSISTANT_ID').innerHTML = obj.auth;
 
 	obj.auth = obj.THREAD_ID_text; // Initialize 
-	obj = await decode_desalt(obj, 0);
+	obj = await module.decode_desalt(obj, 0);
 	document.getElementById('output_THREAD_ID').innerHTML = obj.auth;
 	delete obj.auth;
 
