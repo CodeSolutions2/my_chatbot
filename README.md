@@ -1,6 +1,6 @@
 # my_chatbot
 
-The purpose of this repository is to deploy chatbot models using both Frontend and Backend software organization methods. A library that I created on jsdelivr/npm [library_to_run_GitHub_Actions.js](https://www.jsdelivr.com/package/npm/library_to_run_github_actions) is used to encrypt model tokens and launch repository processes. 
+The purpose of this repository is to deploy chatbot models using both Frontend and Backend software organization methods. A jsdelivr/npm library that I created [library_to_run_GitHub_Actions.js](https://www.jsdelivr.com/package/npm/library_to_run_github_actions) is used to encrypt model tokens and launch repository processes. 
 
 The goal of the webapp is to use both Backend or Frontend software organization architecture:
 - Backend architecture means that the call to the model using the tokens/keys are performed on the GitHub Actions server/runner and results are then saved to a repository file or directly put into the HTML using a web driver.
