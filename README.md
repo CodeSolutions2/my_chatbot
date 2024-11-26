@@ -1,5 +1,7 @@
 # my_chatbot
 
+![](https://github.com/CodeSolutions2/my_chatbot/actions/workflows/reset_chatbot_tokens_automatically.yaml/badge.svg?branch=main)
+
 The purpose of this repository is to deploy chatbot models using both Frontend and Backend software organization methods. A jsdelivr/npm library that I created [library_to_run_GitHub_Actions.js](https://www.jsdelivr.com/package/npm/library_to_run_github_actions) is used to encrypt model tokens and launch repository processes. 
 
 The goal of the webapp is to use both Backend or Frontend software organization architecture:
